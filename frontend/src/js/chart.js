@@ -7,7 +7,9 @@
  * - OLS fitted trend line & Theil-Sen line
  * - Preserves legitimate zeros (rain_mm = 0 is a real value)
  * - Supports NO2 display scaling (x10^15)
- * - Strict palette: Green primary (#476E2A), Espresso secondary (#5C4333), Camel light brown (#CBAB8D)
+ * - Monochromatic Deep Forest Palette:
+ *   Obsidian (#051F20), Pine (#163832), Forest Mid (#235347),
+ *   Sage (#8EB69B for series), Mint (#DAF1DE for OLS trend line)
  */
 
 export class TrendChart {
@@ -98,24 +100,30 @@ export class TrendChart {
       if (activeValues[i] > maxY) maxY = activeValues[i];
     }
 
-    let ySpan = maxY - minY;
-    if (ySpan === 0) ySpan = 1;
+    // Add 10% breathing room to Y axis
+    const ySpan = (maxY - minY) || 1.0;
     minY -= ySpan * 0.08;
     maxY += ySpan * 0.08;
+
+    // If showing anomalies, ensure zero line is included
+    if (this.useAnomalies) {
+      if (minY > 0) minY = -ySpan * 0.1;
+      if (maxY < 0) maxY = ySpan * 0.1;
+    }
 
     const totalPts = this.dataPoints.length;
     const getX = (index) => padding.left + (index / (totalPts - 1)) * plotWidth;
     const getY = (val) => padding.top + plotHeight - ((val - minY) / (maxY - minY)) * plotHeight;
 
-    // Draw Grid & Axes
+    // Draw Dark Grids & Labels
     this._drawGrid(ctx, padding, plotWidth, plotHeight, minY, maxY);
 
-    // Baseline zero line for anomalies
-    if (this.useAnomalies && minY < 0 && maxY > 0) {
+    // Draw Zero reference line for anomalies
+    if (this.useAnomalies && minY <= 0 && maxY >= 0) {
       const zeroY = getY(0);
       if (zeroY >= padding.top && zeroY <= padding.top + plotHeight) {
         ctx.save();
-        ctx.strokeStyle = "#CBAB8D";
+        ctx.strokeStyle = "rgba(218, 241, 222, 0.4)";
         ctx.setLineDash([4, 4]);
         ctx.lineWidth = 1.2;
         ctx.beginPath();
@@ -126,10 +134,10 @@ export class TrendChart {
       }
     }
 
-    // 1. Draw Primary Series Line in Dark Brown (Secondary Color)
+    // 1. Draw Primary Series Line in Sage Green (#8EB69B)
     ctx.save();
-    ctx.strokeStyle = "#5C4333";
-    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = "#8EB69B";
+    ctx.lineWidth = 2.0;
     ctx.lineJoin = "round";
     ctx.beginPath();
 
@@ -153,7 +161,7 @@ export class TrendChart {
     ctx.stroke();
     ctx.restore();
 
-    // 2. Draw OLS Trend Line in Main Green (#476E2A)
+    // 2. Draw OLS Trend Line in Glowing Ice Mint (#DAF1DE)
     if (this.olsResult && totalPts > 1) {
       const slope = this.olsResult.slope_per_year / scale;
       const periodYears = 20.0;
@@ -170,8 +178,10 @@ export class TrendChart {
       const y2 = getY(lastYVal);
 
       ctx.save();
-      ctx.strokeStyle = "#476E2A";
-      ctx.lineWidth = 3.0;
+      ctx.strokeStyle = "#DAF1DE";
+      ctx.lineWidth = 3.2;
+      ctx.shadowColor = "rgba(218, 241, 222, 0.4)";
+      ctx.shadowBlur = 8;
       ctx.beginPath();
       ctx.moveTo(getX(0), y1);
       ctx.lineTo(getX(totalPts - 1), y2);
@@ -189,11 +199,13 @@ export class TrendChart {
         const y = getY(val);
 
         ctx.save();
-        ctx.fillStyle = "#B8DB94";
-        ctx.strokeStyle = "#5C4333";
-        ctx.lineWidth = 2.5;
+        ctx.fillStyle = "#DAF1DE";
+        ctx.strokeStyle = "#051F20";
+        ctx.lineWidth = 3.0;
+        ctx.shadowColor = "#DAF1DE";
+        ctx.shadowBlur = 10;
         ctx.beginPath();
-        ctx.arc(x, y, 5.5, 0, Math.PI * 2);
+        ctx.arc(x, y, 6.0, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
         ctx.restore();
@@ -205,10 +217,10 @@ export class TrendChart {
 
   _drawGrid(ctx, pad, w, h, minY, maxY) {
     ctx.save();
-    ctx.strokeStyle = "#EBE3D9";
+    ctx.strokeStyle = "rgba(142, 182, 155, 0.12)";
     ctx.lineWidth = 0.8;
-    ctx.fillStyle = "#6B5B50";
-    ctx.font = "11px -apple-system, sans-serif";
+    ctx.fillStyle = "#8EB69B";
+    ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
 
     // Horizontal grid lines
     const steps = 4;
@@ -221,29 +233,41 @@ export class TrendChart {
       ctx.lineTo(pad.left + w, y);
       ctx.stroke();
 
+      // Y-axis value label
       ctx.textAlign = "right";
-      const formattedVal = Math.abs(val) >= 1000 ? val.toExponential(2) : (Math.abs(val) < 0.01 && val !== 0 ? val.toFixed(4) : val.toFixed(2));
-      ctx.fillText(formattedVal, pad.left - 6, y + 4);
+      ctx.fillText(val.toFixed(2), pad.left - 8, y + 3.5);
     }
 
-    // X-Axis Year Labels
-    const totalPts = this.dataPoints.length;
-    const step = Math.max(1, Math.floor(totalPts / 6));
+    // Vertical Year Grid lines (2005, 2010, 2015, 2020, 2024)
+    const keyYears = [2005, 2010, 2015, 2020, 2024];
     ctx.textAlign = "center";
+    for (const yr of keyYears) {
+      const targetDate = `${yr}-01`;
+      let foundIdx = -1;
+      for (let i = 0; i < this.dataPoints.length; i++) {
+        if (this.dataPoints[i].date.startsWith(`${yr}-`)) {
+          foundIdx = i;
+          break;
+        }
+      }
+      if (foundIdx >= 0) {
+        const x = pad.left + (foundIdx / (this.dataPoints.length - 1)) * w;
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top);
+        ctx.lineTo(x, pad.top + h);
+        ctx.stroke();
 
-    for (let i = 0; i < totalPts; i += step) {
-      const x = pad.left + (i / (totalPts - 1)) * w;
-      const dateStr = this.dataPoints[i].date;
-      ctx.fillText(dateStr.substring(0, 7), x, pad.top + h + 18);
+        ctx.fillText(yr.toString(), x, pad.top + h + 18);
+      }
     }
 
     // Y-Axis Unit label
     ctx.save();
-    ctx.translate(14, pad.top + h / 2);
+    ctx.translate(16, pad.top + h / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = "center";
-    ctx.font = "bold 11px -apple-system, sans-serif";
-    ctx.fillStyle = "#5C4333";
+    ctx.font = "bold 11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.fillStyle = "#DAF1DE";
     ctx.fillText(this.useAnomalies ? `Anomaly (${this.displayUnit})` : `Value (${this.displayUnit})`, 0, 0);
     ctx.restore();
 
@@ -258,70 +282,77 @@ export class TrendChart {
     const text2 = `Value: ${rawVal} ${this.displayUnit}`;
     const text3 = `Anomaly: ${anomVal}`;
 
-    ctx.font = "11px -apple-system, sans-serif";
-    const boxW = 160;
-    const boxH = 62;
-    let boxX = x + 12;
-    if (boxX + boxW > canvasWidth - 10) boxX = x - boxW - 12;
+    ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    const boxW = 165;
+    const boxH = 64;
+    let boxX = x + 14;
+    if (boxX + boxW > canvasWidth - 10) boxX = x - boxW - 14;
     const boxY = Math.max(8, y - boxH / 2);
 
     ctx.save();
-    ctx.fillStyle = "rgba(74, 53, 40, 0.95)";
-    ctx.strokeStyle = "#B8DB94";
+    ctx.fillStyle = "rgba(5, 31, 32, 0.94)";
+    ctx.strokeStyle = "#235347";
     ctx.lineWidth = 1.5;
+    ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+    ctx.shadowBlur = 12;
     ctx.beginPath();
-    ctx.roundRect(boxX, boxY, boxW, boxH, 6);
+    ctx.roundRect(boxX, boxY, boxW, boxH, 8);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#FFFFFF";
     ctx.textAlign = "left";
-    ctx.fillText(text1, boxX + 8, boxY + 18);
-    ctx.fillStyle = "#E5D7C8";
-    ctx.fillText(text2, boxX + 8, boxY + 34);
-    ctx.fillStyle = "#B8DB94";
-    ctx.fillText(text3, boxX + 8, boxY + 50);
+    ctx.fillText(text1, boxX + 10, boxY + 18);
+    ctx.fillStyle = "#8EB69B";
+    ctx.fillText(text2, boxX + 10, boxY + 34);
+    ctx.fillStyle = "#DAF1DE";
+    ctx.fillText(text3, boxX + 10, boxY + 50);
     ctx.restore();
   }
 
   _renderEmpty(ctx, w, h) {
-    ctx.fillStyle = "#6B5B50";
-    ctx.font = "13px -apple-system, sans-serif";
+    ctx.save();
+    ctx.fillStyle = "#8EB69B";
+    ctx.font = "14px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Select a variable and city to view time series and trend.", w / 2, h / 2);
+    ctx.fillText("Select a variable and city station to visualize observations", w / 2, h / 2);
+    ctx.restore();
   }
 
   _setupEvents() {
+    if (!this.canvas) return;
+
     this.canvas.addEventListener('mousemove', (e) => {
       const rect = this.canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
-      const paddingLeft = 65;
-      const plotWidth = rect.width - 65 - 25;
+      const padding = { left: 65, right: 25 };
+      const plotWidth = rect.width - padding.left - padding.right;
 
-      if (mouseX >= paddingLeft && mouseX <= paddingLeft + plotWidth && this.dataPoints.length > 1) {
-        const fraction = (mouseX - paddingLeft) / plotWidth;
-        const newIndex = Math.min(this.dataPoints.length - 1, Math.max(0, Math.round(fraction * (this.dataPoints.length - 1))));
-        if (newIndex !== this.hoverIndex) {
-          this.hoverIndex = newIndex;
-          this.requestRender();
-        }
-      } else {
+      if (mouseX < padding.left || mouseX > rect.width - padding.right || !this.dataPoints.length) {
         if (this.hoverIndex !== -1) {
           this.hoverIndex = -1;
           this.requestRender();
         }
+        return;
       }
-    }, { passive: true });
+
+      const fraction = (mouseX - padding.left) / plotWidth;
+      const index = Math.round(fraction * (this.dataPoints.length - 1));
+      if (index !== this.hoverIndex && index >= 0 && index < this.dataPoints.length) {
+        this.hoverIndex = index;
+        this.requestRender();
+      }
+    });
 
     this.canvas.addEventListener('mouseleave', () => {
       if (this.hoverIndex !== -1) {
         this.hoverIndex = -1;
         this.requestRender();
       }
-    }, { passive: true });
+    });
 
     window.addEventListener('resize', () => {
       this.requestRender();
-    }, { passive: true });
+    });
   }
 }

@@ -39,14 +39,16 @@ check(html.includes('id="assistant-drawer"'), 'AI Assistant drawer present (SRD 
 check(html.includes('id="btn-export-csv"'), 'CSV export button present (SRD §18)');
 check(html.includes('id="btn-export-md"'), 'Markdown export button present (SRD §18)');
 
-// 2. Check CSS and requested color palette tokens
+// 2. Check CSS and requested color palette tokens (Monochromatic Deep Forest Palette)
 const cssPath = path.join(SRC_DIR, 'css', 'style.css');
 check(fs.existsSync(cssPath), 'style.css exists');
 const css = fs.readFileSync(cssPath, 'utf-8');
-check(css.includes('#B8DB94'), 'Color: Second top green (#B8DB94) integrated');
-check(css.includes('#CBAB8D'), 'Color: Sand camel brown (#CBAB8D) integrated');
-check(css.includes('#5C4333'), 'Color: Deep espresso earth brown (#5C4333) integrated');
-check(css.includes('#FBFBF9'), 'Color: Linen canvas white (#FBFBF9) integrated');
+check(css.includes('#051F20'), 'Color: Deep Obsidian Green (#051F20) integrated');
+check(css.includes('#0B2B26'), 'Color: Dark Forest Green (#0B2B26) integrated');
+check(css.includes('#163832'), 'Color: Deep Pine (#163832) integrated');
+check(css.includes('#235347'), 'Color: Forest Mid (#235347) integrated');
+check(css.includes('#8EB69B'), 'Color: Sage Green (#8EB69B) integrated');
+check(css.includes('#DAF1DE'), 'Color: Mint Highlight (#DAF1DE) integrated');
 
 // 3. Check JavaScript files
 const jsFiles = ['api.js', 'stats.js', 'chart.js', 'map.js', 'app.js'];

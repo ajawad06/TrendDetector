@@ -277,7 +277,7 @@ class App {
     const tierBadge = tier === 'significant' ? 'Statistically Significant Trend' : (tier === 'caution' ? 'Significant With Caution' : 'No Significant Trend');
 
     cardContainer.innerHTML = `
-      <div class="story-card" style="border-left: 6px solid ${tier === 'significant' ? 'var(--color-green-primary)' : (tier === 'caution' ? '#E65100' : 'var(--color-light-brown)')};">
+      <div class="story-card" style="border-left: 6px solid ${tier === 'significant' ? 'var(--color-mint)' : (tier === 'caution' ? '#FB923C' : 'var(--color-border)')};">
         <div class="story-header">
           <span class="story-badge">Earth System Trend Story</span>
           <span class="badge ${badgeColor}">${tierBadge}</span>
@@ -294,7 +294,7 @@ class App {
           </div>
           <div class="story-item">
             <span class="story-label">HOW MUCH?</span>
-            <span class="story-value" style="font-size:1.05rem; color:${dir === 'increasing' ? 'var(--color-green-dark)' : (dir === 'decreasing' ? '#D84315' : 'var(--color-dark-brown)')};">
+            <span class="story-value" style="font-size:1.05rem; color:${dir === 'increasing' ? '#4ADE80' : (dir === 'decreasing' ? '#FB923C' : 'var(--color-mint)')};">
               ${slopeStr} (${totalStr} over 2005–2024)
             </span>
           </div>
@@ -304,18 +304,18 @@ class App {
           </div>
         </div>
 
-        <div style="background:var(--color-canvas); padding:0.9rem; border-radius:6px; margin-top:0.85rem; border:1px solid var(--color-light-brown-border);">
-          <span style="font-weight:800; color:var(--color-dark-brown); font-size:0.75rem; text-transform:uppercase; display:block; margin-bottom:0.25rem;">WHY MIGHT IT MATTER?</span>
-          <p style="font-size:0.875rem; color:var(--color-dark-brown); margin:0; line-height:1.45;">${v.why_it_matters || "Environmental shifts directly alter regional air quality, water security, and public health."}</p>
+        <div style="background:var(--color-obsidian); padding:0.9rem; border-radius:8px; margin-top:0.85rem; border:1px solid var(--color-border-subtle);">
+          <span style="font-weight:800; color:var(--color-mint); font-size:0.75rem; text-transform:uppercase; display:block; margin-bottom:0.25rem;">WHY MIGHT IT MATTER?</span>
+          <p style="font-size:0.88rem; color:var(--color-sage); margin:0; line-height:1.5;">${v.why_it_matters || "Environmental shifts directly alter regional air quality, water security, and public health."}</p>
         </div>
 
         <div class="story-disclaimer" style="margin-top:0.75rem;">
           ⚠️ <b>Scientific Reminder:</b> A statistical trend describes historical observation association; it does not by itself prove a single cause or guarantee future continuation.
         </div>
 
-        <details style="margin-top:0.75rem; font-size:0.85rem; color:var(--color-dark-brown);">
+        <details style="margin-top:0.85rem; font-size:0.85rem; color:var(--color-mint);">
           <summary style="cursor:pointer; font-weight:700;">Show the numbers (Statistical Breakdown)</summary>
-          <div style="background:var(--color-canvas); padding:0.85rem; border-radius:6px; margin-top:0.5rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.5rem; font-size:0.8rem;">
+          <div style="background:var(--color-obsidian); border:1px solid var(--color-border-subtle); padding:0.85rem; border-radius:8px; margin-top:0.5rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.5rem; font-size:0.8rem; color:var(--color-sage);">
             <div><b>OLS Slope:</b> ${ols.slope_per_year.toExponential(4)} ${ols.slope_unit}</div>
             <div><b>OLS p-value:</b> ${ols.p_value.toExponential(4)}</div>
             <div><b>Adjusted p-value (n_eff):</b> ${ols.p_value_adjusted.toExponential(4)}</div>
@@ -746,7 +746,7 @@ class App {
       if (replyObj.analysis_ref?.variable && replyObj.analysis_ref?.region) {
         const v = replyObj.analysis_ref.variable;
         const r = replyObj.analysis_ref.region;
-        botHtml += `<div style="margin-top:8px;"><button class="btn btn-secondary btn-sm" id="btn-chart-jump-${Date.now()}" style="font-size:0.75rem; padding:0.3rem 0.6rem; cursor:pointer; background:var(--color-green-accent); color:var(--color-dark-brown); border:1px solid var(--color-green-primary); border-radius:6px; font-weight:700;">📊 Load ${v.toUpperCase()} in ${r.toUpperCase()} Chart</button></div>`;
+        botHtml += `<div style="margin-top:8px;"><button class="btn btn-primary btn-sm" id="btn-chart-jump-${Date.now()}" style="font-size:0.75rem; padding:0.35rem 0.75rem; cursor:pointer;">📊 Load ${v.toUpperCase()} in ${r.toUpperCase()} Chart</button></div>`;
       }
 
       const msgDiv = document.createElement('div');

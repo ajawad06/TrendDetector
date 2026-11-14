@@ -3,6 +3,7 @@
  * Displays the 8 observation cities at their real coordinates.
  * Markers dynamically visualize trend direction (arrow + color)
  * and statistical significance (solid = significant, dashed = caution, light = stable).
+ * Monochromatic Deep Forest Palette & Dark Mode Glow
  */
 
 export class RegionMap {
@@ -39,7 +40,7 @@ export class RegionMap {
         scrollWheelZoom: false
       });
 
-      // OpenStreetMap clean tiles
+      // OpenStreetMap clean tiles (styled dark via CSS filter)
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 18
@@ -68,12 +69,12 @@ export class RegionMap {
       const marker = L.marker([city.lat, city.lon], { icon: markerIcon }).addTo(this.map);
 
       const tooltipContent = `
-        <div style="font-family:-apple-system, sans-serif; font-size:12px; line-height:1.35; padding:2px;">
-          <b>${city.name}</b> (${city.lat.toFixed(2)}°N, ${city.lon.toFixed(2)}°E)<br>
-          <span style="font-size:11px; color:#5C4333;">Trend: <b>${trend.direction}</b> (${trend.tier.replace('_', ' ')})</span>
+        <div style="font-family:-apple-system, sans-serif; font-size:12px; line-height:1.4; padding:4px; background:#0B2B26; color:#DAF1DE; border-radius:6px;">
+          <b style="color:#FFFFFF; font-size:13px;">${city.name}</b> (${city.lat.toFixed(2)}°N, ${city.lon.toFixed(2)}°E)<br>
+          <span style="font-size:11px; color:#8EB69B;">Trend: <b style="color:#DAF1DE;">${trend.direction}</b> (${trend.tier.replace('_', ' ')})</span>
         </div>
       `;
-      marker.bindTooltip(tooltipContent, { direction: 'top', offset: [0, -12] });
+      marker.bindTooltip(tooltipContent, { direction: 'top', offset: [0, -12], className: 'custom-dark-tooltip' });
 
       marker.on('click', () => {
         this.setActiveCity(cityId);
@@ -108,25 +109,31 @@ export class RegionMap {
     const dir = trend.direction || 'stable';
     const tier = trend.tier || 'no_trend';
 
-    // Color based on direction
-    let bg = '#5C4333'; // stable brown
+    // Color based on direction in monochromatic deep forest theme
+    let bg = '#163832'; // stable pine
     let arrow = '→';
+    let textColor = '#DAF1DE';
+    let borderColor = 'rgba(142, 182, 155, 0.4)';
+
     if (dir === 'increasing') {
-      bg = '#476E2A'; // main green
+      bg = '#235347'; // forest mid
       arrow = '↑';
+      textColor = '#DAF1DE';
+      borderColor = '#4ADE80';
     } else if (dir === 'decreasing') {
-      bg = '#D84315'; // warm reddish-orange
+      bg = '#78350F'; // warm deep amber
       arrow = '↓';
+      textColor = '#FDBA74';
+      borderColor = '#FB923C';
     }
 
-    // Border based on significance tier
-    let borderStyle = '2px solid #FFFFFF';
-    let boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
-    if (tier === 'significant') {
-      borderStyle = isSelected ? '3px solid #B8DB94' : '2px solid #FFFFFF';
-      boxShadow = '0 0 0 3px #476E2A, 0 3px 8px rgba(0,0,0,0.35)';
-    } else if (tier === 'caution') {
-      borderStyle = '2px dashed #E65100';
+    // Border and Glow based on selection and significance tier
+    let boxShadow = '0 2px 8px rgba(0,0,0,0.6)';
+    if (isSelected) {
+      boxShadow = '0 0 16px rgba(218, 241, 222, 0.8), 0 0 0 3px #DAF1DE';
+      borderColor = '#FFFFFF';
+    } else if (tier === 'significant') {
+      boxShadow = '0 0 10px rgba(142, 182, 155, 0.4)';
     }
 
     const scale = isSelected ? 'transform: scale(1.22);' : '';
@@ -134,18 +141,18 @@ export class RegionMap {
     const html = `
       <div style="
         background: ${bg};
-        color: #FFFFFF;
+        color: ${textColor};
         width: 28px;
         height: 28px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 800;
+        font-weight: 900;
         font-size: 14px;
-        border: ${borderStyle};
+        border: 2px solid ${borderColor};
         box-shadow: ${boxShadow};
-        transition: transform 0.2s ease;
+        transition: all 0.25s ease;
         ${scale}
       ">${arrow}</div>
     `;

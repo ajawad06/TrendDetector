@@ -92,6 +92,18 @@ The system has been completely restructured to run **exclusively** on the verifi
   - Markdown investigation report.
   - Shareable URL parameters (`?var=pm25&reg=lahore&mode=anomaly`).
 
+### Phase 5: UI Redesign & Monochromatic Deep Forest System
+- **Deep Forest Monochromatic Palette**:
+  - Implemented 6-tone color system: `#051F20` (Obsidian canvas), `#0B2B26` (Forest card surface), `#163832` (Pine border/elevated), `#235347` (Mid forest action), `#8EB69B` (Sage green muted labels/series line), `#DAF1DE` (Mint text highlights/OLS line).
+- **Dashboard Visual Architecture**:
+  - Redesigned card layouts with 14px–20px rounded geometry, subtle borders, ambient backdrop blur, glowing mint and sage accents.
+  - Redesigned status indicators, interactive curiosity topics, and directional contrast cards.
+- **High-Performance Canvas Rendering**:
+  - Time series canvas visualizer updated to dark mode with `#8EB69B` observed series line, `#DAF1DE` glowing OLS fit line, subtle grid lines, and high-contrast dark tooltip.
+- **Leaflet Dark Map Theme**:
+  - Integrated custom dark cartography styling without external API key requirements.
+  - Updated city station markers with glowing directional indicators and significance rings.
+
 ---
 
 ## 2. Reasonable Architectural Decisions
