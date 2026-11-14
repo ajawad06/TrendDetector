@@ -1,27 +1,26 @@
 /* ==========================================================================
-   TREND DETECTOR — 50/50 GREEN & BROWN DUAL CONTRAST SYSTEM
+   TREND DETECTOR — CLEAN SCIENTIFIC UI WITH LIGHT BROWN ACCENTS & VIDEO BACKDROP
    NASA Space Apps Challenge 2026: Earth System Trend Detective
    
    COLOR HIERARCHY:
-   1. FOREST GREEN PALETTE (50% Dominant):
-      - Canvas:      #09201A (Solid deep forest canvas)
-      - Surface:     #0E2B23 (Pine green card surface)
+   1. FOREST GREEN PALETTE (Primary Theme):
+      - Canvas:      #09201A (Deep forest obsidian)
+      - Surface:     #0E2B23 (Translucent pine surface)
       - Elevated:    #153A30 (Hover and elevated green)
-      - Border:      #1B453A (Flat green border)
+      - Border:      #1B453A (Subtle green boundary)
       - Action:      #245B4D (Solid primary green)
       - Text Main:   #E4F0E8 (Pale mint text)
       - Text Muted:  #8EB69B (Sage secondary text)
       - Text Light:  #FFFFFF
    
-   2. WARM EARTH BROWN PALETTE (50% Contrast, from User's Reference):
-      - Canvas Dark: #261614 (Deep obsidian espresso canvas)
-      - Surface:     #3E2522 (Solid chocolate espresso surface)
-      - Elevated:    #4A2E2A (Hover and elevated brown)
-      - Border:      #5E3D38 (Flat warm brown border)
-      - Action:      #52332E (Warm brown action)
-      - Accent Tan:  #D3A376 (Warm camel / caramel tan)
-      - Cream Text:  #FFE0B2 (Soft almond cream text)
-      - Muted Taupe: #8C6E63 (Muted taupe brown text)
+   2. LIGHT EARTH BROWN PALETTE (Secondary Accent Portions):
+      - Caramel Tan: #D3A376 (Lighter warm camel/caramel tan accent)
+      - Cream Text:  #FFE0B2 (Soft almond cream text & titles)
+      - Ivory Light: #FFF2DF (Warm ivory highlights)
+      - Sand Taupe:  #8C6E63 (Muted taupe brown text & borders)
+      - Tan Surface: rgba(211, 163, 118, 0.10) (Soft warm tan frosted tint)
+      - Tan Border:  rgba(211, 163, 118, 0.30) (Warm boundary)
+      - Dark Brown Ref: #3E2522 (Retained for palette verification)
    ========================================================================== */
 
 :root {
@@ -36,18 +35,26 @@
   --color-sage: #8EB69B;
   --color-mint: #DAF1DE;
 
-  /* 2. Earth Brown Tokens (From Uploaded Image) */
-  --color-brown-dark: #261614;
-  --color-brown-surface: #3E2522;
-  --color-brown-elevated: #4A2E2A;
-  --color-brown-border: #5E3D38;
-  --color-brown-border-subtle: rgba(211, 163, 118, 0.22);
-  --color-brown-action: #52332E;
-  --color-secondary-espresso: #3E2522;
+  /* 2. Lighter Earth Brown & Tan Palette (From Uploaded Color Swatch) */
+  --color-tan: #D3A376;
+  --color-tan-light: #FFE0B2;
+  --color-tan-ivory: #FFF2DF;
+  --color-taupe: #8C6E63;
+  --color-tan-surface: rgba(211, 163, 118, 0.10);
+  --color-tan-border: rgba(211, 163, 118, 0.30);
+  --color-tan-hover: rgba(211, 163, 118, 0.20);
+
+  /* Semantic Aliases & Compatibility */
+  --color-secondary-espresso: #3E2522; /* Verified palette reference */
   --color-secondary-tan: #D3A376;
-  --color-secondary-taupe: #8C6E63;
   --color-secondary-cream: #FFE0B2;
-  --color-secondary-border: #5E3D38;
+  --color-secondary-taupe: #8C6E63;
+  --color-secondary-border: rgba(211, 163, 118, 0.30);
+  --color-brown-surface: rgba(211, 163, 118, 0.10);
+  --color-brown-dark: rgba(9, 32, 26, 0.85);
+  --color-brown-elevated: rgba(211, 163, 118, 0.18);
+  --color-brown-border: rgba(211, 163, 118, 0.30);
+  --color-brown-action: #D3A376;
 
   /* Global Semantic Defaults */
   --color-canvas: var(--color-green-canvas);
@@ -82,9 +89,9 @@
 
   --color-dark-brown: var(--color-text-main);
   --color-dark-brown-light: var(--color-sage);
-  --color-light-brown: var(--color-secondary-espresso);
-  --color-light-brown-border: var(--color-border);
-  --color-light-brown-soft: rgba(62, 37, 34, 0.4);
+  --color-light-brown: var(--color-secondary-tan);
+  --color-light-brown-border: var(--color-secondary-border);
+  --color-light-brown-soft: rgba(211, 163, 118, 0.15);
 
   /* Consistent 6px / 8px Radii */
   --radius-xs: 4px;
@@ -115,11 +122,51 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  position: relative;
 }
 
 h1, h2, h3, h4, .brand-title, .hero-title, .section-title, .panel-title, .mission-title {
   font-family: 'Syne', sans-serif;
   letter-spacing: -0.015em;
+}
+
+/* ==========================================================================
+   VIDEO BACKGROUND CONTAINER & OVERLAY
+   ========================================================================== */
+.video-bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -10;
+  pointer-events: none;
+}
+
+#hero-bg-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  opacity: 0.30;
+  filter: saturate(1.15) brightness(0.85);
+  display: block;
+}
+
+.video-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 15%, rgba(9, 32, 26, 0.72) 0%, rgba(5, 31, 32, 0.90) 80%, #051F20 100%);
+  pointer-events: none;
 }
 
 ::-webkit-scrollbar {
@@ -144,10 +191,12 @@ h1, h2, h3, h4, .brand-title, .hero-title, .section-title, .panel-title, .missio
 }
 
 /* ==========================================================================
-   1. HEADER (GREEN SURFACE)
+   1. HEADER (FROSTED GREEN SURFACE)
    ========================================================================== */
 .site-header {
-  background-color: var(--color-green-surface);
+  background-color: rgba(9, 32, 26, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-green-border);
   padding: 0.85rem 2rem;
   position: sticky;
@@ -206,7 +255,7 @@ h1, h2, h3, h4, .brand-title, .hero-title, .section-title, .panel-title, .missio
   display: inline-flex !important;
   align-items: center;
   gap: 0.45rem;
-  background: var(--color-green-elevated) !important;
+  background: rgba(14, 43, 35, 0.85) !important;
   padding: 4px 10px !important;
   border-radius: var(--radius-sm) !important;
   font-size: 0.75rem !important;
@@ -227,7 +276,7 @@ h1, h2, h3, h4, .brand-title, .hero-title, .section-title, .panel-title, .missio
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--color-green-elevated);
+  background: rgba(14, 43, 35, 0.85);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
   font-size: 0.78rem;
@@ -282,7 +331,7 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
-   2. BUTTONS (GREEN PRIMARY & BROWN SECONDARY)
+   2. BUTTONS (PRIMARY GREEN & LIGHT BROWN SECONDARY)
    ========================================================================== */
 .btn {
   display: inline-flex;
@@ -295,13 +344,16 @@ input:checked + .slider:before {
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   text-decoration: none;
   line-height: 1.25;
-  user-select: none;
 }
 
-/* Primary Green Button */
+.btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+}
+
 .btn-primary {
   background-color: var(--color-green-action);
   color: #FFFFFF;
@@ -310,57 +362,40 @@ input:checked + .slider:before {
 
 .btn-primary:hover {
   background-color: var(--color-green-action-hover);
-  border-color: var(--color-sage);
+  border-color: var(--color-green-action-hover);
 }
 
-.btn-accent {
-  background-color: var(--color-green-action);
-  color: var(--color-mint);
-  border-color: var(--color-sage);
-}
-
-.btn-accent:hover {
-  background-color: var(--color-green-action-hover);
-  color: #FFFFFF;
-}
-
-/* Secondary Brown Button (From User's Uploaded Palette) */
+/* Secondary Button: Lighter warm camel tan outline */
 .btn-secondary {
-  background-color: var(--color-brown-surface);
+  background: rgba(211, 163, 118, 0.16);
   color: var(--color-secondary-cream);
-  border-color: var(--color-brown-border);
+  border-color: var(--color-secondary-tan);
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-brown-elevated);
+  background: var(--color-secondary-tan);
+  color: #09201A;
   border-color: var(--color-secondary-tan);
-  color: #FFFFFF;
 }
 
 .btn-outline {
-  background-color: transparent;
+  background: rgba(14, 43, 35, 0.75);
+  border-color: var(--color-green-border);
   color: var(--color-text-main);
-  border-color: var(--color-border);
 }
 
 .btn-outline:hover {
-  background-color: var(--color-surface-elevated);
+  background: var(--color-green-elevated);
   border-color: var(--color-sage);
-  color: #FFFFFF;
-}
-
-.btn-sm {
-  padding: 0.3rem 0.75rem;
-  font-size: 0.75rem;
 }
 
 /* ==========================================================================
-   3. HERO SECTION (WARM BROWN CONTRAST — HALF 1)
+   3. HERO BANNER (FROSTED ATMOSPHERIC GLASS)
    ========================================================================== */
 .hero-section {
-  background-color: var(--color-brown-surface);
-  border-bottom: 1px solid var(--color-brown-border);
-  padding: 2.5rem 2rem 2.25rem;
+  padding: 2.75rem 2rem 2.25rem;
+  position: relative;
+  border-bottom: 1px solid var(--color-green-border);
 }
 
 .hero-container {
@@ -369,56 +404,68 @@ input:checked + .slider:before {
 }
 
 .hero-tag {
+  display: inline-block;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-secondary-tan);
-  margin-bottom: 0.35rem;
+  letter-spacing: 0.08em;
+  color: var(--color-sage);
+  margin-bottom: 0.65rem;
 }
 
 .hero-title {
   font-size: 2.25rem;
   font-weight: 700;
-  line-height: 1.15;
-  margin-bottom: 0.5rem;
   color: #FFFFFF;
-  letter-spacing: -0.02em;
+  margin-bottom: 0.65rem;
+  line-height: 1.2;
 }
 
 .hero-subtitle {
   font-size: 0.95rem;
-  color: var(--color-secondary-cream);
-  max-width: 800px;
+  color: var(--color-text-muted);
+  max-width: 780px;
   line-height: 1.55;
-  margin-bottom: 1.35rem;
-  opacity: 0.92;
+  margin-bottom: 1.25rem;
 }
 
 .hero-features {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.65rem;
+  flex-wrap: wrap;
 }
 
 .hero-pill {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  background: var(--color-brown-elevated);
-  border: 1px solid var(--color-brown-border);
-  padding: 0.35rem 0.75rem;
+  padding: 4px 11px;
   border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  color: var(--color-secondary-cream);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(14, 43, 35, 0.75);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--color-green-border);
+  color: var(--color-mint);
 }
 
 .hero-pill .icon {
+  color: var(--color-sage);
+}
+
+/* Lighter Tan Accented Hero Pills */
+.hero-pill-brown {
+  background: rgba(211, 163, 118, 0.14);
+  border: 1px solid rgba(211, 163, 118, 0.35);
+  color: var(--color-secondary-cream);
+}
+
+.hero-pill-brown .icon {
   color: var(--color-secondary-tan);
 }
 
 /* ==========================================================================
-   4. MAIN CONTENT WRAPPER
+   4. MAIN CONTENT WRAPPER & HEADING BOXES (ORGANIC GREEN / BROWN CONTRAST)
    ========================================================================== */
 .main-content {
   max-width: 1440px;
@@ -430,32 +477,64 @@ input:checked + .slider:before {
 
 .section-header {
   margin-bottom: 0.85rem;
+  padding-left: 0.85rem;
 }
 
-.section-label {
+/* Lighter Brown Heading Boxes */
+.section-header-brown {
+  border-left: 3px solid var(--color-secondary-tan);
+}
+
+.section-header-brown .section-label {
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-secondary-tan);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
-.section-title {
+.section-header-brown .section-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-secondary-cream);
   margin-top: 0.15rem;
 }
 
-.section-desc {
+.section-header-brown .section-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 242, 223, 0.8);
+  margin-top: 0.15rem;
+}
+
+/* Green Heading Boxes */
+.section-header-green {
+  border-left: 3px solid var(--color-green-action);
+}
+
+.section-header-green .section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-sage);
+  letter-spacing: 0.06em;
+}
+
+.section-header-green .section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-mint);
+  margin-top: 0.15rem;
+}
+
+.section-header-green .section-desc {
   font-size: 0.82rem;
   color: var(--color-text-muted);
   margin-top: 0.15rem;
 }
 
 #learning-mode-banner {
-  background: var(--color-brown-surface);
-  border: 1px solid var(--color-brown-border);
+  background: rgba(211, 163, 118, 0.12);
+  border: 1px solid rgba(211, 163, 118, 0.35);
   border-left: 4px solid var(--color-secondary-tan);
   border-radius: var(--radius-md);
   padding: 0.85rem 1.15rem;
@@ -465,7 +544,7 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
-   5. GUIDED MISSIONS (BROWN CARDS CONTRAST)
+   5. GUIDED MISSIONS (CARDS WITH WARM TAN ACCENTS)
    ========================================================================== */
 .missions-grid {
   display: grid;
@@ -475,8 +554,9 @@ input:checked + .slider:before {
 }
 
 .mission-card {
-  background: var(--color-brown-surface);
-  border: 1px solid var(--color-brown-border);
+  background: rgba(14, 43, 35, 0.80);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(211, 163, 118, 0.25);
   border-radius: var(--radius-md);
   padding: 1.15rem;
   display: flex;
@@ -487,7 +567,7 @@ input:checked + .slider:before {
 
 .mission-card:hover {
   border-color: var(--color-secondary-tan);
-  background-color: var(--color-brown-elevated);
+  background: rgba(22, 54, 45, 0.88);
 }
 
 .mission-header {
@@ -513,7 +593,7 @@ input:checked + .slider:before {
 .mission-question {
   font-size: 0.82rem;
   color: var(--color-secondary-cream);
-  opacity: 0.85;
+  opacity: 0.9;
   margin-bottom: 0.85rem;
   flex: 1;
   line-height: 1.45;
@@ -525,7 +605,7 @@ input:checked + .slider:before {
   gap: 0.45rem;
   margin-top: auto;
   padding-top: 0.65rem;
-  border-top: 1px solid var(--color-brown-border);
+  border-top: 1px solid rgba(211, 163, 118, 0.2);
 }
 
 .badge {
@@ -533,7 +613,7 @@ input:checked + .slider:before {
   font-weight: 600;
   padding: 2px 7px;
   border-radius: var(--radius-xs);
-  background: var(--color-surface-elevated);
+  background: rgba(14, 43, 35, 0.85);
   color: var(--color-text-muted);
   border: 1px solid var(--color-border);
 }
@@ -544,17 +624,19 @@ input:checked + .slider:before {
   border-color: var(--color-green-border);
 }
 
+/* Secondary Badge: Lighter warm camel tan */
 .badge-secondary {
-  background: rgba(62, 37, 34, 0.7);
+  background: rgba(211, 163, 118, 0.15);
   color: var(--color-secondary-cream);
-  border-color: var(--color-brown-border);
+  border-color: rgba(211, 163, 118, 0.35);
 }
 
 /* ==========================================================================
-   6. DOMAIN SELECTION (GREEN CARDS CONTRAST)
+   6. DOMAIN SELECTION (GREEN SECTION)
    ========================================================================== */
 .exploration-section {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.82);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-md);
   padding: 1.35rem;
@@ -562,7 +644,7 @@ input:checked + .slider:before {
 }
 
 .topic-card {
-  background: var(--color-green-canvas);
+  background: rgba(9, 32, 26, 0.8);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-sm);
   padding: 0.85rem 1rem;
@@ -604,7 +686,7 @@ input:checked + .slider:before {
 }
 
 .recommendation-box {
-  background: var(--color-green-canvas);
+  background: rgba(9, 32, 26, 0.85);
   border: 1px solid var(--color-green-border);
   border-left: 3px solid var(--color-secondary-tan);
   border-radius: var(--radius-sm);
@@ -618,7 +700,7 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
-   7. TREND OPPOSITES EXPLORER (DUAL CONTRAST CARDS)
+   7. TREND OPPOSITES EXPLORER (LIGHT DUAL ACCENTS)
    ========================================================================== */
 .opposites-grid {
   display: grid;
@@ -627,10 +709,11 @@ input:checked + .slider:before {
   margin-bottom: 2rem;
 }
 
-/* Card 1 & Odd: Brown Surface; Card 2 & Even: Green Surface */
 .opposite-card {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.80);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--color-green-border);
+  border-top: 3px solid var(--color-green-action);
   border-radius: var(--radius-md);
   padding: 1.15rem;
   display: flex;
@@ -639,8 +722,8 @@ input:checked + .slider:before {
 }
 
 .opposite-card:nth-child(even) {
-  background: var(--color-brown-surface);
-  border-color: var(--color-brown-border);
+  border-top: 3px solid var(--color-secondary-tan);
+  border-color: rgba(211, 163, 118, 0.25);
 }
 
 .opposite-row {
@@ -656,19 +739,19 @@ input:checked + .slider:before {
 }
 
 .opposite-row.increasing {
-  background: rgba(36, 91, 77, 0.4);
+  background: rgba(36, 91, 77, 0.35);
   color: var(--color-increasing);
   border-color: rgba(74, 222, 128, 0.2);
 }
 
 .opposite-row.decreasing {
-  background: rgba(62, 37, 34, 0.55);
+  background: rgba(211, 163, 118, 0.15);
   color: var(--color-decreasing);
-  border-color: rgba(251, 146, 60, 0.25);
+  border-color: rgba(251, 146, 60, 0.3);
 }
 
 /* ==========================================================================
-   8. MAIN WORKSPACE (LEFT BROWN PANEL VS RIGHT GREEN ANALYSIS)
+   8. MAIN WORKSPACE (LEFT CONTROL PANEL & RIGHT ANALYSIS)
    ========================================================================== */
 .workspace-grid {
   display: grid;
@@ -683,10 +766,11 @@ input:checked + .slider:before {
   }
 }
 
-/* LEFT SIDEBAR: WARM ESPRESSO BROWN PANEL */
+/* LEFT SIDEBAR: FROSTED GLASS WITH LIGHT TAN ACCENTS */
 .control-panel {
-  background: var(--color-brown-surface);
-  border: 1px solid var(--color-brown-border);
+  background: rgba(14, 43, 35, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(211, 163, 118, 0.25);
   border-radius: var(--radius-md);
   padding: 1.15rem;
   position: sticky;
@@ -701,6 +785,12 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 0.45rem;
+}
+
+.panel-title-brown {
+  color: var(--color-secondary-cream);
+  border-bottom: 1px solid rgba(211, 163, 118, 0.25);
+  padding-bottom: 0.65rem;
 }
 
 .panel-title .icon {
@@ -725,9 +815,9 @@ input:checked + .slider:before {
   width: 100%;
   padding: 0.45rem 0.65rem;
   font-size: 0.82rem;
-  border: 1px solid var(--color-brown-border);
+  border: 1px solid rgba(211, 163, 118, 0.28);
   border-radius: var(--radius-sm);
-  background-color: var(--color-brown-dark);
+  background-color: rgba(9, 32, 26, 0.85);
   color: var(--color-secondary-cream);
   outline: none;
   transition: border-color 0.15s ease;
@@ -738,28 +828,28 @@ input:checked + .slider:before {
 }
 
 .form-select option {
-  background: var(--color-brown-surface);
+  background: var(--color-green-surface);
   color: var(--color-secondary-cream);
 }
 
 .anomaly-toggle-box {
-  background: var(--color-brown-dark);
+  background: rgba(9, 32, 26, 0.85);
   padding: 0.75rem;
   border-radius: var(--radius-sm);
   margin-bottom: 0.85rem;
-  border: 1px solid var(--color-brown-border);
+  border: 1px solid rgba(211, 163, 118, 0.22);
 }
 
 .map-frame {
   height: 220px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-brown-border);
+  border: 1px solid rgba(211, 163, 118, 0.25);
   overflow: hidden;
-  background: var(--color-brown-dark);
+  background: rgba(9, 32, 26, 0.9);
 }
 
 .leaflet-container {
-  background: var(--color-brown-dark) !important;
+  background: #09201A !important;
 }
 
 .leaflet-tile {
@@ -767,15 +857,16 @@ input:checked + .slider:before {
 }
 
 .leaflet-control-zoom a {
-  background-color: var(--color-brown-surface) !important;
+  background-color: rgba(14, 43, 35, 0.9) !important;
   color: var(--color-secondary-cream) !important;
-  border-color: var(--color-brown-border) !important;
+  border-color: rgba(211, 163, 118, 0.3) !important;
   border-radius: var(--radius-xs) !important;
 }
 
-/* RIGHT COLUMN: FOREST GREEN STORY & CHART */
+/* RIGHT COLUMN: STORY CARD & CHART */
 .story-card {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.82);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--color-green-border);
   border-left: 4px solid var(--color-primary);
   border-radius: var(--radius-md);
@@ -844,7 +935,8 @@ input:checked + .slider:before {
 }
 
 .chart-card {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.82);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-md);
   padding: 1.15rem;
@@ -877,7 +969,7 @@ input:checked + .slider:before {
   position: relative;
   width: 100%;
   height: 360px;
-  background: var(--color-green-canvas);
+  background: rgba(9, 32, 26, 0.9);
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-green-border);
   padding: 4px;
@@ -890,7 +982,7 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
-   9. SECTORAL IMPLICATIONS (ALTERNATING DUAL TONES)
+   9. SECTORAL IMPLICATIONS
    ========================================================================== */
 .why-matters-grid {
   display: grid;
@@ -900,15 +992,16 @@ input:checked + .slider:before {
 }
 
 .why-matters-box {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.80);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-md);
   padding: 1rem;
 }
 
 .why-matters-box:nth-child(2) {
-  background: var(--color-brown-surface);
-  border-color: var(--color-brown-border);
+  border-color: rgba(211, 163, 118, 0.3);
+  background: rgba(211, 163, 118, 0.08);
 }
 
 .why-matters-title {
@@ -933,14 +1026,15 @@ input:checked + .slider:before {
 
 .why-matters-box:nth-child(2) .why-matters-text {
   color: var(--color-secondary-cream);
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 /* ==========================================================================
    10. CONFIDENCE METER (GREEN SURFACE)
    ========================================================================== */
 .confidence-card {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.82);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-md);
   padding: 1.15rem;
@@ -972,13 +1066,13 @@ input:checked + .slider:before {
 }
 
 .confidence-medium {
-  background: rgba(62, 37, 34, 0.5);
+  background: rgba(211, 163, 118, 0.16);
   color: var(--color-secondary-cream);
-  border-color: var(--color-brown-border);
+  border-color: rgba(211, 163, 118, 0.35);
 }
 
 .confidence-bar-wrapper {
-  background: var(--color-green-canvas);
+  background: rgba(9, 32, 26, 0.9);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-sm);
   height: 8px;
@@ -1000,7 +1094,7 @@ input:checked + .slider:before {
 }
 
 .factor-box {
-  background: var(--color-green-canvas);
+  background: rgba(9, 32, 26, 0.85);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-sm);
   padding: 0.65rem 0.85rem;
@@ -1020,7 +1114,7 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
-   11. RANKED HOTSPOTS (WARM BROWN CARDS CONTRAST)
+   11. RANKED HOTSPOTS (LIGHT TAN ACCENT CARDS)
    ========================================================================== */
 .hotspots-grid {
   display: grid;
@@ -1030,19 +1124,21 @@ input:checked + .slider:before {
 }
 
 .hotspot-card {
-  background: var(--color-brown-surface);
-  border: 1px solid var(--color-brown-border);
+  background: rgba(14, 43, 35, 0.80);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(211, 163, 118, 0.22);
   border-radius: var(--radius-md);
   padding: 1.15rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .hotspot-card:hover {
   border-color: var(--color-secondary-tan);
+  background: rgba(22, 54, 45, 0.88);
 }
 
 .hotspot-rank-badge {
@@ -1052,9 +1148,9 @@ input:checked + .slider:before {
   width: 24px;
   height: 24px;
   border-radius: var(--radius-xs);
-  background: var(--color-brown-dark);
+  background: rgba(211, 163, 118, 0.16);
   color: var(--color-secondary-tan);
-  border: 1px solid var(--color-brown-border);
+  border: 1px solid rgba(211, 163, 118, 0.35);
   font-weight: 700;
   font-size: 0.75rem;
 }
@@ -1075,7 +1171,8 @@ input:checked + .slider:before {
 }
 
 .nasa-card {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.80);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--color-green-border);
   border-top: 3px solid var(--color-secondary-tan);
   border-radius: var(--radius-md);
@@ -1102,15 +1199,16 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
-   13. ASSISTANT DRAWER (DUAL CONTRAST: BROWN FAB, GREEN DRAWER)
+   13. ASSISTANT DRAWER (LIGHT TAN ACCENT FAB & GREEN DRAWER)
    ========================================================================== */
 .assistant-fab {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  background-color: var(--color-brown-surface);
+  background-color: rgba(14, 43, 35, 0.92);
+  backdrop-filter: blur(8px);
   color: var(--color-secondary-cream);
-  border: 1px solid var(--color-brown-border);
+  border: 1px solid var(--color-secondary-tan);
   border-radius: var(--radius-sm);
   padding: 0.65rem 1rem;
   font-weight: 600;
@@ -1121,12 +1219,12 @@ input:checked + .slider:before {
   align-items: center;
   gap: 0.5rem;
   z-index: 999;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .assistant-fab:hover {
-  border-color: var(--color-secondary-tan);
-  background-color: var(--color-brown-elevated);
+  background-color: var(--color-secondary-tan);
+  color: #09201A;
 }
 
 .assistant-drawer {
@@ -1137,7 +1235,8 @@ input:checked + .slider:before {
   max-width: calc(100vw - 2rem);
   height: 540px;
   max-height: calc(100vh - 6rem);
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.94);
+  backdrop-filter: blur(14px);
   border: 1px solid var(--color-green-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
@@ -1152,7 +1251,7 @@ input:checked + .slider:before {
 }
 
 .drawer-header {
-  background: var(--color-green-elevated);
+  background: rgba(21, 58, 48, 0.95);
   color: #FFFFFF;
   padding: 0.85rem 1rem;
   display: flex;
@@ -1168,7 +1267,7 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  background: var(--color-green-canvas);
+  background: rgba(9, 32, 26, 0.85);
 }
 
 .chat-msg {
@@ -1181,14 +1280,14 @@ input:checked + .slider:before {
 }
 
 .chat-user {
-  background: var(--color-brown-surface);
+  background: rgba(211, 163, 118, 0.18);
   color: var(--color-secondary-cream);
   align-self: flex-end;
-  border: 1px solid var(--color-brown-border);
+  border: 1px solid rgba(211, 163, 118, 0.35);
 }
 
 .chat-bot {
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.9);
   color: var(--color-text-main);
   border: 1px solid var(--color-green-border);
   align-self: flex-start;
@@ -1203,19 +1302,19 @@ input:checked + .slider:before {
   border-top: 1px solid var(--color-green-border);
   display: flex;
   gap: 0.5rem;
-  background: var(--color-green-surface);
+  background: rgba(14, 43, 35, 0.92);
 }
 
 /* ==========================================================================
-   14. FOOTER (WARM ESPRESSO BROWN)
+   14. FOOTER (FROSTED GREEN WITH LIGHT TAN ACCENTS)
    ========================================================================== */
 .site-footer {
-  background: var(--color-brown-surface);
-  color: var(--color-secondary-cream);
-  opacity: 0.95;
+  background: rgba(9, 32, 26, 0.94);
+  backdrop-filter: blur(12px);
+  color: var(--color-text-muted);
   padding: 2.25rem 2rem;
   margin-top: auto;
-  border-top: 1px solid var(--color-brown-border);
+  border-top: 1px solid rgba(211, 163, 118, 0.25);
   font-size: 0.82rem;
 }
 

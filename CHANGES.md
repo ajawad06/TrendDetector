@@ -101,13 +101,30 @@ The system has been completely restructured to run **exclusively** on the verifi
     - **Brown Sections (50%)**: Hero banner, Guided Mission cards, Investigation Setup sidebar (left workspace column), Trend Hotspots, and Site Footer.
     - **Green Sections (50%)**: Site header, Domain Exploration pathway, Observational Story Card & HTML5 Chart visualizer (right workspace column), and Dataset Provenance cards.
   - Achieves clean, decent, sleek visual contrast across the entire platform.
+- **Video Background & Frosted Glass Backdrop**:
+  - Integrated user's `HeroTD.mp4` video background (`frontend/HeroTD.mp4`, 4.8MB) via fixed `<div class="video-bg-container">` with a subtle dark-forest radial gradient overlay (`opacity: 0.30`, `filter: saturate(1.15) brightness(0.85)`).
+  - Added HTTP 206 Partial Content Range streaming support to `frontend/server.js` for seamless, buffer-free video playback and looping across all browsers.
+  - Converted opaque card surfaces to frosted glass with backdrop blur (`background: rgba(14, 43, 35, 0.80); backdrop-filter: blur(8px);`) so the atmospheric background video shows through subtly without hindering legibility or contrast.
+- **Lighter Earth Brown & Tan Accents (Replacing Dark Espresso)**:
+  - Replaced the dark `#3E2522` / `#261614` espresso blocks with lighter, luminous brown/tan shades from the user palette swatch:
+    - Caramel Tan: `#D3A376` (accents, borders, badges, button outlines)
+    - Almond Cream: `#FFE0B2` (heading text and titles on brown boxes)
+    - Warm Ivory: `#FFF2DF` (secondary text)
+    - Muted Sand Taupe: `#8C6E63` (subtitles and secondary text)
+    - Lighter Brown Surface Tint: `rgba(211, 163, 118, 0.10)`
+- **Organic Balance (Natural Green/Brown Alternation)**:
+  - Rather than a rigid 50/50 block split, the layout distributes green and lighter brown accents naturally:
+    - **Lighter Brown Heading Boxes** (`.section-header-brown`): Case Studies / Guided Missions, Contrasting Regional Trajectories (Spatial Divergence), Statistical Ranking (Ranked Decadal Trends), and Workspace Analysis Parameters.
+    - **Green Heading Boxes** (`.section-header-green`): Exploration Pathway / Domain Selection, Observational Series & Parameters (Provenance), and Main Time Series Visualizer.
+- **Cinematic Professional Typography**:
+  - Integrated `Syne` (600, 700, 800) for titles and brand headings and `Plus Jakarta Sans` (400, 500, 600, 700) for calm, non-AI reading flow.
 - **De-AI / Organic Scientific Polish**:
   - Removed all gradients, glowing shadows, and neon line blurs.
   - Replaced all emojis across the entire UI, missions, topics, and story outputs with real Lucide SVG icons (`icons.js`).
   - Flattened nested cards: eliminated boxes inside boxes inside boxes in favor of clean 1px dividers and whitespace.
   - Matched corner radiuses across the application strictly to 6px (small) and 8px (cards).
   - Eliminated loop animations (no pulsing status dots or hovering scale bounces).
-  - Toned down typography: removed shouting all-caps labels ("WHAT CHANGED?", "HOW MUCH?") in favor of natural calm casing ("Observed Variable", "Rate of Change", "Statistical Confidence").
+  - Toned down typography: removed shouting all-caps labels in favor of natural calm casing.
 
 ---
 
@@ -133,4 +150,4 @@ The system has been completely restructured to run **exclusively** on the verifi
 | Statistical Benchmark | `tests/test_stats.js` | 384 / 384 | **PASS** |
 | Validation Failure Modes | `tests/test_validation.py` | 3 / 3 | **PASS** |
 | Data & Catalog Integrity | `backend/tests/verify_integrity.js` | 7,758 / 7,758 | **PASS** |
-| Frontend Assets & Selectors | `frontend/tests/verify_frontend.js` | 20 / 20 | **PASS** |
+| Frontend Assets & Selectors | `frontend/tests/verify_frontend.js` | 23 / 23 | **PASS** |

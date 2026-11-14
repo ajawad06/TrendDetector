@@ -19,7 +19,15 @@
 </head>
 <body>
 
-  <!-- Top Navigation Bar -->
+  <!-- Cinematic Background Video (Aesthetic Atmosphere) -->
+  <div class="video-bg-container" aria-hidden="true">
+    <video autoplay muted loop playsinline id="hero-bg-video">
+      <source src="./HeroTD.mp4" type="video/mp4">
+    </video>
+    <div class="video-bg-overlay"></div>
+  </div>
+
+  <!-- Top Navigation Bar (Green Surface) -->
   <header class="site-header">
     <div class="header-container">
       <a href="#" class="brand-wrapper">
@@ -55,7 +63,7 @@
     </div>
   </header>
 
-  <!-- Hero Section (Cinematic Editorial, Non-AI) -->
+  <!-- Hero Section (Frosted Atmospheric Glass Banner) -->
   <section class="hero-section">
     <div class="hero-container">
       <div class="hero-tag">NASA Space Apps Challenge 2026</div>
@@ -66,9 +74,9 @@
       
       <div class="hero-features">
         <div class="hero-pill"><i data-icon="wind"></i> Particulate Matter (PM2.5)</div>
-        <div class="hero-pill"><i data-icon="sun"></i> Aerosol Optical Depth (AOD)</div>
+        <div class="hero-pill hero-pill-brown"><i data-icon="sun"></i> Aerosol Optical Depth (AOD)</div>
         <div class="hero-pill"><i data-icon="cloud-rain"></i> Monthly Rainfall (rain_mm)</div>
-        <div class="hero-pill"><i data-icon="zap"></i> Tropospheric NO₂ Column</div>
+        <div class="hero-pill hero-pill-brown"><i data-icon="zap"></i> Tropospheric NO₂ Column</div>
         <div class="hero-pill"><i data-icon="map-pin"></i> 8 Monitored Stations</div>
       </div>
     </div>
@@ -82,9 +90,9 @@
       <b><i data-icon="info"></i> Learning Mode Active:</b> Statistical terminology is translated into plain, intuitive explanations. Statistical significance indicates that a multi-year pattern is mathematically unlikely to be random variation, but does not establish isolated causality or guarantee future trends.
     </div>
 
-    <!-- Priority 4: Guided Demo Missions -->
+    <!-- Section 1: Guided Demo Missions (Brown Heading Accent) -->
     <section style="margin-bottom:2.25rem;">
-      <div class="section-header">
+      <div class="section-header section-header-brown">
         <span class="section-label">Case Studies</span>
         <h3 class="section-title">Guided Missions</h3>
         <p class="section-desc">Focused investigations based on verified observational records (2005–2024).</p>
@@ -94,9 +102,9 @@
       </div>
     </section>
 
-    <!-- Priority 1: Earth Detective Investigation Flow -->
+    <!-- Section 2: Domain Selection (Green Heading Accent) -->
     <section class="exploration-section">
-      <div class="section-header">
+      <div class="section-header section-header-green">
         <span class="section-label">Exploration Pathway</span>
         <h3 class="section-title">Domain Selection</h3>
         <p class="section-desc">Select an environmental domain to load recommended variables and monitoring stations.</p>
@@ -111,9 +119,9 @@
       <div id="topic-recommendation-container" style="display:none;"></div>
     </section>
 
-    <!-- Priority 3: Trend Opposites Explorer -->
+    <!-- Section 3: Trend Opposites Explorer (Brown Heading Accent) -->
     <section style="margin-bottom:2.25rem;">
-      <div class="section-header">
+      <div class="section-header section-header-brown">
         <span class="section-label">Spatial Divergence</span>
         <h3 class="section-title">Contrasting Regional Trajectories</h3>
         <p class="section-desc">
@@ -126,12 +134,12 @@
       </div>
     </section>
 
-    <!-- Main Workspace (Controls, Station Map, Story Card, Charts & Impact Analysis) -->
+    <!-- Section 4: Main Workspace (Controls, Station Map, Story Card, Charts & Impact Analysis) -->
     <div class="workspace-grid" id="investigation-workspace">
       
-      <!-- Left Column: Controls & Geographic Map -->
+      <!-- Left Column: Controls & Geographic Map (Warm Brown Accents) -->
       <aside class="control-panel">
-        <h3 class="panel-title">
+        <h3 class="panel-title panel-title-brown">
           <i data-icon="settings"></i> Analysis Parameters
         </h3>
 
@@ -149,7 +157,7 @@
         <div class="anomaly-toggle-box">
           <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--color-text-main);">
             <span>Seasonal Anomalies</span>
-            <input type="checkbox" id="toggle-anomalies" checked style="width:15px; height:15px; accent-color:var(--color-primary);">
+            <input type="checkbox" id="toggle-anomalies" checked style="width:15px; height:15px; accent-color:var(--color-secondary-tan);">
           </label>
           <div style="font-size:0.73rem; color:var(--color-text-muted); margin-top:0.3rem; line-height:1.4;">
             Removes the 12-month annual cycle to reveal the multi-decadal signal.
@@ -158,7 +166,7 @@
 
         <!-- Interactive Map (SRD §15) -->
         <div style="margin-top:1rem;">
-          <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:0.4rem; letter-spacing:0.04em;">
+          <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; color:var(--color-secondary-tan); margin-bottom:0.4rem; letter-spacing:0.04em;">
             Observation Stations
           </div>
           <div id="map-container" class="map-frame"></div>
@@ -168,7 +176,7 @@
         </div>
       </aside>
 
-      <!-- Right Column: Results, Story Card, Visualizer & Impact Analysis -->
+      <!-- Right Column: Results, Story Card, Visualizer & Impact Analysis (Green Surface) -->
       <section>
         
         <!-- Priority 2: Trend Story Generator Card (SRD §7) -->
@@ -232,9 +240,9 @@
       </section>
     </div>
 
-    <!-- Priority 10: Ranked Decadal Trends -->
+    <!-- Section 5: Ranked Decadal Trends (Brown Heading Accent) -->
     <section style="margin-top:3rem; margin-bottom:2.25rem;">
-      <div class="section-header">
+      <div class="section-header section-header-brown">
         <span class="section-label">Statistical Ranking</span>
         <h3 class="section-title">Ranked Multi-Decadal Trends</h3>
         <p class="section-desc">Series ranked by statistical confidence with False Discovery Rate (FDR) validation.</p>
@@ -245,12 +253,12 @@
       </div>
     </section>
 
-    <!-- Priority 6: Data Provenance Section -->
+    <!-- Section 6: Data Provenance Section (Green Heading Accent) -->
     <section style="margin-bottom:2.5rem;">
-      <div class="section-header">
+      <div class="section-header section-header-green">
         <span class="section-label">Dataset Provenance</span>
         <h3 class="section-title">Observational Series & Parameters</h3>
-        <p class="section-desc">Atmospheric variables included in the official 2005–2024 city monthly time series.</p>
+        <p class="section-desc">Atmospheric variables included in the official 2005–2024 monthly observation record.</p>
       </div>
 
       <div class="nasa-showcase-grid" id="nasa-showcase-grid">
@@ -294,7 +302,7 @@
     </div>
   </div>
 
-  <!-- Footer with Data Provenance -->
+  <!-- Footer with Data Provenance (Frosted Glass Ground) -->
   <footer class="site-footer">
     <div class="footer-container">
       <div>
