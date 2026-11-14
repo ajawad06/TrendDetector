@@ -92,14 +92,15 @@ The system has been completely restructured to run **exclusively** on the verifi
   - Markdown investigation report.
   - Shareable URL parameters (`?var=pm25&reg=lahore&mode=anomaly`).
 
-### Phase 6: Professional Non-AI Polish, Cinematic Typography & Secondary Brown System
+### Phase 6: Professional Non-AI Polish, Cinematic Typography & 50/50 Green-Brown Dual Contrast System
 - **Cinematic & Professional Typography**:
   - Main headings set in `Syne` (geometric, cinematic, documentary-grade typeface).
   - Clean UI text and controls set in `Plus Jakarta Sans`.
-- **Secondary Warm Earth Brown Palette (From Reference Palette)**:
-  - Integrated `#3E2522` (deep espresso brown) for secondary actions, station tags, and dark contrast elements.
-  - Integrated `#D3A376` (warm caramel/tan) for secondary borders, labels, and the climatological baseline chart fit.
-  - Kept primary green `#09201A` / `#0E2B23` / `#245B4D` as the dominant color.
+- **50/50 Green & Earth Brown Dual Contrast Architecture**:
+  - Balanced split between the Forest Green and Warm Earth Brown palettes:
+    - **Brown Sections (50%)**: Hero banner, Guided Mission cards, Investigation Setup sidebar (left workspace column), Trend Hotspots, and Site Footer.
+    - **Green Sections (50%)**: Site header, Domain Exploration pathway, Observational Story Card & HTML5 Chart visualizer (right workspace column), and Dataset Provenance cards.
+  - Achieves clean, decent, sleek visual contrast across the entire platform.
 - **De-AI / Organic Scientific Polish**:
   - Removed all gradients, glowing shadows, and neon line blurs.
   - Replaced all emojis across the entire UI, missions, topics, and story outputs with real Lucide SVG icons (`icons.js`).
