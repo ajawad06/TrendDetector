@@ -5,8 +5,9 @@
  * - Raw monthly values (context line)
  * - Monthly anomalies (primary line)
  * - OLS fitted trend line & Theil-Sen line
- * - GAPS for missing data (FR-VIS-005: missing data appears as gaps, never zeros or interpolated)
- * - Smooth hover tooltips
+ * - Preserves legitimate zeros (rain_mm = 0 is a real value)
+ * - Supports NO2 display scaling (x10^15)
+ * - Strict palette: Green primary (#476E2A), Espresso secondary (#5C4333), Camel light brown (#CBAB8D)
  */
 
 export class TrendChart {
@@ -16,19 +17,21 @@ export class TrendChart {
     this.dataPoints = [];
     this.olsResult = null;
     this.unit = "";
+    this.displayUnit = "";
+    this.displayScale = 1.0;
     this.useAnomalies = true;
     this.hoverIndex = -1;
     this.renderRequested = false;
-    this.lastWidth = 0;
-    this.lastHeight = 0;
 
     this._setupEvents();
   }
 
-  setData(dataPoints, olsResult, unit, useAnomalies = true) {
+  setData(dataPoints, olsResult, unit, useAnomalies = true, displayScale = 1.0, displayUnit = null) {
     this.dataPoints = dataPoints || [];
     this.olsResult = olsResult;
     this.unit = unit || "";
+    this.displayScale = displayScale || 1.0;
+    this.displayUnit = displayUnit || unit || "";
     this.useAnomalies = useAnomalies;
     this.hoverIndex = -1;
     this.requestRender();
@@ -49,16 +52,15 @@ export class TrendChart {
     const rect = this.canvas.getBoundingClientRect();
     const width = Math.floor(rect.width) || 600;
     const height = Math.floor(rect.height) || 360;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2); // cap at 2x for speed
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    // Resize canvas buffer only when physical dimensions change
     if (this.canvas.width !== width * dpr || this.canvas.height !== height * dpr) {
       this.canvas.width = width * dpr;
       this.canvas.height = height * dpr;
     }
 
     const ctx = this.ctx;
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, width, height);
 
@@ -67,18 +69,20 @@ export class TrendChart {
       return;
     }
 
-    const padding = { top: 25, right: 25, bottom: 40, left: 60 };
+    const padding = { top: 25, right: 25, bottom: 40, left: 65 };
     const plotWidth = width - padding.left - padding.right;
     const plotHeight = height - padding.top - padding.bottom;
 
     if (plotWidth <= 10 || plotHeight <= 10) return;
 
-    // Filter valid points
+    // Scale values for display
     const activeValues = [];
+    const scale = this.displayScale || 1.0;
+
     for (let i = 0; i < this.dataPoints.length; i++) {
       const v = this.useAnomalies ? this.dataPoints[i].anomaly : this.dataPoints[i].value;
       if (v !== null && v !== undefined && !isNaN(v)) {
-        activeValues.push(v);
+        activeValues.push(v / scale);
       }
     }
 
@@ -99,7 +103,6 @@ export class TrendChart {
     minY -= ySpan * 0.08;
     maxY += ySpan * 0.08;
 
-    // Coordinates helpers
     const totalPts = this.dataPoints.length;
     const getX = (index) => padding.left + (index / (totalPts - 1)) * plotWidth;
     const getY = (val) => padding.top + plotHeight - ((val - minY) / (maxY - minY)) * plotHeight;
@@ -125,17 +128,18 @@ export class TrendChart {
 
     // 1. Draw Primary Series Line in Dark Brown (Secondary Color)
     ctx.save();
-    ctx.strokeStyle = "#5C4333"; // Rich espresso earth brown
-    ctx.lineWidth = 2.0;
+    ctx.strokeStyle = "#5C4333";
+    ctx.lineWidth = 1.8;
     ctx.lineJoin = "round";
     ctx.beginPath();
 
     let inSegment = false;
     for (let i = 0; i < totalPts; i++) {
-      const val = this.useAnomalies ? this.dataPoints[i].anomaly : this.dataPoints[i].value;
-      if (val === null || val === undefined || isNaN(val)) {
-        inSegment = false; // Gaps for missing data
+      const rawVal = this.useAnomalies ? this.dataPoints[i].anomaly : this.dataPoints[i].value;
+      if (rawVal === null || rawVal === undefined || isNaN(rawVal)) {
+        inSegment = false;
       } else {
+        const val = rawVal / scale;
         const x = getX(i);
         const y = getY(val);
         if (!inSegment) {
@@ -149,25 +153,25 @@ export class TrendChart {
     ctx.stroke();
     ctx.restore();
 
-    // 2. Draw OLS Trend Line in Main Green (#476E2A / #5D8C3A)
+    // 2. Draw OLS Trend Line in Main Green (#476E2A)
     if (this.olsResult && totalPts > 1) {
-      const slope = this.olsResult.slope_per_year;
-      const periodYears = totalPts / 12.0;
+      const slope = this.olsResult.slope_per_year / scale;
+      const periodYears = 20.0;
       
-      let firstYVal = this.olsResult.intercept;
-      let lastYVal = this.olsResult.intercept + slope * periodYears;
+      let firstYVal = this.olsResult.intercept / scale;
+      let lastYVal = (this.olsResult.intercept + this.olsResult.slope_per_year * periodYears) / scale;
 
       if (this.useAnomalies) {
-        firstYVal = -(slope * (periodYears / 2));
-        lastYVal = (slope * (periodYears / 2));
+        firstYVal = -(slope * (periodYears / 2.0));
+        lastYVal = (slope * (periodYears / 2.0));
       }
 
       const y1 = getY(firstYVal);
       const y2 = getY(lastYVal);
 
       ctx.save();
-      ctx.strokeStyle = "#476E2A"; // Vibrant Main Green
-      ctx.lineWidth = 3.2;
+      ctx.strokeStyle = "#476E2A";
+      ctx.lineWidth = 3.0;
       ctx.beginPath();
       ctx.moveTo(getX(0), y1);
       ctx.lineTo(getX(totalPts - 1), y2);
@@ -178,8 +182,9 @@ export class TrendChart {
     // 3. Draw Hover Point & Tooltip
     if (this.hoverIndex >= 0 && this.hoverIndex < totalPts) {
       const pt = this.dataPoints[this.hoverIndex];
-      const val = this.useAnomalies ? pt.anomaly : pt.value;
-      if (val !== null && val !== undefined && !isNaN(val)) {
+      const rawVal = this.useAnomalies ? pt.anomaly : pt.value;
+      if (rawVal !== null && rawVal !== undefined && !isNaN(rawVal)) {
+        const val = rawVal / scale;
         const x = getX(this.hoverIndex);
         const y = getY(val);
 
@@ -193,7 +198,7 @@ export class TrendChart {
         ctx.stroke();
         ctx.restore();
 
-        this._drawTooltip(ctx, x, y, pt, width);
+        this._drawTooltip(ctx, x, y, pt, width, scale);
       }
     }
   }
@@ -217,7 +222,8 @@ export class TrendChart {
       ctx.stroke();
 
       ctx.textAlign = "right";
-      ctx.fillText(val.toFixed(2), pad.left - 6, y + 4);
+      const formattedVal = Math.abs(val) >= 1000 ? val.toExponential(2) : (Math.abs(val) < 0.01 && val !== 0 ? val.toFixed(4) : val.toFixed(2));
+      ctx.fillText(formattedVal, pad.left - 6, y + 4);
     }
 
     // X-Axis Year Labels
@@ -228,7 +234,7 @@ export class TrendChart {
     for (let i = 0; i < totalPts; i += step) {
       const x = pad.left + (i / (totalPts - 1)) * w;
       const dateStr = this.dataPoints[i].date;
-      ctx.fillText(dateStr, x, pad.top + h + 18);
+      ctx.fillText(dateStr.substring(0, 7), x, pad.top + h + 18);
     }
 
     // Y-Axis Unit label
@@ -238,26 +244,29 @@ export class TrendChart {
     ctx.textAlign = "center";
     ctx.font = "bold 11px -apple-system, sans-serif";
     ctx.fillStyle = "#5C4333";
-    ctx.fillText(this.useAnomalies ? `Anomaly (${this.unit})` : `Value (${this.unit})`, 0, 0);
+    ctx.fillText(this.useAnomalies ? `Anomaly (${this.displayUnit})` : `Value (${this.displayUnit})`, 0, 0);
     ctx.restore();
 
     ctx.restore();
   }
 
-  _drawTooltip(ctx, x, y, pt, canvasWidth) {
+  _drawTooltip(ctx, x, y, pt, canvasWidth, scale) {
+    const rawVal = pt.value !== null ? (pt.value / scale).toFixed(3) : 'Missing';
+    const anomVal = pt.anomaly !== null ? ((pt.anomaly >= 0 ? '+' : '') + (pt.anomaly / scale).toFixed(3)) : 'N/A';
+
     const text1 = `Date: ${pt.date}`;
-    const text2 = `Value: ${pt.value !== null ? pt.value.toFixed(3) : 'Missing'} ${this.unit}`;
-    const text3 = `Anomaly: ${pt.anomaly !== null ? (pt.anomaly >= 0 ? '+' : '') + pt.anomaly.toFixed(3) : 'N/A'}`;
+    const text2 = `Value: ${rawVal} ${this.displayUnit}`;
+    const text3 = `Anomaly: ${anomVal}`;
 
     ctx.font = "11px -apple-system, sans-serif";
-    const boxW = 150;
+    const boxW = 160;
     const boxH = 62;
     let boxX = x + 12;
     if (boxX + boxW > canvasWidth - 10) boxX = x - boxW - 12;
     const boxY = Math.max(8, y - boxH / 2);
 
     ctx.save();
-    ctx.fillStyle = "rgba(92, 67, 51, 0.95)";
+    ctx.fillStyle = "rgba(74, 53, 40, 0.95)";
     ctx.strokeStyle = "#B8DB94";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -279,15 +288,15 @@ export class TrendChart {
     ctx.fillStyle = "#6B5B50";
     ctx.font = "13px -apple-system, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Select a variable and region to view time series and trend.", w / 2, h / 2);
+    ctx.fillText("Select a variable and city to view time series and trend.", w / 2, h / 2);
   }
 
   _setupEvents() {
     this.canvas.addEventListener('mousemove', (e) => {
       const rect = this.canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
-      const paddingLeft = 60;
-      const plotWidth = rect.width - 60 - 25;
+      const paddingLeft = 65;
+      const plotWidth = rect.width - 65 - 25;
 
       if (mouseX >= paddingLeft && mouseX <= paddingLeft + plotWidth && this.dataPoints.length > 1) {
         const fraction = (mouseX - paddingLeft) / plotWidth;

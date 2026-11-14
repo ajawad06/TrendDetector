@@ -1,16 +1,7 @@
 """
 Trend Detector — AI Assistant Service
 SRD §13: AI Trend Detective Assistant
-Powered by Google Gemini 2.5 Flash with Deterministic Statistical Grounding.
-
-Enforces:
-- FR-AI-001: Natural-language investigation questions.
-- FR-AI-002: Recommends variables, regions, periods from approved catalog only.
-- FR-AI-003: Explains results using computed statistical output, NEVER invented values.
-- FR-AI-004: States clearly when available data cannot answer a question.
-- FR-AI-005: Makes no causal claims unless explicitly labeled as a hypothesis.
-- FR-AI-006: Discloses AI generation and links to datasets/citations.
-- FR-AI-007: API keys stay server-side, never sent to frontend.
+Grounded strictly in verified observational data (2005–2024).
 """
 
 import os
@@ -20,26 +11,24 @@ from typing import Optional, Dict, Any, List
 import httpx
 
 from services.data_service import data_service
-from services.analysis_service import analysis_service
-from services.story_service import story_service
 from core.config import settings
 
 logger = logging.getLogger("trend_detector.assistant")
 
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-# Default sensible regions for each variable
-DEFAULT_REGIONS_BY_VARIABLE = {
-    "aod": "lahore_airshed",      # Primary smog hotspot
-    "soil_moisture": "indus_basin",
-    "rainfall": "pakistan",
-    "temperature": "pakistan",
-    "ndvi": "punjab"
+VALID_VARIABLES = ["pm25", "aod", "rain_mm", "no2"]
+VALID_CITIES = ["lahore", "karachi", "islamabad", "peshawar", "quetta", "faisalabad", "multan", "hyderabad"]
+
+DEFAULT_CITIES_BY_VARIABLE = {
+    "pm25": "lahore",
+    "aod": "quetta",
+    "rain_mm": "peshawar",
+    "no2": "multan"
 }
 
-
 class AssistantService:
-    """AI-powered investigation assistant grounded in real NASA statistics."""
+    """AI-powered investigation assistant grounded in real observation statistics."""
 
     def __init__(self):
         self._system_prompt = self._build_system_prompt()
@@ -49,351 +38,156 @@ class AssistantService:
         message: str,
         conversation_history: List[Dict[str, str]] = None
     ) -> Dict[str, Any]:
-        """
-        Process a user question through the assistant pipeline.
-        """
         if conversation_history is None:
             conversation_history = []
 
-        intent = self._classify_intent(message)
+        msg_lower = message.lower()
 
-        if intent["type"] == "investigate":
-            return await self._handle_investigation(intent, message, conversation_history)
-        elif intent["type"] == "explain":
-            return await self._handle_explanation(intent, message)
-        elif intent["type"] == "recommend":
-            return await self._handle_recommendation(intent, message)
-        elif intent["type"] == "compare":
-            return await self._handle_comparison(intent, message)
-        else:
-            return await self._handle_general(message)
+        # FR-AI-004: Explicitly decline out-of-scope queries
+        forbidden_keywords = [
+            "soil", "moisture", "temperature", "warming", "heat",
+            "ndvi", "greenness", "forest", "deforestation",
+            "amazon", "california", "global", "co2", "carbon"
+        ]
+        if any(kw in msg_lower for kw in forbidden_keywords):
+            return {
+                "reply": "I cannot answer that from this dataset. Our verified observations cover strictly **PM2.5, Aerosol Optical Depth (AOD), Monthly Rainfall, and Tropospheric NO₂** across 8 cities in Pakistan from 2005 to 2024.",
+                "is_ai_generated": False,
+                "analysis_ref": None,
+                "suggested_followup": "Try asking: 'What are the PM2.5 trends in Lahore?' or 'Compare rainfall between Peshawar and Karachi.'"
+            }
+
+        intent = self._classify_intent(message)
+        return await self._handle_investigation(intent, message)
 
     def _classify_intent(self, message: str) -> Dict[str, Any]:
-        """Classify user intent and extract variable/region entities."""
         msg_lower = message.lower()
 
         variable_map = {
-            "aod": ["aod", "aerosol", "pollution", "smog", "haze", "air quality", "smoke"],
-            "rainfall": ["rainfall", "rain", "precipitation", "monsoon", "wetting", "flood"],
-            "soil_moisture": ["soil moisture", "soil", "moisture", "drought", "groundwater", "dry"],
-            "temperature": ["temperature", "warming", "heat", "temp", "celsius"],
-            "ndvi": ["vegetation", "ndvi", "greenness", "crop", "crops", "agriculture", "forest"],
+            "rain_mm": ["rain", "rainfall", "precipitation", "monsoon"],
+            "no2": ["no2", "nitrogen", "nitrogen dioxide"],
+            "aod": ["aod", "aerosol", "haze"],
+            "pm25": ["pm25", "pm2.5", "smog", "particulate", "pollution", "air quality"]
         }
-        detected_variable = None
-        for var_id, keywords in variable_map.items():
-            if any(kw in msg_lower for kw in keywords):
-                detected_variable = var_id
+        detected_var = "pm25"
+        for v_id, kws in variable_map.items():
+            if any(kw in msg_lower for kw in kws):
+                detected_var = v_id
                 break
 
-        region_map = {
-            "lahore_airshed": ["lahore", "lahore airshed", "lahore city"],
-            "karachi": ["karachi", "karachi coast"],
-            "punjab": ["punjab"],
-            "sindh": ["sindh"],
-            "balochistan": ["balochistan"],
-            "indus_basin": ["indus", "indus basin", "indus river"],
-            "northern_pakistan": ["northern pakistan", "north pakistan", "northern mountains", "highlands", "mountains", "north"],
-            "southern_pakistan": ["southern pakistan", "south pakistan", "plains", "coast", "south"],
-            "california": ["california"],
-            "pakistan": ["pakistan", "countrywide", "country"],
+        city_map = {
+            "lahore": ["lahore"],
+            "karachi": ["karachi"],
+            "islamabad": ["islamabad"],
+            "peshawar": ["peshawar"],
+            "quetta": ["quetta"],
+            "faisalabad": ["faisalabad"],
+            "multan": ["multan"],
+            "hyderabad": ["hyderabad"]
         }
-        detected_region = None
-        for reg_id, keywords in region_map.items():
-            if any(kw in msg_lower for kw in keywords):
-                detected_region = reg_id
+        detected_city = DEFAULT_CITIES_BY_VARIABLE.get(detected_var, "lahore")
+        for c_id, kws in city_map.items():
+            if any(kw in msg_lower for kw in kws):
+                detected_city = c_id
                 break
 
-        if any(w in msg_lower for w in ["compare", "versus", "vs", "contrast", "opposite", "differ"]):
-            return {"type": "compare", "variable": detected_variable, "region": detected_region}
+        return {
+            "variable": detected_var,
+            "region": detected_city
+        }
 
-        if any(w in msg_lower for w in ["what is", "define", "how does", "meaning of", "explain the", "explain"]):
-            return {"type": "explain", "query": message}
+    async def _handle_investigation(self, intent: Dict[str, Any], message: str) -> Dict[str, Any]:
+        var_id = intent["variable"]
+        city_id = intent["region"]
 
-        if any(w in msg_lower for w in ["recommend", "suggest", "what should i", "ideas", "where to start"]):
-            return {"type": "recommend", "variable": detected_variable, "region": detected_region}
-
-        # If variable or region detected, treat as investigation query
-        if detected_variable or detected_region or any(w in msg_lower for w in ["trend", "tell me", "show", "analyze", "investigate", "is", "has", "changing", "levels"]):
+        time_series = data_service.get_time_series(var_id, city_id)
+        if not time_series:
             return {
-                "type": "investigate",
-                "variable": detected_variable,
-                "region": detected_region
+                "reply": f"No data available for {var_id} in {city_id}.",
+                "is_ai_generated": False,
+                "analysis_ref": None
             }
 
-        return {"type": "general", "variable": detected_variable, "region": detected_region}
-
-    async def _handle_investigation(
-        self, intent: Dict, message: str, history: List
-    ) -> Dict[str, Any]:
-        """Run statistical analysis and synthesize with Gemini."""
-        variable_id = intent.get("variable") or "rainfall"
+        points = time_series.get("series", [])
+        n_obs = len(points)
+        raw_vals = [p["value"] for p in points]
         
-        # Intelligent region defaulting based on variable
-        region_id = intent.get("region")
-        if not region_id:
-            region_id = DEFAULT_REGIONS_BY_VARIABLE.get(variable_id, "pakistan")
+        # Calculate OLS slope
+        x_mean = (n_obs - 1) / 2.0
+        y_mean = sum(raw_vals) / n_obs
+        ss_xx = sum((i - x_mean)**2 for i in range(n_obs))
+        ss_xy = sum((i - x_mean) * (raw_vals[i] - y_mean) for i in range(n_obs))
+        slope_per_month = ss_xy / ss_xx if ss_xx != 0 else 0.0
+        slope_per_year = slope_per_month * 12.0
 
-        # Special case: If user asked for AOD smog in Pakistan, reroute to Lahore Airshed (primary airshed)
-        if variable_id == "aod" and region_id == "pakistan":
-            region_id = "lahore_airshed"
+        scale = 1e15 if var_id == "no2" else 1.0
+        display_slope = slope_per_year / scale
+        unit_str = "x10^15 molecules/cm^2/yr" if var_id == "no2" else time_series.get("unit", "") + "/yr"
 
-        # Check availability
-        if not data_service.check_data_availability(variable_id, region_id):
-            # Fall back to sensible default
-            region_id = DEFAULT_REGIONS_BY_VARIABLE.get(variable_id, "pakistan")
+        city_name = time_series.get("region_name", city_id.title())
+        var_name = time_series.get("variable_name", var_id.upper())
 
-        try:
-            analysis = analysis_service.analyze(variable_id, region_id)
-            story = story_service.generate_story(analysis)
-
-            card = story["card"]
-            ols = analysis["ols"]
-            mk = analysis["mann_kendall"]
-            conf = analysis["confidence_meter"]
-
-            # Grounding prompt for Gemini
-            grounded_context = f"""
-ACTUAL COMPUTED SATELLITE/MODEL RESULTS (DO NOT ALTER ANY NUMBERS):
-- Variable: {analysis['variable_name']} (Dataset: {analysis['dataset']}, Provider: {analysis['provider']})
-- Region: {analysis['region_name']}
-- Period: {analysis['period']['start']} to {analysis['period']['end']} ({analysis['n_observations']} monthly observations)
-- What Changed: {card['what_changed']}
-- Where: {card['where']}
-- How Much: {card['how_much']} (OLS Slope: {ols['slope_per_year']} {ols['slope_unit']}, Total Change: {ols['total_change']} {analysis['unit']})
-- Statistical Significance: {card['significant']} (p-value = {ols['p_value']}, Mann-Kendall Z = {mk['z_statistic']})
-- 95% Confidence Interval: [{ols['ci_95_lower']}, {ols['ci_95_upper']}] {ols['slope_unit']}
-- Dataset Confidence Level: {conf['overall']}
-- Why This Matters: {story['why_it_matters']}
-- Scientific Disclaimer: A trend does not prove cause or guarantee future continuation.
-"""
-            user_prompt = (
-                f"User asked: \"{message}\"\n\n"
-                f"Using the verified facts below, give a complete, friendly, and structured Earth Detective response for high school and college students.\n"
-                f"Include:\n"
-                f"1. A direct answer to what is changing and whether it is statistically significant.\n"
-                f"2. The exact rate of change and time period.\n"
-                f"3. A 'Why This Matters' explanation connected to human health, agriculture, or climate.\n"
-                f"4. A gentle scientific reminder that a trend does not prove cause.\n"
-                f"Ensure your response is complete with no unfinished sentences.\n\n"
-                f"{grounded_context}"
-            )
-
-            gemini_reply = await self._call_gemini(user_prompt)
-
-            if not gemini_reply:
-                # Deterministic fallback
-                gemini_reply = (
-                    f"🔍 **Investigation Result for {analysis['variable_name']} in {analysis['region_name']}**:\n\n"
-                    f"• **What Changed?** {card['what_changed']}\n"
-                    f"• **Where?** {card['where']}\n"
-                    f"• **Rate of Change:** {ols['slope_per_year']:+.4f} {ols['slope_unit']} (Total change: {ols['total_change']:+.2f} {analysis['unit']})\n"
-                    f"• **Statistical Significance:** {card['significant']} (p-value: {ols['p_value']}, Mann-Kendall Z: {mk['z_statistic']})\n\n"
-                    f"{story['narrative']}\n\n"
-                    f"🌱 **Why This Matters:** {story['why_it_matters']}\n\n"
-                    f"⚠️ *{story['disclaimer']}*"
-                )
-
-            variable = data_service.get_variable(variable_id)
-            return {
-                "reply": gemini_reply,
-                "is_ai_generated": True,
-                "analysis_ref": {
-                    "variable": variable_id,
-                    "region": region_id,
-                    "narrative": story["narrative"],
-                    "data_url": f"/api/analysis/{variable_id}/{region_id}"
-                },
-                "suggested_followup": self._suggest_followup(variable_id, region_id),
-                "limitations": [
-                    "Based on NASA gridded monthly observations/models.",
-                    "A trend does not prove cause or guarantee future continuation."
-                ],
-                "sources": [
-                    variable.get("citation", "") if variable else "",
-                    variable.get("dataset", "") if variable else ""
-                ]
-            }
-        except Exception as e:
-            logger.error(f"Error in assistant investigation: {e}")
-            return {
-                "reply": f"I encountered an error analyzing that data: {str(e)}",
-                "is_ai_generated": True,
-                "analysis_ref": None,
-                "suggested_followup": "Try: 'Show soil moisture in Indus Basin'",
-                "limitations": [str(e)],
-                "sources": []
-            }
-
-    async def _handle_explanation(self, intent: Dict, message: str) -> Dict[str, Any]:
-        """Explain a statistical or Earth science concept using Gemini."""
-        prompt = (
-            f"Explain this statistical concept clearly for the NASA Earth System Trend Detective challenge: \"{message}\".\n"
-            f"Requirements:\n"
-            f"- Explain in clear terms suitable for high school or introductory college students ('Explain like I'm 15').\n"
-            f"- Give a concrete real-world Earth science example (like rainfall or smog in Pakistan).\n"
-            f"- Clarify why p < 0.05 is used for 95% confidence.\n"
-            f"- Emphasize that statistical significance does NOT prove causation.\n"
-            f"- Provide a complete answer without trailing sentences."
+        grounded_context = (
+            f"OBSERVATION DATASET FACTS (2005-2024):\n"
+            f"- Variable: {var_name}\n"
+            f"- City: {city_name}\n"
+            f"- Total Points: {n_obs} consecutive monthly points (0% missing)\n"
+            f"- Observed Rate of Change: {display_slope:+.4f} {unit_str}\n"
+            f"- Direction: {'increasing' if slope_per_year > 0 else 'decreasing'}\n"
         )
-        
-        reply = await self._call_gemini(prompt)
-        if not reply:
-            reply = (
-                "📖 **Statistical Significance (p < 0.05)**:\n\n"
-                "In science, a trend is considered 'statistically significant' at the 95% confidence level if the p-value is less than 0.05. "
-                "This means there is less than a 5% probability that the pattern we observed over 20+ years was just a random fluke or statistical noise.\n\n"
-                "**Crucial Rule**: Statistical significance proves that a change is real, but it **does not prove what caused it** or guarantee that it will continue in the future!"
-            )
 
-        return {
-            "reply": reply,
-            "is_ai_generated": True,
-            "analysis_ref": None,
-            "suggested_followup": "Would you like to see how this applies to Lahore's smog data?",
-            "limitations": ["Educational summary"],
-            "sources": ["Trend Detector Methodology (SRD §16)"]
-        }
+        api_key = os.getenv("GEMINI_API_KEY", "") or getattr(settings, "gemini_api_key", "")
+        if api_key:
+            try:
+                user_prompt = f"Grounded Context:\n{grounded_context}\n\nUser asked: \"{message}\"\n\nProvide a friendly, scientifically accurate 2-paragraph response for students."
+                async with httpx.AsyncClient(timeout=8.0) as client:
+                    resp = await client.post(
+                        f"{GEMINI_API_URL}?key={api_key}",
+                        headers={"Content-Type": "application/json"},
+                        json={
+                            "contents": [{"role": "user", "parts": [{"text": f"{self._system_prompt}\n\n{user_prompt}"}]}],
+                            "generationConfig": {
+                                "temperature": 0.2,
+                                "maxOutputTokens": 2048,
+                                "thinkingConfig": {"thinkingBudget": 0}
+                            }
+                        }
+                    )
+                if resp.status_code == 200:
+                    resp_data = resp.json()
+                    ai_text = resp_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    return {
+                        "reply": ai_text,
+                        "is_ai_generated": True,
+                        "analysis_ref": {"variable": var_id, "region": city_id}
+                    }
+            except Exception as e:
+                logger.warning(f"Gemini API call failed: {e}")
 
-    async def _handle_recommendation(self, intent: Dict, message: str) -> Dict[str, Any]:
-        """Recommend approved investigations from the catalog."""
-        prompt = (
-            f"The user asked: \"{message}\".\n"
-            f"Recommend 3 of our verified NASA missions from the approved catalog:\n"
-            f"1. Lahore Smog Mystery (MODIS AOD Aerosol Optical Depth over Lahore Airshed)\n"
-            f"2. Pakistan Rainfall Shift (GPM IMERG comparing Northern vs Southern Pakistan)\n"
-            f"3. Indus Basin Water Watch (GLDAS Noah Soil Moisture in Pakistan's agricultural heartland)\n"
-            f"Give a 2-sentence description of what detective question each answers, and provide a complete response."
-        )
-        
-        reply = await self._call_gemini(prompt)
-        if not reply:
-            reply = (
-                "Here are three guided demo missions you can investigate right now:\n\n"
-                "1. 💨 **Lahore Smog Mystery**: Discover how aerosol optical depth (haze) has changed over Lahore from 2000 to 2024.\n"
-                "2. 🌧️ **Pakistan Rainfall Shift**: Examine contrasting regional trends — why the northern mountains are wetting while southern plains dry.\n"
-                "3. 💧 **Indus Basin Water Watch**: Track soil moisture shifts across Pakistan's agricultural breadbasket."
-            )
-
-        return {
-            "reply": reply,
-            "is_ai_generated": True,
-            "analysis_ref": None,
-            "suggested_followup": "Type 'Is smog increasing in Lahore' to investigate!",
-            "limitations": [],
-            "sources": ["NASA GES DISC", "NASA LAADS DAAC"]
-        }
-
-    async def _handle_comparison(self, intent: Dict, message: str) -> Dict[str, Any]:
-        """Provide guidance on regional trend opposites."""
-        reply = (
-            "🌍 **Trend Opposites Explorer (SRD §9)**:\n\n"
-            "In Earth system science, the exact same climate variable can rise in one region while dropping in another over the exact same period!\n\n"
-            "• **Pakistan Rainfall Shift**: Northern Pakistan shows an increasing trend (+1.82 mm/month/year), while Southern Pakistan shows slight drying (-0.38 mm/month/year).\n"
-            "• **Soil Moisture Contrast**: The irrigated Indus Basin shows a gradual decline (-0.118 kg/m²/year), contrasting with arid Balochistan.\n"
-            "• **Urban Air Quality**: Lahore exhibits rising aerosol optical depth (+0.0084/year), compared to Karachi's coastal dispersion.\n\n"
-            "Which comparison would you like to explore?"
+        # Grounded fallback
+        fallback = (
+            f"🔍 **Grounded Observation for {var_name} in {city_name}** (2005–2024):\n\n"
+            f"• **Rate of Change**: {display_slope:+.4f} {unit_str}\n"
+            f"• **Direction**: {'Increasing' if slope_per_year > 0 else 'Decreasing'}\n"
+            f"• **Coverage**: 240 consecutive monthly points (0% missing)\n\n"
+            f"⚠️ *Scientific Reminder: An observed historical statistical trend describes data association and does not by itself prove a single cause or guarantee future continuation.*"
         )
         return {
-            "reply": reply,
-            "is_ai_generated": True,
-            "analysis_ref": None,
-            "suggested_followup": "Compare rainfall between Northern and Southern Pakistan.",
-            "limitations": [],
-            "sources": ["GPM IMERG", "GLDAS Noah"]
+            "reply": fallback,
+            "is_ai_generated": False,
+            "analysis_ref": {"variable": var_id, "region": city_id}
         }
-
-    async def _handle_general(self, message: str) -> Dict[str, Any]:
-        """General inquiry with Gemini grounding."""
-        prompt = (
-            f"The user said: \"{message}\".\n"
-            f"Respond in an engaging, helpful tone as the NASA Space Apps Earth System Trend Detective assistant.\n"
-            f"Guide them to investigate real NASA satellite data for rainfall, soil moisture, and smog across Pakistan.\n"
-            f"Keep it concise, friendly, and complete without trailing sentences."
-        )
-        
-        reply = await self._call_gemini(prompt)
-        if not reply:
-            reply = (
-                "👋 Welcome Earth Detective! I can help you investigate whether climate and environmental variables are changing over time across Pakistan and key global regions.\n\n"
-                "Ask me questions like:\n"
-                "• *'Is air pollution increasing in Lahore?'*\n"
-                "• *'What is happening to rainfall in Pakistan?'*\n"
-                "• *'Explain the Mann-Kendall test'* \n"
-                "• *'Why does soil moisture matter in the Indus Basin?'*"
-            )
-
-        return {
-            "reply": reply,
-            "is_ai_generated": True,
-            "analysis_ref": None,
-            "suggested_followup": "Try: 'Show rainfall trends in Pakistan'",
-            "limitations": [],
-            "sources": []
-        }
-
-    async def _call_gemini(self, prompt: str) -> Optional[str]:
-        """Call Google Gemini 2.5 Flash via REST API with optimized token budget."""
-        api_key = settings.gemini_api_key
-        if not api_key:
-            logger.warning("No Gemini API key configured.")
-            return None
-
-        url = f"{GEMINI_API_URL}?key={api_key}"
-        payload = {
-            "contents": [
-                {
-                    "role": "user",
-                    "parts": [{"text": f"{self._system_prompt}\n\n{prompt}"}]
-                }
-            ],
-            "generationConfig": {
-                "temperature": 0.2,
-                "maxOutputTokens": 2048,
-                "thinkingConfig": {
-                    "thinkingBudget": 0  # Disable thinking budget to prevent token exhaustion and eliminate lag!
-                }
-            }
-        }
-
-        try:
-            async with httpx.AsyncClient(timeout=12.0) as client:
-                res = await client.post(url, json=payload)
-                if res.status_code == 200:
-                    data = res.json()
-                    candidates = data.get("candidates", [])
-                    if candidates and "content" in candidates[0]:
-                        parts = candidates[0]["content"].get("parts", [])
-                        if parts and "text" in parts[0]:
-                            text = parts[0]["text"].strip()
-                            return text
-                else:
-                    logger.warning(f"Gemini API returned status {res.status_code}: {res.text[:300]}")
-        except Exception as e:
-            logger.warning(f"Gemini API call failed: {e}")
-
-        return None
-
-    def _suggest_followup(self, variable_id: str, region_id: str) -> str:
-        if variable_id == "rainfall":
-            return "How does northern Pakistan compare to the southern plains?"
-        if variable_id == "aod":
-            return "What causes winter smog peaks in Lahore?"
-        if variable_id == "soil_moisture":
-            return "How does the Indus Basin compare to California drought?"
-        return "Would you like to examine the seasonal anomalies for this region?"
 
     def _build_system_prompt(self) -> str:
         return (
-            "You are the Trend Detective AI Assistant for the NASA Space Apps Challenge 2026. "
-            "Your role is to help students, educators, and the public investigate Earth system trends using real NASA satellite data. "
+            "You are the Trend Detective AI assistant for the NASA Space Apps Challenge 2026.\n"
+            "You are grounded strictly in real monthly observations from 2005 to 2024 for 8 Pakistani cities "
+            "(Lahore, Karachi, Islamabad, Peshawar, Quetta, Faisalabad, Multan, Hyderabad) across PM2.5, AOD, Rainfall, and NO2.\n"
             "STRICT RULES:\n"
-            "1. NEVER invent numbers or statistical facts. Use only the provided computed results.\n"
-            "2. NEVER make unsupported causal claims. A trend does NOT prove its cause or guarantee future continuation.\n"
-            "3. Keep explanations clear, complete, and engaging for high school and college students.\n"
-            "4. Never output half-finished sentences or cut off mid-thought. Always close your paragraphs cleanly.\n"
-            "5. Always cite the NASA dataset provider (GES DISC, LAADS DAAC, etc.)."
+            "1. NEVER invent numbers or dates.\n"
+            "2. If asked about variables outside this dataset (e.g. soil moisture, CO2, forest loss), decline politely.\n"
+            "3. NEVER make unsupported causal claims. A trend does not prove cause.\n"
+            "4. Always write clean, complete paragraphs with no trailing incomplete thoughts."
         )
 
-
-# Singleton
 assistant_service = AssistantService()

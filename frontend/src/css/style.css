@@ -775,6 +775,245 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
+   HOTSPOTS, OPPOSITES & NASA DATA SHOWCASE STYLING
+   ========================================================================== */
+
+/* Topic Wizard (Priority 1) */
+.topic-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-light-brown-border);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+
+.topic-card:hover {
+  border-color: var(--color-green-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.topic-card.active {
+  background: var(--color-green-soft);
+  border-color: var(--color-green-primary);
+  box-shadow: 0 0 0 2px var(--color-green-accent);
+}
+
+.topic-card .topic-icon {
+  font-size: 1.5rem;
+  background: var(--color-light-brown-soft);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.topic-card.active .topic-icon {
+  background: var(--color-green-accent);
+}
+
+/* Recommendation Box (Priority 1) */
+.recommendation-box {
+  background: linear-gradient(135deg, var(--color-green-soft) 0%, #FFFFFF 100%);
+  border: 1px solid var(--color-green-border);
+  border-left: 5px solid var(--color-green-primary);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-top: 1rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Trend Opposites Explorer (Priority 3) */
+.opposites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.opposite-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-light-brown-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.opposite-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-green-primary);
+}
+
+.opposite-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  margin: 0.35rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.opposite-row.increasing {
+  background: #E8F5E9;
+  color: #2E7D32;
+  border-left: 4px solid #4CAF50;
+}
+
+.opposite-row.decreasing {
+  background: #FFF3E0;
+  color: #D84315;
+  border-left: 4px solid #FF9800;
+}
+
+/* Why This Matters Cards (Priority 5) */
+.why-matters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.why-matters-box {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-light-brown-border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem;
+}
+
+.why-matters-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-dark-brown);
+  margin-bottom: 0.35rem;
+}
+
+.why-matters-text {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* NASA Data Showcase (Priority 6) */
+.nasa-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.nasa-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-light-brown-border);
+  border-top: 4px solid var(--color-green-primary);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.nasa-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.nasa-card-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-green-primary);
+  margin-bottom: 0.25rem;
+}
+
+.nasa-card-meta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.nasa-card-body {
+  font-size: 0.8rem;
+  color: var(--color-dark-brown);
+  line-height: 1.4;
+}
+
+/* Global Hotspots Leaderboard (Priority 10) */
+.hotspots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.hotspot-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-light-brown-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hotspot-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-green-primary);
+}
+
+.hotspot-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-green-primary);
+  color: white;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+/* Quality Meter Progress Bar (Priority 7) */
+.confidence-bar-wrapper {
+  background: #E5E7EB;
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.confidence-bar-fill {
+  background: linear-gradient(90deg, #6B9441 0%, #476E2A 100%);
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* ==========================================================================
    FOOTER — GREEN ACCENT ON DEEP GROUND
    ========================================================================== */
 .site-footer {

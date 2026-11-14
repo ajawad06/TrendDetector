@@ -1,16 +1,18 @@
 /**
- * Trend Detector — Pakistan Regional Interactive Map
- * SRD §15 FR-PAK-001, FR-PAK-002, FR-PAK-006:
- * Clean, fast OpenStreetMap/Esri tiles with zero API key requirement.
+ * Trend Detector — City Trend Map (Leaflet)
+ * Displays the 8 observation cities at their real coordinates.
+ * Markers dynamically visualize trend direction (arrow + color)
+ * and statistical significance (solid = significant, dashed = caution, light = stable).
  */
 
 export class RegionMap {
-  constructor(mapContainerId, onRegionSelect) {
+  constructor(mapContainerId, onCitySelect) {
     this.containerId = mapContainerId;
-    this.onRegionSelect = onRegionSelect;
+    this.onCitySelect = onCitySelect;
     this.map = null;
-    this.layers = {};
-    this.activeRegionId = 'pakistan';
+    this.markers = {};
+    this.activeCityId = 'lahore';
+    this.currentTrends = {}; // cityId -> { direction, tier, slope_per_year, unit }
   }
 
   init(regions) {
@@ -30,85 +32,129 @@ export class RegionMap {
     try {
       // Centered on Pakistan
       this.map = L.map(this.containerId, {
-        center: [30.3753, 69.3451],
+        center: [30.2, 70.8],
         zoom: 5,
         minZoom: 4,
-        maxZoom: 9,
-        scrollWheelZoom: false // prevents accidental scroll trap
+        maxZoom: 10,
+        scrollWheelZoom: false
       });
 
-      // Free, clean, fast tiles with NO API key requirement
+      // OpenStreetMap clean tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 18
       }).addTo(this.map);
 
-      this.renderRegions(regions);
+      this.renderCities(regions);
     } catch (e) {
       console.error("Map initialization error:", e);
     }
   }
 
-  renderRegions(regions) {
+  renderCities(regions) {
     if (!this.map || !regions) return;
 
-    regions.forEach(region => {
-      if (!region.bbox) return;
+    // Clear existing
+    Object.values(this.markers).forEach(m => m.remove());
+    this.markers = {};
 
-      const bounds = [
-        [region.bbox.south, region.bbox.west],
-        [region.bbox.north, region.bbox.east]
-      ];
+    regions.forEach(city => {
+      if (city.lat === undefined || city.lon === undefined) return;
 
-      const isCountry = region.id === 'pakistan';
-      const color = isCountry ? '#5C4333' : '#CBAB8D';
+      const cityId = city.id.toLowerCase();
+      const trend = this.currentTrends[cityId] || { direction: 'stable', tier: 'no_trend' };
 
-      const rect = L.rectangle(bounds, {
-        color: color,
-        weight: isCountry ? 2.5 : 1.8,
-        fillColor: '#B8DB94',
-        fillOpacity: region.id === this.activeRegionId ? 0.35 : 0.08,
-        dashArray: isCountry ? null : '4, 4'
-      }).addTo(this.map);
+      const markerIcon = this._createMarkerIcon(cityId, trend, cityId === this.activeCityId);
+      const marker = L.marker([city.lat, city.lon], { icon: markerIcon }).addTo(this.map);
 
-      rect.bindTooltip(`<b>${region.name}</b><br><span style="font-size:11px">${region.boundary_type.replace('_', ' ')}</span>`, {
-        permanent: false,
-        direction: 'center',
-        className: 'custom-map-tooltip'
-      });
+      const tooltipContent = `
+        <div style="font-family:-apple-system, sans-serif; font-size:12px; line-height:1.35; padding:2px;">
+          <b>${city.name}</b> (${city.lat.toFixed(2)}°N, ${city.lon.toFixed(2)}°E)<br>
+          <span style="font-size:11px; color:#5C4333;">Trend: <b>${trend.direction}</b> (${trend.tier.replace('_', ' ')})</span>
+        </div>
+      `;
+      marker.bindTooltip(tooltipContent, { direction: 'top', offset: [0, -12] });
 
-      rect.on('click', () => {
-        this.setActiveRegion(region.id);
-        if (this.onRegionSelect) {
-          this.onRegionSelect(region.id);
+      marker.on('click', () => {
+        this.setActiveCity(cityId);
+        if (this.onCitySelect) {
+          this.onCitySelect(cityId);
         }
       });
 
-      rect.on('mouseover', () => {
-        rect.setStyle({ fillOpacity: 0.45, weight: 3 });
-      });
-
-      rect.on('mouseout', () => {
-        const isCurrent = region.id === this.activeRegionId;
-        rect.setStyle({
-          fillOpacity: isCurrent ? 0.35 : 0.08,
-          weight: isCountry ? 2.5 : 1.8
-        });
-      });
-
-      this.layers[region.id] = rect;
+      this.markers[cityId] = marker;
     });
   }
 
-  setActiveRegion(regionId) {
-    this.activeRegionId = regionId;
-    Object.entries(this.layers).forEach(([id, layer]) => {
-      const isSelected = id === regionId;
-      layer.setStyle({
-        fillOpacity: isSelected ? 0.35 : 0.08,
-        color: isSelected ? '#5C4333' : (id === 'pakistan' ? '#5C4333' : '#CBAB8D'),
-        weight: isSelected ? 3 : (id === 'pakistan' ? 2.5 : 1.8)
-      });
+  updateTrends(cityTrendsMap) {
+    this.currentTrends = cityTrendsMap || {};
+    Object.entries(this.markers).forEach(([cityId, marker]) => {
+      const trend = this.currentTrends[cityId] || { direction: 'stable', tier: 'no_trend' };
+      const isSelected = cityId === this.activeCityId;
+      marker.setIcon(this._createMarkerIcon(cityId, trend, isSelected));
+    });
+  }
+
+  setActiveCity(cityId) {
+    this.activeCityId = cityId.toLowerCase();
+    Object.entries(this.markers).forEach(([id, marker]) => {
+      const trend = this.currentTrends[id] || { direction: 'stable', tier: 'no_trend' };
+      const isSelected = id === this.activeCityId;
+      marker.setIcon(this._createMarkerIcon(id, trend, isSelected));
+    });
+  }
+
+  _createMarkerIcon(cityId, trend, isSelected) {
+    const dir = trend.direction || 'stable';
+    const tier = trend.tier || 'no_trend';
+
+    // Color based on direction
+    let bg = '#5C4333'; // stable brown
+    let arrow = '→';
+    if (dir === 'increasing') {
+      bg = '#476E2A'; // main green
+      arrow = '↑';
+    } else if (dir === 'decreasing') {
+      bg = '#D84315'; // warm reddish-orange
+      arrow = '↓';
+    }
+
+    // Border based on significance tier
+    let borderStyle = '2px solid #FFFFFF';
+    let boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+    if (tier === 'significant') {
+      borderStyle = isSelected ? '3px solid #B8DB94' : '2px solid #FFFFFF';
+      boxShadow = '0 0 0 3px #476E2A, 0 3px 8px rgba(0,0,0,0.35)';
+    } else if (tier === 'caution') {
+      borderStyle = '2px dashed #E65100';
+    }
+
+    const scale = isSelected ? 'transform: scale(1.22);' : '';
+
+    const html = `
+      <div style="
+        background: ${bg};
+        color: #FFFFFF;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+        border: ${borderStyle};
+        box-shadow: ${boxShadow};
+        transition: transform 0.2s ease;
+        ${scale}
+      ">${arrow}</div>
+    `;
+
+    return L.divIcon({
+      html,
+      className: `custom-city-marker-${cityId}`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
     });
   }
 }

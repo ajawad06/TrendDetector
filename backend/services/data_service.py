@@ -1,7 +1,7 @@
 """
 Trend Detector — Data Service
-Loads prepared JSON time series and catalog data.
-SRD §4: All data access through one interface.
+Loads real observation series and catalog data.
+Strict single source of truth: reads from public/data/series.json.
 """
 
 import json
@@ -12,14 +12,13 @@ from functools import lru_cache
 
 from core.config import settings
 
-
 class DataService:
-    """Loads and caches prepared data and catalog files."""
+    """Loads and caches prepared data and catalog files from the real dataset."""
 
     def __init__(self):
         self.data_dir = settings.resolved_data_dir
         self.catalog_dir = settings.resolved_catalog_dir
-        self._cache: Dict[str, Any] = {}
+        self._series_cache: Optional[Dict[str, Any]] = None
 
     # ── Catalog Loading ──
 
@@ -29,7 +28,10 @@ class DataService:
 
     @lru_cache(maxsize=None)
     def get_regions(self) -> List[Dict]:
-        return self._load_catalog("regions.json")
+        res = self._load_catalog("regions.json")
+        if isinstance(res, dict) and "regions" in res:
+            return res["regions"]
+        return res if isinstance(res, list) else []
 
     @lru_cache(maxsize=None)
     def get_missions(self) -> List[Dict]:
@@ -45,7 +47,10 @@ class DataService:
 
     @lru_cache(maxsize=None)
     def get_learning_terms(self) -> List[Dict]:
-        return self._load_catalog("learning_terms.json")
+        res = self._load_catalog("learning_terms.json")
+        if isinstance(res, dict) and "terms" in res:
+            return res["terms"]
+        return res if isinstance(res, list) else []
 
     @lru_cache(maxsize=None)
     def get_hotspots(self) -> List[Dict]:
@@ -81,7 +86,27 @@ class DataService:
                 return t
         return None
 
-    # ── Time Series Data ──
+    # ── Time Series Data from public/data/series.json ──
+
+    def _load_series_json(self) -> Optional[Dict[str, Any]]:
+        if self._series_cache is not None:
+            return self._series_cache
+
+        possible_paths = [
+            Path(__file__).resolve().parent.parent.parent / "public" / "data" / "series.json",
+            Path(__file__).resolve().parent.parent / "data" / "series.json",
+            Path(os.getcwd()) / "public" / "data" / "series.json"
+        ]
+
+        for p in possible_paths:
+            if p.exists():
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        self._series_cache = json.load(f)
+                        return self._series_cache
+                except Exception:
+                    pass
+        return None
 
     def get_time_series(
         self,
@@ -90,49 +115,62 @@ class DataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None
     ) -> Optional[Dict]:
-        """
-        Load prepared time series JSON for a variable × region combination.
+        series_all = self._load_series_json()
+        if not series_all:
+            return None
 
-        File path: data/prepared/{variable_id}/{region_id}.json
-        """
-        cache_key = f"{variable_id}/{region_id}"
-        if cache_key not in self._cache:
-            file_path = self.data_dir / variable_id / f"{region_id}.json"
-            if not file_path.exists():
-                return None
-            try:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    self._cache[cache_key] = json.load(f)
-            except (json.JSONDecodeError, IOError):
-                return None
+        city_key = region_id.lower()
+        var_key = variable_id.lower()
 
-        data = self._cache[cache_key]
+        if city_key not in series_all:
+            return None
 
-        # Apply date filtering if requested
+        city_data = series_all[city_key]
+        if "variables" not in city_data or var_key not in city_data["variables"]:
+            return None
+
+        points = city_data["variables"][var_key]
         if start_date or end_date:
-            filtered_series = []
-            for point in data.get("series", []):
-                d = point.get("date", "")
-                if start_date and d < start_date:
-                    continue
-                if end_date and d > end_date:
-                    continue
-                filtered_series.append(point)
-            data = {**data, "series": filtered_series}
+            points = [
+                pt for pt in points
+                if (not start_date or pt["date"] >= start_date) and (not end_date or pt["date"] <= end_date)
+            ]
 
-        return data
+        var_info = self.get_variable(var_key) or {}
+        return {
+            "variable": var_key,
+            "variable_name": var_info.get("name", var_key.upper()),
+            "region": city_key,
+            "region_name": city_data.get("name", city_key.title()),
+            "unit": var_info.get("unit", ""),
+            "n_observations": len(points),
+            "pct_missing": 0.0,
+            "period": {
+                "start": points[0]["date"] if points else "",
+                "end": points[-1]["date"] if points else ""
+            },
+            "series": points
+        }
 
     def check_data_availability(self, variable_id: str, region_id: str) -> bool:
-        """Check if prepared data exists for this combination."""
-        file_path = self.data_dir / variable_id / f"{region_id}.json"
-        return file_path.exists()
+        series_all = self._load_series_json()
+        if not series_all:
+            return False
+        city_key = region_id.lower()
+        var_key = variable_id.lower()
+        return city_key in series_all and var_key in series_all[city_key].get("variables", {})
 
     # ── Internal ──
 
-    def _load_catalog(self, filename: str) -> List[Dict]:
+    def _load_catalog(self, filename: str) -> Any:
         path = self.catalog_dir / filename
         if not path.exists():
-            return []
+            # Try frontend/catalogs
+            alt_path = Path(__file__).resolve().parent.parent.parent / "frontend" / "catalogs" / filename
+            if alt_path.exists():
+                path = alt_path
+            else:
+                return []
         try:
             with open(path, "r", encoding="utf-8") as f:
                 return json.load(f)

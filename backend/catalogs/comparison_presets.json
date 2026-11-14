@@ -1,32 +1,52 @@
 [
   {
-    "id": "pakistan_rainfall_shift",
-    "name": "Pakistan Rainfall Shift",
-    "variable": "rainfall",
-    "region_a": "northern_pakistan",
-    "region_b": "southern_pakistan",
-    "region_a_name": "Northern Pakistan (Mountains)",
-    "region_b_name": "Southern Pakistan (Plains & Coast)",
-    "insight": "Regional rainfall trends can differ: monsoon intensification in the north may contrast with drying in the south."
+    "id": "multan_vs_peshawar_no2",
+    "name": "Multan vs Peshawar: NO₂ Divergence",
+    "variable": "no2",
+    "city1": "multan",
+    "city2": "peshawar",
+    "is_nearby": false,
+    "caveat": null,
+    "description": "Contrasting nitrogen dioxide column trends between southern Punjab and northwestern Khyber Pakhtunkhwa."
   },
   {
-    "id": "water_availability",
-    "name": "Water Availability Contrast",
-    "variable": "soil_moisture",
-    "region_a": "indus_basin",
-    "region_b": "balochistan",
-    "region_a_name": "Indus River Basin",
-    "region_b_name": "Balochistan",
-    "insight": "Water stress varies spatially: irrigated basins vs. arid provinces may show very different soil moisture trends."
+    "id": "lahore_vs_faisalabad_pm25",
+    "name": "Lahore vs Faisalabad: Industrial Corridor PM2.5",
+    "variable": "pm25",
+    "city1": "lahore",
+    "city2": "faisalabad",
+    "is_nearby": true,
+    "caveat": "Caveat: Nearby cities (Lahore & Faisalabad) may share the same underlying satellite data cell or atmospheric grid column; their trends are not independent.",
+    "description": "Comparing fine particulate pollution along the central Punjab industrial corridor."
   },
   {
-    "id": "air_quality_contrast",
-    "name": "Air Quality Contrast",
+    "id": "peshawar_vs_karachi_rain",
+    "name": "Peshawar vs Karachi: Mountain vs Coastal Rainfall",
+    "variable": "rain_mm",
+    "city1": "peshawar",
+    "city2": "karachi",
+    "is_nearby": false,
+    "caveat": null,
+    "description": "Comparing long-term precipitation trajectory between the northwestern highlands and southern Arabian Sea coast."
+  },
+  {
+    "id": "islamabad_vs_peshawar_aod",
+    "name": "Islamabad vs Peshawar: Northern Foothill AOD",
     "variable": "aod",
-    "region_a": "lahore_airshed",
-    "region_b": "karachi",
-    "region_a_name": "Lahore Metropolitan Airshed",
-    "region_b_name": "Karachi Metropolitan Region",
-    "insight": "Urban pollution trends can differ: Lahore's smog season is driven by crop burning and geography, while Karachi faces different pollution sources."
+    "city1": "islamabad",
+    "city2": "peshawar",
+    "is_nearby": true,
+    "caveat": "Caveat: Nearby cities (Islamabad & Peshawar) may share the same underlying satellite data cell or atmospheric grid column; their trends are not independent.",
+    "description": "Aerosol optical depth across northern highland valleys."
+  },
+  {
+    "id": "karachi_vs_hyderabad_no2",
+    "name": "Karachi vs Hyderabad: Lower Indus Urban NO₂",
+    "variable": "no2",
+    "city1": "karachi",
+    "city2": "hyderabad",
+    "is_nearby": true,
+    "caveat": "Caveat: Nearby cities (Karachi & Hyderabad) may share the same underlying satellite data cell or atmospheric grid column; their trends are not independent.",
+    "description": "Tropospheric nitrogen dioxide comparison across neighboring southern urban centers."
   }
 ]

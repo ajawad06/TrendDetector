@@ -1,9 +1,6 @@
 /**
- * Trend Detector — Integrated Server with Live Gemini AI & FastAPI Proxy
- * 
- * 1. Serves frontend UI at http://localhost:5173
- * 2. Proxies /api/* to FastAPI backend (http://127.0.0.1:8000) when running
- * 3. Has built-in Gemini 2.5 Flash + NASA statistical grounding when backend is offline
+ * Trend Detector — Integrated Server with Live Gemini AI & Grounded Statistical Context
+ * Operating exclusively on real observation data (pk_city_monthly_final.csv).
  */
 
 const http = require('http');
@@ -11,17 +8,15 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 5173;
-const BACKEND_HOST = process.env.BACKEND_HOST || '127.0.0.1';
-const BACKEND_PORT = process.env.BACKEND_PORT || 8000;
 const ROOT_DIR = __dirname;
-const BACKEND_DIR = path.join(__dirname, '..', 'backend');
+const PROJECT_ROOT = path.join(__dirname, '..');
 
-// Load environment variables from backend/.env or .env
+// Load environment variables
 function loadEnv() {
   const envPaths = [
-    path.join(BACKEND_DIR, '.env'),
+    path.join(PROJECT_ROOT, '.env'),
     path.join(ROOT_DIR, '.env'),
-    path.join(ROOT_DIR, '..', '.env')
+    path.join(PROJECT_ROOT, 'backend', '.env')
   ];
   for (const ep of envPaths) {
     if (fs.existsSync(ep)) {
@@ -60,6 +55,26 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon'
 };
 
+// Cache series data for server-side AI grounding
+let cachedSeriesData = null;
+function getSeriesData() {
+  if (cachedSeriesData) return cachedSeriesData;
+  const paths = [
+    path.join(PROJECT_ROOT, 'public', 'data', 'series.json'),
+    path.join(ROOT_DIR, 'public', 'data', 'series.json'),
+    path.join(ROOT_DIR, 'data', 'series.json')
+  ];
+  for (const p of paths) {
+    if (fs.existsSync(p)) {
+      try {
+        cachedSeriesData = JSON.parse(fs.readFileSync(p, 'utf-8'));
+        return cachedSeriesData;
+      } catch (e) {}
+    }
+  }
+  return null;
+}
+
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -71,7 +86,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Buffer request body for POST
+  // Buffer POST body
   let bodyBuffer = Buffer.alloc(0);
   if (req.method === 'POST') {
     try {
@@ -88,191 +103,134 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // ── Route /api/ and /health ──
-  if (req.url.startsWith('/api/') || req.url === '/health') {
-    let fallbackHandled = false;
-    const safeFallback = () => {
-      if (fallbackHandled || res.headersSent) return;
-      fallbackHandled = true;
-      handleLocalFallback(req, res, bodyBuffer);
-    };
-
-    // Attempt proxying to FastAPI backend first
-    const proxyReq = http.request({
-      host: BACKEND_HOST,
-      port: BACKEND_PORT,
-      path: req.url,
-      method: req.method,
-      headers: {
-        ...req.headers,
-        host: `${BACKEND_HOST}:${BACKEND_PORT}`,
-        'content-length': bodyBuffer.length
-      },
-      timeout: 1000 // Quick fail if backend not active
-    }, (proxyRes) => {
-      if (fallbackHandled || res.headersSent) return;
-      res.writeHead(proxyRes.statusCode, proxyRes.headers);
-      proxyRes.pipe(res);
-    });
-
-    proxyReq.on('timeout', () => {
-      proxyReq.destroy();
-      safeFallback();
-    });
-
-    proxyReq.on('error', () => {
-      safeFallback();
-    });
-
-    if (bodyBuffer.length > 0) {
-      proxyReq.write(bodyBuffer);
-    }
-    proxyReq.end();
+  // Health
+  if (req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'healthy', mode: 'real-data-engine' }));
     return;
   }
 
-  // ── Static Files ──
-  handleStaticFiles(req, res);
-});
-
-// ── Built-in Gemini & Data Fallback Handler ──
-async function handleLocalFallback(req, res, bodyBuffer) {
-  if (res.headersSent) return;
-  const urlParts = req.url.split('?')[0].split('/');
-  const endpoint = urlParts[2];
-
-  // 1. Assistant chat endpoint
-  if (endpoint === 'assistant' && urlParts[3] === 'chat') {
+  // Assistant Chat
+  if (req.url.startsWith('/api/assistant/chat')) {
     let payload = {};
     try {
       payload = JSON.parse(bodyBuffer.toString('utf-8'));
     } catch (e) {}
 
     const userMessage = payload.message || '';
-    const result = await handleGeminiChat(userMessage);
-    if (res.headersSent || res.writableEnded) return;
+    const result = await handleGroundedChat(userMessage);
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify(result));
     return;
   }
 
-  // 2. Catalogs
-  if (['variables', 'regions', 'missions', 'topics', 'datasets', 'learning', 'hotspots'].includes(endpoint)) {
-    const catalogFile = endpoint === 'learning' ? 'learning_terms.json' : `${endpoint}.json`;
-    const catPath = path.join(ROOT_DIR, 'catalogs', catalogFile);
-    if (fs.existsSync(catPath)) {
+  // Series JSON Direct Endpoint
+  if (req.url === '/api/series' || req.url === '/public/data/series.json' || req.url === '/data/series.json') {
+    const series = getSeriesData();
+    if (series) {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      const raw = fs.readFileSync(catPath, 'utf-8');
-      const data = JSON.parse(raw);
-      res.end(JSON.stringify({ [endpoint]: data }));
+      res.end(JSON.stringify(series));
       return;
     }
   }
 
-  // 3. Time Series Data: /api/data/{variable}/{region}
-  if (endpoint === 'data' && urlParts.length >= 5) {
-    const varId = urlParts[3];
-    const regId = urlParts[4];
-    const dataPath = path.join(ROOT_DIR, 'data', 'prepared', varId, `${regId}.json`);
-    if (fs.existsSync(dataPath)) {
-      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      fs.createReadStream(dataPath).pipe(res);
-      return;
-    }
-  }
+  // Static files
+  handleStaticFiles(req, res);
+});
 
-  // 4. Health endpoint
-  if (req.url === '/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'healthy', mode: 'node-integrated' }));
-    return;
-  }
-
-  res.writeHead(404, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ detail: `Endpoint not found: ${req.url}` }));
-}
-
-// ── Live Gemini Chat with Deterministic Statistical Grounding ──
-async function handleGeminiChat(message) {
+// Grounded Chat Handler strictly constrained to the 4 variables & 8 cities
+async function handleGroundedChat(message) {
   const msgLower = message.toLowerCase();
 
-  // Entity extraction
-  let variableId = 'rainfall';
-  if (msgLower.includes('smog') || msgLower.includes('aod') || msgLower.includes('pollution') || msgLower.includes('aerosol') || msgLower.includes('haze')) {
-    variableId = 'aod';
-  } else if (msgLower.includes('soil') || msgLower.includes('moisture') || msgLower.includes('drought')) {
-    variableId = 'soil_moisture';
-  } else if (msgLower.includes('temp') || msgLower.includes('warming') || msgLower.includes('heat')) {
-    variableId = 'temperature';
-  } else if (msgLower.includes('veg') || msgLower.includes('ndvi') || msgLower.includes('greenness') || msgLower.includes('crop')) {
-    variableId = 'ndvi';
+  // Out-of-scope check
+  const forbidden = ['soil', 'moisture', 'temperature', 'warming', 'heat', 'ndvi', 'greenness', 'forest', 'deforestation', 'amazon', 'california', 'global', 'co2', 'carbon'];
+  for (const term of forbidden) {
+    if (msgLower.includes(term)) {
+      return {
+        reply: "I cannot answer that from this dataset. Our verified observations cover strictly **PM2.5, Aerosol Optical Depth (AOD), Monthly Rainfall, and Tropospheric NO₂** across 8 cities in Pakistan from 2005 to 2024.",
+        is_ai_generated: false,
+        suggested_followup: "Try asking: 'What are the PM2.5 trends in Lahore?' or 'Compare rainfall between Peshawar and Karachi.'"
+      };
+    }
   }
 
-  let regionId = variableId === 'aod' ? 'lahore_airshed' : (variableId === 'soil_moisture' ? 'indus_basin' : 'pakistan');
-  if (msgLower.includes('lahore')) regionId = 'lahore_airshed';
-  else if (msgLower.includes('karachi')) regionId = 'karachi';
-  else if (msgLower.includes('indus')) regionId = 'indus_basin';
-  else if (msgLower.includes('punjab')) regionId = 'punjab';
-  else if (msgLower.includes('sindh')) regionId = 'sindh';
-  else if (msgLower.includes('balochistan')) regionId = 'balochistan';
-  else if (msgLower.includes('north') || msgLower.includes('mountain')) regionId = 'northern_pakistan';
-  else if (msgLower.includes('south') || msgLower.includes('plain')) regionId = 'southern_pakistan';
-  else if (msgLower.includes('california')) regionId = 'california';
+  // Scope entities
+  const validVars = {
+    'rain': 'rain_mm',
+    'precipitation': 'rain_mm',
+    'rainfall': 'rain_mm',
+    'monsoon': 'rain_mm',
+    'no2': 'no2',
+    'nitrogen': 'no2',
+    'aod': 'aod',
+    'aerosol': 'aod',
+    'haze': 'aod',
+    'pm25': 'pm25',
+    'smog': 'pm25',
+    'particulate': 'pm25',
+    'pollution': 'pm25'
+  };
 
-  // Load data for grounding
-  const dataPath = path.join(ROOT_DIR, 'data', 'prepared', variableId, `${regionId}.json`);
-  let timeSeriesData = null;
-  if (fs.existsSync(dataPath)) {
-    try {
-      timeSeriesData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-    } catch (e) {}
+  let matchedVar = 'pm25';
+  for (const [k, v] of Object.entries(validVars)) {
+    if (msgLower.includes(k)) {
+      matchedVar = v;
+      break;
+    }
   }
 
-  // System prompt enforcing SRD §13
-  const systemPrompt = `You are the Trend Detective AI Assistant for the NASA Space Apps Challenge 2026.
-Your role is to help students, educators, and the public investigate Earth system trends using real NASA satellite data.
-STRICT RULES:
-1. NEVER invent numbers or statistical facts. Use only the provided computed results.
-2. NEVER make unsupported causal claims. A trend does NOT prove its cause or guarantee future continuation.
-3. Keep explanations clear, complete, and engaging for high school and college students.
-4. Never output half-finished sentences or cut off mid-thought. Always close your paragraphs cleanly.
-5. Always cite the NASA dataset provider (GES DISC, LAADS DAAC, etc.).`;
+  const validCities = ['lahore', 'karachi', 'islamabad', 'peshawar', 'quetta', 'faisalabad', 'multan', 'hyderabad'];
+  let matchedCity = 'lahore';
+  for (const c of validCities) {
+    if (msgLower.includes(c)) {
+      matchedCity = c;
+      break;
+    }
+  }
 
-  let groundedContext = '';
-  if (timeSeriesData && timeSeriesData.ols_trend) {
-    const ols = timeSeriesData.ols_trend;
-    groundedContext = `
-ACTUAL COMPUTED SATELLITE/MODEL RESULTS (DO NOT ALTER ANY NUMBERS):
-- Variable: ${timeSeriesData.variable_name} (Dataset: ${timeSeriesData.dataset}, Provider: ${timeSeriesData.provider})
-- Region: ${timeSeriesData.region_name}
-- Period: ${timeSeriesData.period.start} to ${timeSeriesData.period.end} (${timeSeriesData.n_observations} monthly observations)
-- Rate of Change: ${ols.slope_per_year > 0 ? '+' : ''}${ols.slope_per_year} ${ols.slope_unit} (Total Change: ${ols.total_change > 0 ? '+' : ''}${ols.total_change} ${timeSeriesData.unit})
-- Statistical Significance: ${ols.p_value < 0.05 ? 'Statistically significant (p < 0.05)' : 'Not statistically significant (p >= 0.05)'} (p-value = ${ols.p_value})
-- 95% Confidence Interval: [${ols.ci_95_lower}, ${ols.ci_95_upper}] ${ols.slope_unit}
-- Scientific Disclaimer: A trend does not prove cause or guarantee future continuation.
+  const seriesData = getSeriesData();
+  let groundedFacts = "";
+
+  if (seriesData && seriesData[matchedCity]) {
+    const pts = seriesData[matchedCity].variables[matchedVar];
+    if (pts && pts.length === 240) {
+      const dates = pts.map(p => p.date);
+      const vals = pts.map(p => p.value);
+      
+      // Calculate basic grounded stats
+      const n = vals.length;
+      let sumY = 0, sumX = 0, sumXY = 0, sumXX = 0;
+      for (let i = 0; i < n; i++) {
+        const x = i / 12.0;
+        sumX += x; sumY += vals[i]; sumXY += x * vals[i]; sumXX += x * x;
+      }
+      const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+      const cityName = seriesData[matchedCity].name;
+
+      groundedFacts = `
+VERIFIED FACTS FROM OBSERVATION DATASET (DO NOT ALTER):
+- Variable: ${matchedVar.toUpperCase()}
+- City: ${cityName} (lat: ${seriesData[matchedCity].lat}, lon: ${seriesData[matchedCity].lon})
+- Period: 2005-01-01 to 2024-12-01 (240 consecutive monthly points, 0% missing)
+- Rate of Change: ${slope > 0 ? '+' : ''}${matchedVar === 'no2' ? (slope / 1e15).toFixed(3) + ' x10^15' : slope.toFixed(4)} per year
 `;
+    }
   }
 
-  const userPrompt = `User asked: "${message}"
+  const systemPrompt = `You are the Trend Detective AI grounded exclusively in real monthly observations (2005–2024) across 8 Pakistani cities (Lahore, Karachi, Islamabad, Peshawar, Quetta, Faisalabad, Multan, Hyderabad) measuring PM2.5, AOD, Rainfall, and NO2.
+RULES:
+1. Use ONLY the verified observational facts provided below. Never invent numbers.
+2. If asked about variables or regions outside this dataset, decline politely: "I cannot answer that from this dataset."
+3. NEVER make unsupported causal claims. A statistical trend does not prove a cause or guarantee future continuation.
+4. Keep explanations complete and accessible for students and educators.`;
 
-Using the verified facts below, give a complete, friendly, and structured Earth Detective response for high school and college students.
-Include:
-1. A direct answer to what is changing and whether it is statistically significant.
-2. The exact rate of change and time period.
-3. A 'Why This Matters' explanation connected to human health, agriculture, or climate.
-4. A gentle scientific reminder that a trend does not prove cause.
-Ensure your response is complete with no unfinished sentences.
-
-${groundedContext}`;
-
-  // Call Gemini if key is present
-  if (GEMINI_API_KEY) {
+  if (GEMINI_API_KEY && groundedFacts) {
     try {
       const resp = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+          contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\n${groundedFacts}\n\nUser asked: "${message}"` }] }],
           generationConfig: {
             temperature: 0.2,
             maxOutputTokens: 2048,
@@ -288,40 +246,21 @@ ${groundedContext}`;
           return {
             reply: text.trim(),
             is_ai_generated: true,
-            analysis_ref: {
-              variable: variableId,
-              region: regionId,
-              data_url: `/api/data/${variableId}/${regionId}`
-            },
-            suggested_followup: `Ask: 'How does rainfall in Northern Pakistan compare to the South?'`,
-            sources: [timeSeriesData?.dataset || 'NASA Earth Science', timeSeriesData?.provider || 'NASA GES DISC']
+            analysis_ref: { variable: matchedVar, region: matchedCity }
           };
         }
       }
-    } catch (err) {
-      console.warn('Gemini API fetch error in server.js:', err.message);
+    } catch (e) {
+      console.warn("Gemini API error:", e.message);
     }
   }
 
-  // High quality deterministic fallback
-  let fallbackReply = `🔍 **Investigation Result for ${timeSeriesData ? timeSeriesData.variable_name : variableId} in ${timeSeriesData ? timeSeriesData.region_name : regionId}**:\n\n`;
-  if (timeSeriesData && timeSeriesData.ols_trend) {
-    const ols = timeSeriesData.ols_trend;
-    fallbackReply += `• **Rate of Change**: ${ols.slope_per_year > 0 ? '+' : ''}${ols.slope_per_year} ${ols.slope_unit} (Total change: ${ols.total_change > 0 ? '+' : ''}${ols.total_change} ${timeSeriesData.unit})\n`;
-    fallbackReply += `• **Statistical Significance**: ${ols.p_value < 0.05 ? 'Statistically significant (p < 0.05)' : 'Not statistically significant'} (p-value: ${ols.p_value})\n`;
-    fallbackReply += `• **Observation Window**: ${timeSeriesData.period.start} to ${timeSeriesData.period.end} (${timeSeriesData.n_observations} monthly points)\n\n`;
-    fallbackReply += `**Dataset Source**: ${timeSeriesData.dataset} via ${timeSeriesData.provider}.\n\n`;
-    fallbackReply += `⚠️ *Scientific Note: A trend does not prove cause or guarantee future continuation.*`;
-  } else {
-    fallbackReply += `Satellite observations from 2000 to 2024 are prepared for this investigation. Select a mission above to view the interactive time series chart!`;
-  }
-
+  // Fallback if no key or error
+  const cName = matchedCity.charAt(0).toUpperCase() + matchedCity.slice(1);
   return {
-    reply: fallbackReply,
-    is_ai_generated: true,
-    analysis_ref: { variable: variableId, region: regionId },
-    suggested_followup: "Try asking: 'Is air pollution increasing in Lahore?'",
-    sources: ['NASA GES DISC', 'NASA LAADS DAAC']
+    reply: `🔍 **Grounded Observation for ${matchedVar.toUpperCase()} in ${cName}** (2005–2024):\n\nBased on 240 consecutive monthly observations, select **${matchedVar.toUpperCase()}** and **${cName}** above in the workspace to inspect the verified time series chart, anomaly fit, and statistical significance.\n\n⚠️ *A trend describes historical association and does not by itself prove a cause.*`,
+    is_ai_generated: false,
+    analysis_ref: { variable: matchedVar, region: matchedCity }
   };
 }
 
@@ -330,8 +269,8 @@ function handleStaticFiles(req, res) {
   if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
 
   let filePath = path.join(ROOT_DIR, reqPath);
-  if (!fs.existsSync(filePath) && reqPath.startsWith('/backend/')) {
-    filePath = path.join(BACKEND_DIR, reqPath.replace('/backend/', ''));
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(PROJECT_ROOT, reqPath);
   }
 
   fs.stat(filePath, (err, stats) => {
@@ -354,9 +293,9 @@ function handleStaticFiles(req, res) {
 
 server.listen(PORT, () => {
   console.log(`\n======================================================`);
-  console.log(`🌍 Trend Detector Server with Live Gemini 2.5 Flash AI`);
+  console.log(`🌍 Trend Detector Server — Real Observational Dataset`);
   console.log(`   Frontend UI:  http://localhost:${PORT}`);
-  console.log(`   Backend Proxy: http://${BACKEND_HOST}:${BACKEND_PORT}`);
-  console.log(`   Gemini Status: ${GEMINI_API_KEY ? 'Active (API Key loaded)' : 'Offline (No Key)'}`);
+  console.log(`   Dataset:      data/raw/pk_city_monthly_final.csv`);
+  console.log(`   Gemini AI:    ${GEMINI_API_KEY ? 'Active (API Key loaded)' : 'Deterministic Grounding'}`);
   console.log(`======================================================\n`);
 });
