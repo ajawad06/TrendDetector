@@ -1,0 +1,1 @@
+# Trend Detector — Core module

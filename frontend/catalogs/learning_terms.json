@@ -1,0 +1,100 @@
+[
+  {
+    "id": "mann_kendall",
+    "term": "Mann-Kendall test",
+    "plain_explanation": "Checks whether values consistently move up or down over time, without assuming they follow a straight line.",
+    "example": "Mann-Kendall p = 0.02 → The upward pattern is unlikely to be caused by random variation alone.",
+    "category": "statistics"
+  },
+  {
+    "id": "theil_sen",
+    "term": "Theil-Sen slope",
+    "plain_explanation": "A robust estimate of the rate of change that is less affected by unusual values or outliers than a simple average line.",
+    "example": "Theil-Sen slope = +1.2 mm/month per year → Rainfall is rising by about 1.2 mm each year, and this estimate is resistant to one-off extreme months.",
+    "category": "statistics"
+  },
+  {
+    "id": "ols_slope",
+    "term": "OLS slope (linear trend)",
+    "plain_explanation": "The average straight-line rate of change over the entire period. It finds the best-fit line through all the data points.",
+    "example": "OLS slope = −0.5 °C per decade → On average, temperature dropped by 0.5 degrees every ten years.",
+    "category": "statistics"
+  },
+  {
+    "id": "confidence_interval",
+    "term": "95% confidence interval",
+    "plain_explanation": "A likely range for the true rate of change. If this range does not include zero, we can be fairly confident the change is real (not just noise).",
+    "example": "95% CI: [+0.3, +2.1] mm/month/year → The real trend is very likely somewhere between +0.3 and +2.1.",
+    "category": "statistics"
+  },
+  {
+    "id": "p_value",
+    "term": "p-value",
+    "plain_explanation": "The probability of seeing a trend this strong if there were no real trend at all — just random noise. A small p-value (below 0.05) means the trend is unlikely to be a coincidence.",
+    "example": "p = 0.01 → There is only a 1% chance that random variation alone would produce a pattern this strong.",
+    "category": "statistics"
+  },
+  {
+    "id": "significant",
+    "term": "Statistically significant",
+    "plain_explanation": "The observed trend is unlikely to be due to chance alone. Here we use a threshold of p < 0.05, meaning less than a 5% chance the trend is random noise.",
+    "example": "\"Significant at the 95% confidence level\" → We are 95% confident the trend is real, not just luck.",
+    "category": "statistics"
+  },
+  {
+    "id": "anomaly",
+    "term": "Seasonal anomaly",
+    "plain_explanation": "The value after the usual seasonal pattern is removed. For example, subtracting the average July rainfall from this July's rainfall shows whether this July was unusually wet or dry.",
+    "example": "July 2023 anomaly = +15 mm → It rained 15 mm more than the long-term July average.",
+    "category": "data"
+  },
+  {
+    "id": "autocorrelation",
+    "term": "Autocorrelation",
+    "plain_explanation": "Nearby months tend to be similar to each other (a wet June often leads to a wet July). This can make a trend look more certain than it really is, so we check for it and warn you.",
+    "example": "Lag-1 autocorrelation = 0.45 → There is moderate month-to-month similarity; the p-value may be overly optimistic.",
+    "category": "statistics"
+  },
+  {
+    "id": "trend",
+    "term": "Trend",
+    "plain_explanation": "A change that runs in a consistent direction over time — values generally going up, or generally going down, across months or years.",
+    "example": "An upward trend in AOD means haze levels have generally been rising over the analysis period.",
+    "category": "statistics"
+  },
+  {
+    "id": "time_series",
+    "term": "Time series",
+    "plain_explanation": "A list of measurements of the same thing (like rainfall) for the same place, ordered by date — month by month or year by year.",
+    "example": "Monthly rainfall for Lahore from January 2000 to December 2024 is a time series with 300 data points.",
+    "category": "data"
+  },
+  {
+    "id": "baseline_period",
+    "term": "Baseline period",
+    "plain_explanation": "The range of years used to calculate the 'normal' or 'average' value for each month. Anomalies are measured as deviations from this baseline.",
+    "example": "Baseline 2001–2020 means the average for each calendar month is computed from those 20 years.",
+    "category": "methodology"
+  },
+  {
+    "id": "area_weighted_mean",
+    "term": "Area-weighted mean",
+    "plain_explanation": "When averaging satellite data over a region, each grid cell's value is weighted by its area. Cells near the equator are larger than cells near the poles, so this gives a fairer average.",
+    "example": "A 1° cell at 25°N covers more area than a 1° cell at 35°N, so it gets more weight in the regional average.",
+    "category": "methodology"
+  },
+  {
+    "id": "reanalysis",
+    "term": "Reanalysis",
+    "plain_explanation": "A model-based reconstruction of past weather and climate conditions. It blends many types of observations (satellites, weather stations, balloons) into a consistent global picture. It is not a direct measurement.",
+    "example": "MERRA-2 temperature is a reanalysis product — it fills gaps between weather stations using physics-based models.",
+    "category": "data"
+  },
+  {
+    "id": "aod_term",
+    "term": "Aerosol Optical Depth (AOD)",
+    "plain_explanation": "A measure of how much haze, dust, smoke, or pollution is in the atmosphere. Higher AOD means more particles blocking sunlight.",
+    "example": "AOD = 0.8 means the atmosphere is fairly hazy; AOD = 0.1 means relatively clear skies.",
+    "category": "data"
+  }
+]

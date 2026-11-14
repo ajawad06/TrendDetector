@@ -1,0 +1,1 @@
+# Trend Detector — Pydantic models
