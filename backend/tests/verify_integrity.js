@@ -1,6 +1,6 @@
 /**
  * Trend Detector — Data & Catalog Integrity Test
- * Validates all catalogs and 21 prepared NASA time-series datasets against SRD v2.0 requirements.
+ * Validates catalogs and real observation dataset (pk_city_monthly_final.csv / series.json).
  */
 
 const fs = require('fs');
@@ -8,9 +8,9 @@ const path = require('path');
 
 const BACKEND_DIR = path.join(__dirname, '..');
 const CATALOG_DIR = path.join(BACKEND_DIR, 'catalogs');
-const PREPARED_DIR = path.join(BACKEND_DIR, 'data', 'prepared');
+const SERIES_PATH = path.join(BACKEND_DIR, '..', 'public', 'data', 'series.json');
 
-console.log('=== RUNNING TREND DETECTOR BACKEND INTEGRITY SUITE ===\n');
+console.log('=== RUNNING TREND DETECTOR INTEGRITY SUITE (REAL DATASET) ===\n');
 
 let passCount = 0;
 let failCount = 0;
@@ -42,82 +42,63 @@ catalogFiles.forEach(file => {
   assert(fs.existsSync(filePath), `Catalog exists: ${file}`);
   try {
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    assert(Array.isArray(data) && data.length > 0, `Catalog is non-empty array: ${file} (${data.length} entries)`);
+    assert(data !== null, `Catalog parsed valid JSON: ${file}`);
   } catch (e) {
     assert(false, `Catalog parsed valid JSON: ${file} - ${e.message}`);
   }
 });
 
-// 2. Validate P0 Variables
+// 2. Validate P0 Variables (Strictly 4)
 const variables = JSON.parse(fs.readFileSync(path.join(CATALOG_DIR, 'variables.json'), 'utf-8'));
 const varIds = variables.map(v => v.id);
-assert(varIds.includes('rainfall'), 'P0 Variable Rainfall is registered');
-assert(varIds.includes('soil_moisture'), 'P0 Variable Soil Moisture is registered');
-assert(varIds.includes('aod'), 'P0 Variable AOD (smog) is registered');
+assert(varIds.length === 4, `Exactly 4 variables registered (found ${varIds.length})`);
+assert(varIds.includes('pm25'), 'Variable pm25 registered');
+assert(varIds.includes('aod'), 'Variable aod registered');
+assert(varIds.includes('rain_mm'), 'Variable rain_mm registered');
+assert(varIds.includes('no2'), 'Variable no2 registered');
 
-// 3. Validate Regions
-const regions = JSON.parse(fs.readFileSync(path.join(CATALOG_DIR, 'regions.json'), 'utf-8'));
+// 3. Validate Regions (Strictly 8 point cities)
+const regionsData = JSON.parse(fs.readFileSync(path.join(CATALOG_DIR, 'regions.json'), 'utf-8'));
+const regions = regionsData.regions || regionsData;
 const regIds = regions.map(r => r.id);
-assert(regIds.includes('pakistan'), 'Country region Pakistan is registered (FR-PAK-001)');
-assert(regIds.includes('punjab'), 'Punjab region registered');
-assert(regIds.includes('lahore_airshed'), 'Lahore airshed registered');
-assert(regIds.includes('sindh'), 'Sindh region registered');
-assert(regIds.includes('balochistan'), 'Balochistan region registered');
-assert(regIds.includes('indus_basin'), 'Indus Basin region registered');
-
-// 4. Validate Guided Missions (SRD §6)
-const missions = JSON.parse(fs.readFileSync(path.join(CATALOG_DIR, 'missions.json'), 'utf-8'));
-assert(missions.length >= 4, `At least 4 guided demo missions present (found ${missions.length})`);
-const missionIds = missions.map(m => m.id);
-assert(missionIds.includes('lahore_smog'), 'Mission: Lahore Smog Mystery present');
-assert(missionIds.includes('pakistan_rainfall'), 'Mission: Pakistan Rainfall Shift present');
-assert(missionIds.includes('indus_water'), 'Mission: Indus Basin Water Watch present');
-assert(missionIds.includes('california_drought'), 'Mission: California Drought Tracker present');
-
-// 5. Validate Prepared NASA Time Series Files
-const expectedFiles = [
-  'rainfall/pakistan.json',
-  'rainfall/punjab.json',
-  'rainfall/sindh.json',
-  'rainfall/balochistan.json',
-  'rainfall/indus_basin.json',
-  'rainfall/northern_pakistan.json',
-  'rainfall/southern_pakistan.json',
-  'soil_moisture/pakistan.json',
-  'soil_moisture/indus_basin.json',
-  'soil_moisture/balochistan.json',
-  'soil_moisture/punjab.json',
-  'soil_moisture/california.json',
-  'aod/lahore_airshed.json',
-  'aod/punjab.json',
-  'aod/karachi.json',
-  'temperature/pakistan.json',
-  'temperature/northern_pakistan.json',
-  'temperature/southern_pakistan.json',
-  'ndvi/pakistan.json',
-  'ndvi/punjab.json',
-  'ndvi/balochistan.json'
-];
-
-expectedFiles.forEach(relPath => {
-  const fullPath = path.join(PREPARED_DIR, relPath);
-  assert(fs.existsSync(fullPath), `Prepared series exists: ${relPath}`);
-  if (fs.existsSync(fullPath)) {
-    const content = JSON.parse(fs.readFileSync(fullPath, 'utf-8'));
-    assert(content.metadata && content.series, `Schema valid (metadata + series): ${relPath}`);
-    assert(content.series.length >= 240, `Sufficient observations (>= 20 years, found ${content.series.length}): ${relPath}`);
-
-    // Check that missing values are null, not zero (FR-QUAL-005)
-    const hasExplicitNull = content.series.some(pt => pt.value === null);
-    // It's allowed to have nulls or clean series; ensure no NaN or undefined
-    const noCorruptedValues = content.series.every(pt => pt.value === null || typeof pt.value === 'number');
-    assert(noCorruptedValues, `Data points are strictly numbers or explicit nulls: ${relPath}`);
-
-    // Check anomalies exist
-    const hasAnomalies = content.series.some(pt => pt.anomaly !== null);
-    assert(hasAnomalies, `Seasonal anomalies precalculated: ${relPath}`);
-  }
+assert(regIds.length === 8, `Exactly 8 cities registered (found ${regIds.length})`);
+['lahore', 'karachi', 'islamabad', 'peshawar', 'quetta', 'faisalabad', 'multan', 'hyderabad'].forEach(c => {
+  assert(regIds.includes(c), `City registered: ${c}`);
 });
 
-console.log(`\n=== SUITE COMPLETE: ${passCount} PASSED, ${failCount} FAILED ===`);
+// 4. Validate Guided Missions (Strictly 4 real missions)
+const missions = JSON.parse(fs.readFileSync(path.join(CATALOG_DIR, 'missions.json'), 'utf-8'));
+assert(missions.length === 4, `Exactly 4 guided demo missions present (found ${missions.length})`);
+const missionIds = missions.map(m => m.id);
+assert(missionIds.includes('lahore_smog'), 'Mission: Lahore Smog Mystery present');
+assert(missionIds.includes('opposite_no2'), 'Mission: Opposite NO2 Trends present');
+assert(missionIds.includes('quetta_clearing'), 'Mission: Quetta Clearing Skies present');
+assert(missionIds.includes('peshawar_rain_shift'), 'Mission: Peshawar Rainfall Decline vs Karachi present');
+
+// 5. Validate Real Series JSON File
+assert(fs.existsSync(SERIES_PATH), 'public/data/series.json exists');
+const series = JSON.parse(fs.readFileSync(SERIES_PATH, 'utf-8'));
+
+let totalZeros = 0;
+let totalPoints = 0;
+
+for (const c of regIds) {
+  assert(series[c] !== undefined, `Series data contains city ${c}`);
+  for (const v of varIds) {
+    const pts = series[c]?.variables?.[v];
+    assert(Array.isArray(pts) && pts.length === 240, `${c} -> ${v} has exactly 240 monthly points`);
+    pts.forEach(p => {
+      totalPoints++;
+      assert(typeof p.value === 'number' && !isNaN(p.value), `${c} ${v} ${p.date} has valid numeric value`);
+      if (v === 'rain_mm' && p.value === 0.0) {
+        totalZeros++;
+      }
+    });
+  }
+}
+
+assert(totalPoints === 8 * 4 * 240, `Total points across 32 series is exactly 7680 (found ${totalPoints})`);
+assert(totalZeros === 39, `Legitimate zero rain count is exactly 39 (found ${totalZeros})`);
+
+console.log(`\n=== INTEGRITY SUITE COMPLETE: ${passCount} PASSED, ${failCount} FAILED ===`);
 if (failCount > 0) process.exit(1);
