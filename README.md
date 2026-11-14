@@ -2,8 +2,7 @@
 
 **NASA Space Apps Challenge 2026**  
 *Challenge: "Earth System Trend Detective"*  
-*Author: Abdullah Jawad*  
-*Repository: [github.com/hadbierox196/Trend-Detector-](https://github.com/hadbierox196/Trend-Detector-)*
+*Repository: [(https://github.com/fuzailfaraz/TrendDetector)](https://github.com/fuzailfaraz/TrendDetector)]
 
 ---
 
