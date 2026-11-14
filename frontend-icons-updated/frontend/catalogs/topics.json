@@ -1,0 +1,100 @@
+[
+  {
+    "id": "air_pollution",
+    "name": "Air Pollution",
+    "icon": "wind",
+    "available": true,
+    "description": "Investigate trends in aerosol optical depth and nitrogen dioxide — indicators of smog and haze.",
+    "recommendation": {
+      "variables": ["aod"],
+      "variable_names": ["Aerosol Optical Depth"],
+      "regions": ["lahore_airshed", "punjab", "karachi"],
+      "region_names": ["Lahore Airshed", "Punjab", "Karachi"],
+      "reason": "Aerosol optical depth (AOD) directly measures atmospheric haze, which is the signature of smog events in Punjab and Sindh."
+    }
+  },
+  {
+    "id": "drought",
+    "name": "Drought",
+    "icon": "sun",
+    "available": true,
+    "description": "Track soil moisture changes that signal wetting or drying trends in key regions.",
+    "recommendation": {
+      "variables": ["soil_moisture", "rainfall"],
+      "variable_names": ["Soil Moisture", "Rainfall"],
+      "regions": ["indus_basin", "balochistan", "california"],
+      "region_names": ["Indus Basin", "Balochistan", "California"],
+      "reason": "Soil moisture shows how much water is stored in the ground; combining it with rainfall reveals whether drying trends are driven by less rain or more evaporation."
+    }
+  },
+  {
+    "id": "rainfall_patterns",
+    "name": "Rainfall Patterns",
+    "icon": "cloud-rain",
+    "available": true,
+    "description": "Explore how monsoon and seasonal rainfall is shifting across Pakistan's diverse regions.",
+    "recommendation": {
+      "variables": ["rainfall"],
+      "variable_names": ["Rainfall"],
+      "regions": ["pakistan", "northern_pakistan", "southern_pakistan"],
+      "region_names": ["Pakistan", "Northern Pakistan", "Southern Pakistan"],
+      "reason": "GPM IMERG satellite rainfall shows how precipitation patterns differ between Pakistan's northern mountains and southern plains."
+    }
+  },
+  {
+    "id": "climate_change",
+    "name": "Climate Change",
+    "icon": "thermometer",
+    "available": true,
+    "description": "Examine long-term temperature trends using NASA reanalysis data.",
+    "recommendation": {
+      "variables": ["temperature"],
+      "variable_names": ["Temperature"],
+      "regions": ["pakistan", "northern_pakistan", "southern_pakistan"],
+      "region_names": ["Pakistan", "Northern Pakistan", "Southern Pakistan"],
+      "reason": "MERRA-2 reanalysis temperature reveals how warming rates may differ between mountainous north and subtropical south."
+    }
+  },
+  {
+    "id": "agriculture",
+    "name": "Agriculture",
+    "icon": "wheat",
+    "available": true,
+    "description": "Monitor vegetation health and growing conditions using satellite-derived greenness indices.",
+    "recommendation": {
+      "variables": ["ndvi", "soil_moisture"],
+      "variable_names": ["Vegetation Greenness (NDVI)", "Soil Moisture"],
+      "regions": ["punjab", "balochistan"],
+      "region_names": ["Punjab", "Balochistan"],
+      "reason": "NDVI measures crop and vegetation greenness; together with soil moisture it reveals agricultural stress or improvement."
+    }
+  },
+  {
+    "id": "forest_loss",
+    "name": "Forest Loss",
+    "icon": "tree-pine",
+    "available": false,
+    "description": "Coming soon — Track deforestation trends using Hansen Global Forest Change data.",
+    "recommendation": {
+      "variables": [],
+      "variable_names": [],
+      "regions": [],
+      "region_names": [],
+      "reason": "Forest loss analysis requires the Hansen dataset pipeline, which is not yet connected."
+    }
+  },
+  {
+    "id": "ocean_health",
+    "name": "Ocean Health",
+    "icon": "waves",
+    "available": false,
+    "description": "Coming soon — Investigate sea surface temperature and ocean colour trends.",
+    "recommendation": {
+      "variables": [],
+      "variable_names": [],
+      "regions": [],
+      "region_names": [],
+      "reason": "Ocean health variables are planned for a future version."
+    }
+  }
+]
