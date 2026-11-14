@@ -1,53 +1,53 @@
 [
   {
     "id": "lahore_smog",
-    "title": "Lahore Smog Mystery",
+    "title": "Lahore Smog Trend",
     "question": "Is fine particulate pollution rising over Lahore?",
     "variable": "pm25",
     "variable_name": "Particulate Matter (PM2.5)",
     "region": "lahore",
     "region_name": "Lahore",
-    "icon": "💨",
+    "icon": "wind",
     "result_summary": "PM2.5 increasing (+0.33 µg/m³/yr)",
     "use_anomalies": true,
     "related_variables": ["aod", "no2"]
   },
   {
     "id": "opposite_no2",
-    "title": "Opposite NO₂ Trends",
+    "title": "Contrasting NO₂ Trajectories",
     "question": "Why is nitrogen dioxide rising in Peshawar while dropping in Multan?",
     "variable": "no2",
     "variable_name": "Nitrogen Dioxide Column",
     "region": "multan",
     "region_name": "Multan vs Peshawar",
     "compare_region": "peshawar",
-    "icon": "⚡",
+    "icon": "trending-up",
     "result_summary": "Peshawar (+4.46) vs Multan (-1.70)",
     "use_anomalies": true,
-    "caveat": "Different regional industrial and transport emission trajectories."
+    "caveat": "Reflects differing regional industrial and transport emission trajectories."
   },
   {
     "id": "quetta_clearing",
-    "title": "Quetta Clearing Skies",
+    "title": "Quetta Atmospheric Trend",
     "question": "Has atmospheric aerosol optical depth declined over Quetta?",
     "variable": "aod",
     "variable_name": "Aerosol Optical Depth",
     "region": "quetta",
     "region_name": "Quetta Valley",
-    "icon": "🏔️",
+    "icon": "sun",
     "result_summary": "Statistically significant decline (p < 0.01)",
     "use_anomalies": true
   },
   {
     "id": "peshawar_rain_shift",
-    "title": "Peshawar Rainfall Decline vs Karachi",
+    "title": "Peshawar vs Karachi Precipitation",
     "question": "Is precipitation declining in northwestern Pakistan while remaining stable along the coast?",
     "variable": "rain_mm",
     "variable_name": "Monthly Rainfall",
     "region": "peshawar",
     "region_name": "Peshawar vs Karachi",
     "compare_region": "karachi",
-    "icon": "🌧️",
+    "icon": "cloud-rain",
     "result_summary": "Peshawar decline (-1.32 mm/yr) vs Karachi stable",
     "use_anomalies": true
   }

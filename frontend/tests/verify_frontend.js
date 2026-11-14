@@ -39,16 +39,17 @@ check(html.includes('id="assistant-drawer"'), 'AI Assistant drawer present (SRD 
 check(html.includes('id="btn-export-csv"'), 'CSV export button present (SRD §18)');
 check(html.includes('id="btn-export-md"'), 'Markdown export button present (SRD §18)');
 
-// 2. Check CSS and requested color palette tokens (Monochromatic Deep Forest Palette)
+// 2. Check CSS and requested color palette tokens (Primary Green & Secondary Brown)
 const cssPath = path.join(SRC_DIR, 'css', 'style.css');
 check(fs.existsSync(cssPath), 'style.css exists');
 const css = fs.readFileSync(cssPath, 'utf-8');
-check(css.includes('#051F20'), 'Color: Deep Obsidian Green (#051F20) integrated');
-check(css.includes('#0B2B26'), 'Color: Dark Forest Green (#0B2B26) integrated');
-check(css.includes('#163832'), 'Color: Deep Pine (#163832) integrated');
-check(css.includes('#235347'), 'Color: Forest Mid (#235347) integrated');
+check(css.includes('#051F20') || css.includes('#09201A'), 'Color: Primary Deep Green integrated');
+check(css.includes('#0B2B26') || css.includes('#0E2B23'), 'Color: Primary Surface Green integrated');
+check(css.includes('#235347') || css.includes('#245B4D'), 'Color: Primary Forest Action integrated');
 check(css.includes('#8EB69B'), 'Color: Sage Green (#8EB69B) integrated');
 check(css.includes('#DAF1DE'), 'Color: Mint Highlight (#DAF1DE) integrated');
+check(css.includes('#3E2522'), 'Color: Secondary Espresso Brown (#3E2522) integrated');
+check(css.includes('#D3A376'), 'Color: Secondary Warm Tan (#D3A376) integrated');
 
 // 3. Check JavaScript files
 const jsFiles = ['api.js', 'stats.js', 'chart.js', 'map.js', 'app.js'];

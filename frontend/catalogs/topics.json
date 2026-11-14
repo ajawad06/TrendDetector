@@ -2,7 +2,7 @@
   {
     "id": "air_pollution",
     "name": "Air Pollution",
-    "icon": "💨",
+    "icon": "wind",
     "description": "Atmospheric particles and combustion trace gases affecting public health and visibility.",
     "recommendation": {
       "variables": ["pm25", "aod", "no2"],
@@ -15,7 +15,7 @@
   {
     "id": "rainfall_patterns",
     "name": "Rainfall Patterns",
-    "icon": "🌧️",
+    "icon": "cloud-rain",
     "description": "Precipitation volume, monsoon shifts, and regional water availability.",
     "recommendation": {
       "variables": ["rain_mm"],

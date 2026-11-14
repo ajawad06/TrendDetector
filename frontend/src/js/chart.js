@@ -1,15 +1,14 @@
 /**
  * Trend Detector — High-Performance HTML5 Canvas Time Series Visualizer
  * Enforces SRD §17 Visualization:
- * - 60 FPS optimized with requestAnimationFrame (Zero lag)
- * - Raw monthly values (context line)
- * - Monthly anomalies (primary line)
- * - OLS fitted trend line & Theil-Sen line
+ * - 60 FPS optimized with requestAnimationFrame
+ * - Raw monthly values & climatological anomalies
+ * - OLS fitted linear trend line
  * - Preserves legitimate zeros (rain_mm = 0 is a real value)
  * - Supports NO2 display scaling (x10^15)
- * - Monochromatic Deep Forest Palette:
- *   Obsidian (#051F20), Pine (#163832), Forest Mid (#235347),
- *   Sage (#8EB69B for series), Mint (#DAF1DE for OLS trend line)
+ * - Clean, flat, calm palette: Forest green primary (#09201A / #0E2B23),
+ *   Sage observed series (#8EB69B), Pale Mint OLS line (#DAF1DE),
+ *   Warm Tan secondary baseline (#D3A376). No glow, no neon.
  */
 
 export class TrendChart {
@@ -71,7 +70,7 @@ export class TrendChart {
       return;
     }
 
-    const padding = { top: 25, right: 25, bottom: 40, left: 65 };
+    const padding = { top: 20, right: 20, bottom: 35, left: 60 };
     const plotWidth = width - padding.left - padding.right;
     const plotHeight = height - padding.top - padding.bottom;
 
@@ -100,12 +99,11 @@ export class TrendChart {
       if (activeValues[i] > maxY) maxY = activeValues[i];
     }
 
-    // Add 10% breathing room to Y axis
+    // Breathing room to Y axis
     const ySpan = (maxY - minY) || 1.0;
-    minY -= ySpan * 0.08;
-    maxY += ySpan * 0.08;
+    minY -= ySpan * 0.06;
+    maxY += ySpan * 0.06;
 
-    // If showing anomalies, ensure zero line is included
     if (this.useAnomalies) {
       if (minY > 0) minY = -ySpan * 0.1;
       if (maxY < 0) maxY = ySpan * 0.1;
@@ -115,17 +113,17 @@ export class TrendChart {
     const getX = (index) => padding.left + (index / (totalPts - 1)) * plotWidth;
     const getY = (val) => padding.top + plotHeight - ((val - minY) / (maxY - minY)) * plotHeight;
 
-    // Draw Dark Grids & Labels
+    // Draw Flat Grids & Labels
     this._drawGrid(ctx, padding, plotWidth, plotHeight, minY, maxY);
 
-    // Draw Zero reference line for anomalies
+    // Draw Zero reference line for anomalies in secondary tan (#D3A376)
     if (this.useAnomalies && minY <= 0 && maxY >= 0) {
       const zeroY = getY(0);
       if (zeroY >= padding.top && zeroY <= padding.top + plotHeight) {
         ctx.save();
-        ctx.strokeStyle = "rgba(218, 241, 222, 0.4)";
-        ctx.setLineDash([4, 4]);
-        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = "rgba(211, 163, 118, 0.5)";
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1.0;
         ctx.beginPath();
         ctx.moveTo(padding.left, zeroY);
         ctx.lineTo(padding.left + plotWidth, zeroY);
@@ -134,10 +132,10 @@ export class TrendChart {
       }
     }
 
-    // 1. Draw Primary Series Line in Sage Green (#8EB69B)
+    // 1. Draw Primary Series Line in Sage Green (#8EB69B) - Flat, Clean
     ctx.save();
     ctx.strokeStyle = "#8EB69B";
-    ctx.lineWidth = 2.0;
+    ctx.lineWidth = 1.6;
     ctx.lineJoin = "round";
     ctx.beginPath();
 
@@ -161,7 +159,7 @@ export class TrendChart {
     ctx.stroke();
     ctx.restore();
 
-    // 2. Draw OLS Trend Line in Glowing Ice Mint (#DAF1DE)
+    // 2. Draw OLS Trend Line in Pale Mint (#DAF1DE) - Crisp 2.4px, No Glow
     if (this.olsResult && totalPts > 1) {
       const slope = this.olsResult.slope_per_year / scale;
       const periodYears = 20.0;
@@ -179,9 +177,7 @@ export class TrendChart {
 
       ctx.save();
       ctx.strokeStyle = "#DAF1DE";
-      ctx.lineWidth = 3.2;
-      ctx.shadowColor = "rgba(218, 241, 222, 0.4)";
-      ctx.shadowBlur = 8;
+      ctx.lineWidth = 2.4;
       ctx.beginPath();
       ctx.moveTo(getX(0), y1);
       ctx.lineTo(getX(totalPts - 1), y2);
@@ -189,7 +185,7 @@ export class TrendChart {
       ctx.restore();
     }
 
-    // 3. Draw Hover Point & Tooltip
+    // 3. Draw Hover Point & Flat Tooltip
     if (this.hoverIndex >= 0 && this.hoverIndex < totalPts) {
       const pt = this.dataPoints[this.hoverIndex];
       const rawVal = this.useAnomalies ? pt.anomaly : pt.value;
@@ -200,12 +196,10 @@ export class TrendChart {
 
         ctx.save();
         ctx.fillStyle = "#DAF1DE";
-        ctx.strokeStyle = "#051F20";
-        ctx.lineWidth = 3.0;
-        ctx.shadowColor = "#DAF1DE";
-        ctx.shadowBlur = 10;
+        ctx.strokeStyle = "#09201A";
+        ctx.lineWidth = 2.0;
         ctx.beginPath();
-        ctx.arc(x, y, 6.0, 0, Math.PI * 2);
+        ctx.arc(x, y, 4.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
         ctx.restore();
@@ -220,7 +214,7 @@ export class TrendChart {
     ctx.strokeStyle = "rgba(142, 182, 155, 0.12)";
     ctx.lineWidth = 0.8;
     ctx.fillStyle = "#8EB69B";
-    ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
 
     // Horizontal grid lines
     const steps = 4;
@@ -238,11 +232,10 @@ export class TrendChart {
       ctx.fillText(val.toFixed(2), pad.left - 8, y + 3.5);
     }
 
-    // Vertical Year Grid lines (2005, 2010, 2015, 2020, 2024)
+    // Vertical Year Grid lines
     const keyYears = [2005, 2010, 2015, 2020, 2024];
     ctx.textAlign = "center";
     for (const yr of keyYears) {
-      const targetDate = `${yr}-01`;
       let foundIdx = -1;
       for (let i = 0; i < this.dataPoints.length; i++) {
         if (this.dataPoints[i].date.startsWith(`${yr}-`)) {
@@ -257,18 +250,18 @@ export class TrendChart {
         ctx.lineTo(x, pad.top + h);
         ctx.stroke();
 
-        ctx.fillText(yr.toString(), x, pad.top + h + 18);
+        ctx.fillText(yr.toString(), x, pad.top + h + 16);
       }
     }
 
     // Y-Axis Unit label
     ctx.save();
-    ctx.translate(16, pad.top + h / 2);
+    ctx.translate(14, pad.top + h / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = "center";
-    ctx.font = "bold 11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    ctx.fillStyle = "#DAF1DE";
-    ctx.fillText(this.useAnomalies ? `Anomaly (${this.displayUnit})` : `Value (${this.displayUnit})`, 0, 0);
+    ctx.font = "600 11px 'Plus Jakarta Sans', -apple-system, sans-serif";
+    ctx.fillStyle = "#E4F0E8";
+    ctx.fillText(this.useAnomalies ? `Anomaly (${this.displayUnit})` : `Observed (${this.displayUnit})`, 0, 0);
     ctx.restore();
 
     ctx.restore();
@@ -278,44 +271,45 @@ export class TrendChart {
     const rawVal = pt.value !== null ? (pt.value / scale).toFixed(3) : 'Missing';
     const anomVal = pt.anomaly !== null ? ((pt.anomaly >= 0 ? '+' : '') + (pt.anomaly / scale).toFixed(3)) : 'N/A';
 
-    const text1 = `Date: ${pt.date}`;
+    const text1 = `${pt.date}`;
     const text2 = `Value: ${rawVal} ${this.displayUnit}`;
     const text3 = `Anomaly: ${anomVal}`;
 
-    ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    const boxW = 165;
-    const boxH = 64;
-    let boxX = x + 14;
-    if (boxX + boxW > canvasWidth - 10) boxX = x - boxW - 14;
-    const boxY = Math.max(8, y - boxH / 2);
+    ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
+    const boxW = 155;
+    const boxH = 58;
+    let boxX = x + 12;
+    if (boxX + boxW > canvasWidth - 10) boxX = x - boxW - 12;
+    const boxY = Math.max(6, y - boxH / 2);
 
     ctx.save();
-    ctx.fillStyle = "rgba(5, 31, 32, 0.94)";
-    ctx.strokeStyle = "#235347";
-    ctx.lineWidth = 1.5;
-    ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
-    ctx.shadowBlur = 12;
+    ctx.fillStyle = "#0E2B23";
+    ctx.strokeStyle = "#1B453A";
+    ctx.lineWidth = 1.0;
     ctx.beginPath();
-    ctx.roundRect(boxX, boxY, boxW, boxH, 8);
+    ctx.roundRect(boxX, boxY, boxW, boxH, 6);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#FFFFFF";
     ctx.textAlign = "left";
-    ctx.fillText(text1, boxX + 10, boxY + 18);
+    ctx.font = "600 11px 'Plus Jakarta Sans', -apple-system, sans-serif";
+    ctx.fillText(text1, boxX + 10, boxY + 16);
+
+    ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
     ctx.fillStyle = "#8EB69B";
-    ctx.fillText(text2, boxX + 10, boxY + 34);
-    ctx.fillStyle = "#DAF1DE";
-    ctx.fillText(text3, boxX + 10, boxY + 50);
+    ctx.fillText(text2, boxX + 10, boxY + 32);
+    ctx.fillStyle = "#D3A376";
+    ctx.fillText(text3, boxX + 10, boxY + 48);
     ctx.restore();
   }
 
   _renderEmpty(ctx, w, h) {
     ctx.save();
     ctx.fillStyle = "#8EB69B";
-    ctx.font = "14px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.font = "13px 'Plus Jakarta Sans', -apple-system, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Select a variable and city station to visualize observations", w / 2, h / 2);
+    ctx.fillText("Select a variable and city station to display observations", w / 2, h / 2);
     ctx.restore();
   }
 
@@ -325,7 +319,7 @@ export class TrendChart {
     this.canvas.addEventListener('mousemove', (e) => {
       const rect = this.canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
-      const padding = { left: 65, right: 25 };
+      const padding = { left: 60, right: 20 };
       const plotWidth = rect.width - padding.left - padding.right;
 
       if (mouseX < padding.left || mouseX > rect.width - padding.right || !this.dataPoints.length) {

@@ -10,6 +10,7 @@ import { api } from './api.js';
 import * as stats from './stats.js';
 import { TrendChart } from './chart.js';
 import { RegionMap } from './map.js';
+import { icon } from './icons.js';
 
 class App {
   constructor() {
@@ -273,61 +274,61 @@ class App {
       isSig = `${tier.toUpperCase()} — MK p = ${mk.p_value < 0.001 ? '< 0.001' : mk.p_value.toFixed(4)} (Z = ${mk.z_statistic.toFixed(2)}), OLS adj p = ${ols.p_value_adjusted < 0.001 ? '< 0.001' : ols.p_value_adjusted.toFixed(4)}.`;
     }
 
-    const badgeColor = tier === 'significant' ? 'badge-green' : (tier === 'caution' ? '' : '');
     const tierBadge = tier === 'significant' ? 'Statistically Significant Trend' : (tier === 'caution' ? 'Significant With Caution' : 'No Significant Trend');
 
     cardContainer.innerHTML = `
-      <div class="story-card" style="border-left: 6px solid ${tier === 'significant' ? 'var(--color-mint)' : (tier === 'caution' ? '#FB923C' : 'var(--color-border)')};">
+      <div class="story-card" style="border-left: 4px solid ${tier === 'significant' ? 'var(--color-primary)' : (tier === 'caution' ? 'var(--color-secondary-tan)' : 'var(--color-border)')};">
         <div class="story-header">
-          <span class="story-badge">Earth System Trend Story</span>
-          <span class="badge ${badgeColor}">${tierBadge}</span>
+          <span class="story-badge">Observational Synthesis</span>
+          <span class="badge ${tier === 'significant' ? 'badge-green' : 'badge-secondary'}">${tierBadge}</span>
         </div>
         
-        <div class="story-grid" style="margin-top:0.75rem;">
+        <div class="story-grid">
           <div class="story-item">
-            <span class="story-label">WHAT CHANGED?</span>
-            <span class="story-value" style="font-size:1.05rem;">${whatChanged}</span>
+            <span class="story-label">Observed Variable</span>
+            <span class="story-value">${whatChanged}</span>
           </div>
           <div class="story-item">
-            <span class="story-label">WHERE?</span>
-            <span class="story-value" style="font-size:1.05rem;">${this.currentRegion.name} (${this.currentRegion.lat}°N, ${this.currentRegion.lon}°E)</span>
+            <span class="story-label">Station Coordinates</span>
+            <span class="story-value">${this.currentRegion.name} (${this.currentRegion.lat}°N, ${this.currentRegion.lon}°E)</span>
           </div>
           <div class="story-item">
-            <span class="story-label">HOW MUCH?</span>
-            <span class="story-value" style="font-size:1.05rem; color:${dir === 'increasing' ? '#4ADE80' : (dir === 'decreasing' ? '#FB923C' : 'var(--color-mint)')};">
+            <span class="story-label">Rate of Change</span>
+            <span class="story-value" style="color:${dir === 'increasing' ? 'var(--color-increasing)' : (dir === 'decreasing' ? 'var(--color-decreasing)' : 'var(--color-text-main)')};">
               ${slopeStr} (${totalStr} over 2005–2024)
             </span>
           </div>
           <div class="story-item">
-            <span class="story-label">IS IT SIGNIFICANT?</span>
-            <span class="story-value" style="font-size:1.05rem;">${isSig}</span>
+            <span class="story-label">Statistical Confidence</span>
+            <span class="story-value">${isSig}</span>
           </div>
         </div>
 
-        <div style="background:var(--color-obsidian); padding:0.9rem; border-radius:8px; margin-top:0.85rem; border:1px solid var(--color-border-subtle);">
-          <span style="font-weight:800; color:var(--color-mint); font-size:0.75rem; text-transform:uppercase; display:block; margin-bottom:0.25rem;">WHY MIGHT IT MATTER?</span>
-          <p style="font-size:0.88rem; color:var(--color-sage); margin:0; line-height:1.5;">${v.why_it_matters || "Environmental shifts directly alter regional air quality, water security, and public health."}</p>
+        <div class="story-narrative-group">
+          <span class="story-label">Environmental Context</span>
+          <p style="font-size:0.85rem; color:var(--color-text-main); margin-top:0.25rem; line-height:1.5;">${v.why_it_matters || "Environmental shifts directly alter regional air quality, water security, and public health."}</p>
         </div>
 
-        <div class="story-disclaimer" style="margin-top:0.75rem;">
-          ⚠️ <b>Scientific Reminder:</b> A statistical trend describes historical observation association; it does not by itself prove a single cause or guarantee future continuation.
+        <div class="story-disclaimer">
+          ${icon('triangle-alert', { size: '0.95rem' })}
+          <span>Statistical trends reflect historical observational associations; they do not establish isolated physical causation or guarantee continued trajectory.</span>
         </div>
 
-        <details style="margin-top:0.85rem; font-size:0.85rem; color:var(--color-mint);">
-          <summary style="cursor:pointer; font-weight:700;">Show the numbers (Statistical Breakdown)</summary>
-          <div style="background:var(--color-obsidian); border:1px solid var(--color-border-subtle); padding:0.85rem; border-radius:8px; margin-top:0.5rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.5rem; font-size:0.8rem; color:var(--color-sage);">
-            <div><b>OLS Slope:</b> ${ols.slope_per_year.toExponential(4)} ${ols.slope_unit}</div>
-            <div><b>OLS p-value:</b> ${ols.p_value.toExponential(4)}</div>
-            <div><b>Adjusted p-value (n_eff):</b> ${ols.p_value_adjusted.toExponential(4)}</div>
-            <div><b>95% CI on slope:</b> [${ols.ci_95_lower.toExponential(3)}, ${ols.ci_95_upper.toExponential(3)}]</div>
-            <div><b>R-squared:</b> ${ols.r_squared.toFixed(4)}</div>
-            <div><b>Mann-Kendall Tau:</b> ${mk.tau.toFixed(4)} (Z = ${mk.z_statistic.toFixed(2)})</div>
-            <div><b>Mann-Kendall p-value:</b> ${mk.p_value.toExponential(4)}</div>
-            <div><b>Theil-Sen Median Slope:</b> ${analysis.theil_sen.slope_per_year.toExponential(4)} ${analysis.theil_sen.slope_unit}</div>
-            <div><b>Lag-1 Autocorrelation (r₁):</b> ${analysis.autocorrelation.r1.toFixed(3)}</div>
-            <div><b>Effective Sample Size (n_eff):</b> ${analysis.autocorrelation.n_eff.toFixed(1)} / 240</div>
-            <div><b>Linearity Flag:</b> ${analysis.flags.non_linear ? 'Non-linear divergence (>30%)' : 'Linear concordance verified'}</div>
-            <div><b>Observations:</b> 240 consecutive months (0% missing)</div>
+        <details style="margin-top:0.75rem; font-size:0.8rem; color:var(--color-text-muted);">
+          <summary style="cursor:pointer; font-weight:600; color:var(--color-text-main);">Statistical Summary Breakdown</summary>
+          <div style="background:var(--color-canvas); border:1px solid var(--color-border); padding:0.75rem; border-radius:var(--radius-sm); margin-top:0.5rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.5rem; font-size:0.78rem; color:var(--color-text-muted);">
+            <div><b style="color:var(--color-text-main);">OLS Slope:</b> ${ols.slope_per_year.toExponential(4)} ${ols.slope_unit}</div>
+            <div><b style="color:var(--color-text-main);">OLS p-value:</b> ${ols.p_value.toExponential(4)}</div>
+            <div><b style="color:var(--color-text-main);">Adjusted p-value (n_eff):</b> ${ols.p_value_adjusted.toExponential(4)}</div>
+            <div><b style="color:var(--color-text-main);">95% CI on slope:</b> [${ols.ci_95_lower.toExponential(3)}, ${ols.ci_95_upper.toExponential(3)}]</div>
+            <div><b style="color:var(--color-text-main);">R-squared:</b> ${ols.r_squared.toFixed(4)}</div>
+            <div><b style="color:var(--color-text-main);">Mann-Kendall Tau:</b> ${mk.tau.toFixed(4)} (Z = ${mk.z_statistic.toFixed(2)})</div>
+            <div><b style="color:var(--color-text-main);">Mann-Kendall p-value:</b> ${mk.p_value.toExponential(4)}</div>
+            <div><b style="color:var(--color-text-main);">Theil-Sen Median Slope:</b> ${analysis.theil_sen.slope_per_year.toExponential(4)} ${analysis.theil_sen.slope_unit}</div>
+            <div><b style="color:var(--color-text-main);">Lag-1 Autocorrelation (r₁):</b> ${analysis.autocorrelation.r1.toFixed(3)}</div>
+            <div><b style="color:var(--color-text-main);">Effective Sample Size (n_eff):</b> ${analysis.autocorrelation.n_eff.toFixed(1)} / 240</div>
+            <div><b style="color:var(--color-text-main);">Linearity Flag:</b> ${analysis.flags.non_linear ? 'Non-linear divergence (>30%)' : 'Linear concordance verified'}</div>
+            <div><b style="color:var(--color-text-main);">Observations:</b> 240 consecutive months (0% missing)</div>
           </div>
         </details>
       </div>
@@ -364,21 +365,21 @@ class App {
     }
 
     container.innerHTML = `
-      <div style="margin-top:1.5rem;">
-        <h4 style="font-size:1.1rem; color:var(--color-dark-brown); font-weight:800; margin-bottom:0.25rem;">
-          🌱 Why This Matters (Systemic Real-World Impacts)
+      <div style="margin-top:1.25rem;">
+        <h4 style="font-size:0.95rem; color:#FFFFFF; font-weight:700; margin-bottom:0.25rem; font-family:'Syne', sans-serif;">
+          Sectoral Implications
         </h4>
         <div class="why-matters-grid">
           <div class="why-matters-box">
-            <div class="why-matters-title">🌾 For Agriculture & Crops</div>
+            <div class="why-matters-title">${icon('sprout')} Agriculture & Vegetation</div>
             <div class="why-matters-text">${agText}</div>
           </div>
           <div class="why-matters-box">
-            <div class="why-matters-title">🌊 For Water Security & Flood Risk</div>
+            <div class="why-matters-title">${icon('droplets')} Water Resources & Hydrology</div>
             <div class="why-matters-text">${waterText}</div>
           </div>
           <div class="why-matters-box">
-            <div class="why-matters-title">🏥 For Public Health & Air Quality</div>
+            <div class="why-matters-title">${icon('heart-pulse')} Public Health & Air Quality</div>
             <div class="why-matters-text">${healthText}</div>
           </div>
         </div>
@@ -480,24 +481,30 @@ class App {
         <div class="opposite-card">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-              <span style="font-weight:700; font-size:1rem; color:var(--color-dark-brown);">${p.title}</span>
-              <span class="badge badge-green">Live Analysis</span>
+              <span style="font-weight:700; font-size:0.95rem; color:#FFFFFF;">${p.title}</span>
+              <span class="badge badge-secondary">Comparative Analysis</span>
             </div>
             <div class="opposite-row ${an1.verdict.direction === 'increasing' ? 'increasing' : (an1.verdict.direction === 'decreasing' ? 'decreasing' : '')}">
-              <span>${an1.verdict.direction === 'increasing' ? '↑' : (an1.verdict.direction === 'decreasing' ? '↓' : '→')} ${p.c1.toUpperCase()}</span>
+              <span style="display:flex; align-items:center; gap:0.4rem;">
+                ${icon(an1.verdict.direction === 'increasing' ? 'trending-up' : (an1.verdict.direction === 'decreasing' ? 'trending-down' : 'search'), { size: '0.95rem' })}
+                ${p.c1.toUpperCase()}
+              </span>
               <span>${an1.ols.slope_per_year > 0 ? '+' : ''}${formatSlope(an1.ols.slope_per_year)} /yr (${an1.verdict.tier})</span>
             </div>
             <div class="opposite-row ${an2.verdict.direction === 'increasing' ? 'increasing' : (an2.verdict.direction === 'decreasing' ? 'decreasing' : '')}">
-              <span>${an2.verdict.direction === 'increasing' ? '↑' : (an2.verdict.direction === 'decreasing' ? '↓' : '→')} ${p.c2.toUpperCase()}</span>
+              <span style="display:flex; align-items:center; gap:0.4rem;">
+                ${icon(an2.verdict.direction === 'increasing' ? 'trending-up' : (an2.verdict.direction === 'decreasing' ? 'trending-down' : 'search'), { size: '0.95rem' })}
+                ${p.c2.toUpperCase()}
+              </span>
               <span>${an2.ols.slope_per_year > 0 ? '+' : ''}${formatSlope(an2.ols.slope_per_year)} /yr (${an2.verdict.tier})</span>
             </div>
-            <p style="font-size:0.8rem; color:var(--color-text-muted); margin-top:0.6rem; line-height:1.4;">
+            <p style="font-size:0.78rem; color:var(--color-text-muted); margin-top:0.6rem; line-height:1.45;">
               ${p.desc}
             </p>
-            ${isNearby ? `<div style="background:#FFF8E1; border:1px solid #FFE082; padding:6px 8px; border-radius:4px; font-size:0.75rem; color:#B78103; margin-top:6px;"><b>Caveat:</b> Nearby cities may share the same underlying satellite data cell or atmospheric grid column; their trends are not independent.</div>` : ''}
+            ${isNearby ? `<div style="background:rgba(62, 37, 34, 0.45); border:1px solid rgba(211, 163, 118, 0.3); padding:6px 8px; border-radius:var(--radius-xs); font-size:0.73rem; color:var(--color-secondary-tan); margin-top:6px;"><b>Spatial Correlation Note:</b> Neighboring stations may reflect a shared regional air column or satellite grid cell; measurements should not be treated as strictly independent.</div>` : ''}
           </div>
           <button class="btn btn-outline btn-sm" style="margin-top:0.85rem;" onclick="window.trendApp.loadInvestigation('${p.variable}', '${p.c1}')">
-            Investigate ${p.c1.toUpperCase()} &rarr;
+            Examine ${p.c1.toUpperCase()} &rarr;
           </button>
         </div>
       `;
@@ -514,9 +521,9 @@ class App {
 
     grid.innerHTML = topics.map((t, idx) => `
       <div class="topic-card ${idx === 0 ? 'active' : ''}" data-topic-id="${t.id}">
-        <div class="topic-icon">${t.icon || '🔍'}</div>
+        <div class="topic-icon">${icon(t.icon || 'search', { size: '1.2rem' })}</div>
         <div>
-          <div style="font-weight:700; font-size:0.9rem; color:var(--color-dark-brown);">${t.name}</div>
+          <div style="font-weight:700; font-size:0.88rem; color:#FFFFFF;">${t.name}</div>
           <div style="font-size:0.75rem; color:var(--color-text-muted);">${t.description}</div>
         </div>
       </div>
@@ -527,26 +534,26 @@ class App {
       const rec = topic.recommendation;
       if (!rec) return;
 
-      const varList = rec.variable_names?.map(v => `✓ <b>${v}</b>`).join(' &nbsp; ') || '';
-      const regList = rec.region_names?.map(r => `✓ <b>${r}</b>`).join(' &nbsp; ') || '';
+      const varList = rec.variable_names?.map(v => `<b style="color:var(--color-mint);">${v}</b>`).join(', ') || '';
+      const regList = rec.region_names?.map(r => `<b style="color:var(--color-mint);">${r}</b>`).join(', ') || '';
 
       recContainer.style.display = 'block';
       recContainer.innerHTML = `
         <div class="recommendation-box">
           <div style="flex:1; min-width:280px;">
-            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
-              <span style="font-size:1.25rem;">${topic.icon}</span>
-              <span style="font-weight:800; color:var(--color-green-dark); font-size:1.05rem;">Detective Recommendation for ${topic.name}:</span>
+            <div style="display:flex; align-items:center; gap:0.45rem; margin-bottom:0.35rem;">
+              <span style="color:var(--color-secondary-tan);">${icon(topic.icon || 'search', { size: '1.1rem' })}</span>
+              <span style="font-weight:700; color:#FFFFFF; font-size:0.95rem;">Recommended Focus for ${topic.name}:</span>
             </div>
-            <div style="font-size:0.85rem; color:var(--color-dark-brown); margin:0.3rem 0;">
-              <div><b>Suggested Variables:</b> ${varList}</div>
-              <div style="margin-top:0.2rem;"><b>Suggested Cities:</b> ${regList}</div>
+            <div style="font-size:0.82rem; color:var(--color-text-main); margin:0.3rem 0;">
+              <div><span style="color:var(--color-text-muted);">Suggested Variables:</span> ${varList}</div>
+              <div style="margin-top:0.2rem;"><span style="color:var(--color-text-muted);">Suggested Stations:</span> ${regList}</div>
             </div>
-            <p style="font-size:0.8rem; color:var(--color-text-muted); margin-top:0.4rem; line-height:1.4;">
-              <b>Why?</b> ${rec.reason}
+            <p style="font-size:0.78rem; color:var(--color-text-muted); margin-top:0.35rem; line-height:1.4;">
+              ${rec.reason}
             </p>
           </div>
-          <button class="btn btn-primary" id="btn-launch-topic" style="white-space:nowrap;">
+          <button class="btn btn-secondary btn-sm" id="btn-launch-topic" style="white-space:nowrap;">
             Launch Investigation &rarr;
           </button>
         </div>
@@ -583,15 +590,15 @@ class App {
     grid.innerHTML = this.missions.map(m => `
       <div class="mission-card" data-mission-id="${m.id}">
         <div class="mission-header">
-          <span class="mission-icon">${m.icon || '🔍'}</span>
-          <span class="badge badge-green">${m.result_summary || 'Real Observation'}</span>
+          <span class="mission-icon">${icon(m.icon || 'search', { size: '1.1rem' })}</span>
+          <span class="badge badge-secondary">${m.result_summary || 'Observed Series'}</span>
         </div>
         <h4 class="mission-title">${m.title}</h4>
         <p class="mission-question">"${m.question}"</p>
-        <div class="mission-meta" style="margin-top:auto; padding-top:0.6rem;">
+        <div class="mission-meta">
           <span class="badge">${m.variable_name}</span>
           <span class="badge">${m.region_name}</span>
-          <button class="btn btn-secondary btn-sm" style="margin-left:auto; font-size:0.75rem; padding:0.25rem 0.5rem;">Try Mission &rarr;</button>
+          <button class="btn btn-outline btn-sm" style="margin-left:auto; font-size:0.72rem; padding:0.25rem 0.5rem;">View Case &rarr;</button>
         </div>
       </div>
     `).join('');
@@ -615,24 +622,24 @@ class App {
       <div class="hotspot-card" data-var="${h.variable}" data-reg="${h.region}">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-            <div style="display:flex; align-items:center; gap:0.4rem;">
+            <div style="display:flex; align-items:center; gap:0.45rem;">
               <span class="hotspot-rank-badge">#${h.rank}</span>
-              <span style="font-weight:800; font-size:1rem; color:var(--color-dark-brown);">${h.title}</span>
+              <span style="font-weight:700; font-size:0.92rem; color:#FFFFFF;">${h.title}</span>
             </div>
-            <span style="font-size:1.2rem;">${h.icon || '🌍'}</span>
+            <span style="color:var(--color-secondary-tan);">${icon(h.direction === 'increasing' ? 'trending-up' : 'trending-down', { size: '1rem' })}</span>
           </div>
-          <div style="font-size:0.85rem; font-weight:700; color:${h.direction === 'increasing' ? 'var(--color-green-dark)' : '#D84315'}; margin:0.3rem 0;">
+          <div style="font-size:0.82rem; font-weight:600; color:${h.direction === 'increasing' ? 'var(--color-increasing)' : 'var(--color-decreasing)'}; margin:0.3rem 0;">
             ${h.rate}
           </div>
-          <div style="font-size:0.75rem; color:var(--color-text-muted); margin-bottom:0.5rem;">
+          <div style="font-size:0.75rem; color:var(--color-text-muted); margin-bottom:0.45rem;">
             ${h.significance}
           </div>
-          <p style="font-size:0.75rem; color:var(--color-dark-brown); line-height:1.4;">
+          <p style="font-size:0.75rem; color:var(--color-text-muted); line-height:1.45;">
             ${h.why_it_matters || ''}
           </p>
         </div>
         <button class="btn btn-outline btn-sm" style="margin-top:0.75rem; width:100%;">
-          Investigate Trend &rarr;
+          Examine Series &rarr;
         </button>
       </div>
     `).join('');
@@ -736,7 +743,7 @@ class App {
       history.scrollTop = history.scrollHeight;
 
       const typingId = `typing-${Date.now()}`;
-      history.innerHTML += `<div class="chat-msg chat-bot" id="${typingId}" style="color:var(--color-green-primary); font-style:italic;">✨ Detective AI analyzing dataset...</div>`;
+      history.innerHTML += `<div class="chat-msg chat-bot" id="${typingId}" style="color:var(--color-text-muted); font-style:italic;">Querying observational dataset...</div>`;
       history.scrollTop = history.scrollHeight;
 
       const replyObj = await api.chatAssistant(text);
@@ -746,7 +753,7 @@ class App {
       if (replyObj.analysis_ref?.variable && replyObj.analysis_ref?.region) {
         const v = replyObj.analysis_ref.variable;
         const r = replyObj.analysis_ref.region;
-        botHtml += `<div style="margin-top:8px;"><button class="btn btn-primary btn-sm" id="btn-chart-jump-${Date.now()}" style="font-size:0.75rem; padding:0.35rem 0.75rem; cursor:pointer;">📊 Load ${v.toUpperCase()} in ${r.toUpperCase()} Chart</button></div>`;
+        botHtml += `<div style="margin-top:8px;"><button class="btn btn-secondary btn-sm" id="btn-chart-jump-${Date.now()}" style="font-size:0.75rem; padding:0.35rem 0.75rem; cursor:pointer;">${icon('trending-up')} Load ${v.toUpperCase()} in ${r.toUpperCase()} Chart</button></div>`;
       }
 
       const msgDiv = document.createElement('div');

@@ -92,17 +92,21 @@ The system has been completely restructured to run **exclusively** on the verifi
   - Markdown investigation report.
   - Shareable URL parameters (`?var=pm25&reg=lahore&mode=anomaly`).
 
-### Phase 5: UI Redesign & Monochromatic Deep Forest System
-- **Deep Forest Monochromatic Palette**:
-  - Implemented 6-tone color system: `#051F20` (Obsidian canvas), `#0B2B26` (Forest card surface), `#163832` (Pine border/elevated), `#235347` (Mid forest action), `#8EB69B` (Sage green muted labels/series line), `#DAF1DE` (Mint text highlights/OLS line).
-- **Dashboard Visual Architecture**:
-  - Redesigned card layouts with 14px–20px rounded geometry, subtle borders, ambient backdrop blur, glowing mint and sage accents.
-  - Redesigned status indicators, interactive curiosity topics, and directional contrast cards.
-- **High-Performance Canvas Rendering**:
-  - Time series canvas visualizer updated to dark mode with `#8EB69B` observed series line, `#DAF1DE` glowing OLS fit line, subtle grid lines, and high-contrast dark tooltip.
-- **Leaflet Dark Map Theme**:
-  - Integrated custom dark cartography styling without external API key requirements.
-  - Updated city station markers with glowing directional indicators and significance rings.
+### Phase 6: Professional Non-AI Polish, Cinematic Typography & Secondary Brown System
+- **Cinematic & Professional Typography**:
+  - Main headings set in `Syne` (geometric, cinematic, documentary-grade typeface).
+  - Clean UI text and controls set in `Plus Jakarta Sans`.
+- **Secondary Warm Earth Brown Palette (From Reference Palette)**:
+  - Integrated `#3E2522` (deep espresso brown) for secondary actions, station tags, and dark contrast elements.
+  - Integrated `#D3A376` (warm caramel/tan) for secondary borders, labels, and the climatological baseline chart fit.
+  - Kept primary green `#09201A` / `#0E2B23` / `#245B4D` as the dominant color.
+- **De-AI / Organic Scientific Polish**:
+  - Removed all gradients, glowing shadows, and neon line blurs.
+  - Replaced all emojis across the entire UI, missions, topics, and story outputs with real Lucide SVG icons (`icons.js`).
+  - Flattened nested cards: eliminated boxes inside boxes inside boxes in favor of clean 1px dividers and whitespace.
+  - Matched corner radiuses across the application strictly to 6px (small) and 8px (cards).
+  - Eliminated loop animations (no pulsing status dots or hovering scale bounces).
+  - Toned down typography: removed shouting all-caps labels ("WHAT CHANGED?", "HOW MUCH?") in favor of natural calm casing ("Observed Variable", "Rate of Change", "Statistical Confidence").
 
 ---
 
