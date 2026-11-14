@@ -1,0 +1,40 @@
+{
+  "pm25": {
+    "label": "Particulate Matter (PM2.5)",
+    "unit": "µg/m³",
+    "description": "Fine inhalable atmospheric particles with diameters that are generally 2.5 micrometers and smaller.",
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null
+  },
+  "aod": {
+    "label": "Aerosol Optical Depth",
+    "unit": "dimensionless",
+    "description": "Measure of light extinction by atmospheric aerosol particles (dust, smoke, haze) across the atmospheric column.",
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null
+  },
+  "rain_mm": {
+    "label": "Monthly Rainfall",
+    "unit": "mm/month",
+    "description": "Total monthly accumulated precipitation at the city coordinate.",
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null
+  },
+  "no2": {
+    "label": "Nitrogen Dioxide Column",
+    "unit": "molecules/cm²",
+    "display_scale": 1e15,
+    "display_unit": "×10¹⁵ molecules/cm²",
+    "description": "Tropospheric nitrogen dioxide vertical column density, an indicator of combustion and vehicular/industrial emissions.",
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null
+  }
+}

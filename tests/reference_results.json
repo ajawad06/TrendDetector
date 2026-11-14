@@ -1,0 +1,3250 @@
+{
+  "lahore": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "lahore",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 57.089349000000006,
+        "2": 46.688037249999994,
+        "3": 40.2131504,
+        "4": 39.13478025,
+        "5": 54.2061426,
+        "6": 69.3724761,
+        "7": 77.94776425,
+        "8": 56.99270075,
+        "9": 51.333311300000005,
+        "10": 71.29319075000001,
+        "11": 93.74328765,
+        "12": 76.79524095000002
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.4321570353877686,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -809.5623070355203,
+          "p_value": 0.06918993990696215,
+          "p_value_adjusted": 0.22523260994940378,
+          "ci_95_lower": -0.034222421437899886,
+          "ci_95_upper": 0.8985364922134371,
+          "r_squared": 0.013807448126177735,
+          "total_change": 8.643140707755371,
+          "total_change_pct": 14.114909809558116
+        },
+        "theil_sen": {
+          "slope_per_year": 0.4833976197387565,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.09853556485355648,
+          "p_value": 0.023064103578684048,
+          "z_statistic": 2.272371135527469,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.37821181739102955,
+          "n_eff": 108.27737938617112,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.3346813883782705,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -674.382997582215,
+          "p_value": 0.03213466392765547,
+          "p_value_adjusted": 0.06386675196117769,
+          "ci_95_lower": 0.02878932032410375,
+          "ci_95_upper": 0.6405734564324372,
+          "r_squared": 0.019146015435016484,
+          "total_change": 6.69362776756541,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.3674556383333309,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.11478382147838215,
+          "p_value": 0.008115849835062638,
+          "z_statistic": 2.6472118254941237,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.1424897023447789,
+          "n_eff": 180.13507781722333,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "lahore",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.4215466525,
+        "2": 0.394014455,
+        "3": 0.3801280515,
+        "4": 0.418905875,
+        "5": 0.5496490805,
+        "6": 0.6532440930000001,
+        "7": 0.749023596,
+        "8": 0.5535598294999999,
+        "9": 0.4475170229999999,
+        "10": 0.5267098625000001,
+        "11": 0.6069162464999999,
+        "12": 0.430618972
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0016115692449869315,
+          "slope_unit": "dimensionless/year",
+          "intercept": -2.736325883898667,
+          "p_value": 0.30807053865539236,
+          "p_value_adjusted": 0.4924830600250276,
+          "ci_95_lower": -0.0014964729860664568,
+          "ci_95_upper": 0.00471961147604032,
+          "r_squared": 0.004364873691106164,
+          "total_change": 0.03223138489973863,
+          "total_change_pct": 6.307682748523022
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0018358673384615471,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.05202231520223152,
+          "p_value": 0.2303999139874906,
+          "z_statistic": 1.1993293320606924,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.37067666759367685,
+          "n_eff": 110.19199738963613,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0012685891441170858,
+          "slope_unit": "dimensionless/year",
+          "intercept": -2.556207125395928,
+          "p_value": 0.19307699014553126,
+          "p_value_adjusted": 0.2333964964260533,
+          "ci_95_lower": -0.0006460990917031451,
+          "ci_95_upper": 0.003183277379937317,
+          "r_squared": 0.007107151569686332,
+          "total_change": 0.025371782882341716,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.001337035342857156,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.06046025104602511,
+          "p_value": 0.1633208993704569,
+          "z_statistic": 1.393989089511187,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.08697408606259038,
+          "n_eff": 201.59286422248755,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "lahore",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 39.112082015,
+        "2": 37.165465845,
+        "3": 44.884034105,
+        "4": 27.840239762,
+        "5": 21.53545303,
+        "6": 71.69832373,
+        "7": 193.4734879,
+        "8": 149.4093396,
+        "9": 103.62960194999998,
+        "10": 14.051185020000002,
+        "11": 7.329600467115,
+        "12": 11.923716041499999
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.5215051440326207,
+          "slope_unit": "mm/month/year",
+          "intercept": -990.6618211035961,
+          "p_value": 0.5240755428073333,
+          "p_value_adjusted": 0.6629909414254396,
+          "ci_95_lower": -1.0887252667082792,
+          "ci_95_upper": 2.1317355547735204,
+          "r_squared": 0.001707443449114776,
+          "total_change": 10.430102880652415,
+          "total_change_pct": 17.334089897927477
+        },
+        "theil_sen": {
+          "slope_per_year": 0.09803414712195138,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.012831241283124128,
+          "p_value": 0.7678356381979383,
+          "z_statistic": 0.2952071528278163,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.3573547195079287,
+          "n_eff": 113.62900581655667,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.510992578489926,
+          "slope_unit": "mm/month/year",
+          "intercept": -1029.6500456572007,
+          "p_value": 0.3183676277018935,
+          "p_value_adjusted": 0.3183676277018935,
+          "ci_95_lower": -0.49573988212560727,
+          "ci_95_upper": 1.5177250391054593,
+          "r_squared": 0.004183384288945269,
+          "total_change": 10.21985156979852,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.2690439273212842,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.033821478382147836,
+          "p_value": 0.4357185613626815,
+          "z_statistic": 0.7794434089649973,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": -0.030482426071324422,
+          "n_eff": 240.0,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "lahore",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 7305851190000000.0,
+        "2": 5839186600000000.0,
+        "3": 4747310180000000.0,
+        "4": 4377926555000000.0,
+        "5": 6242535790000000.0,
+        "6": 5267824755000000.0,
+        "7": 3912583280000000.0,
+        "8": 3739848250000000.0,
+        "9": 4375223445000000.0,
+        "10": 5838192810000000.0,
+        "11": 7207466200000000.0,
+        "12": 7923565465000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 20294270513376.805,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -3.5328162207787596e+16,
+          "p_value": 0.28379348051511805,
+          "p_value_adjusted": 0.6269245783611509,
+          "ci_95_lower": -16921383331583.023,
+          "ci_95_upper": 57509924358336.63,
+          "r_squared": 0.0048254983824910225,
+          "total_change": 405885410267536.1,
+          "total_change_pct": 7.29380983736924
+        },
+        "theil_sen": {
+          "slope_per_year": 19811798540145.47,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.046443514644351466,
+          "p_value": 0.2843364288354282,
+          "z_statistic": 1.0706286659777207,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.6475674678025793,
+          "n_eff": 51.33860031856143,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 18432911928332.094,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -3.714231753558917e+16,
+          "p_value": 0.1084661020449167,
+          "p_value_adjusted": 0.4538382645883,
+          "ci_95_lower": -4104930840250.621,
+          "ci_95_upper": 40970754696914.81,
+          "r_squared": 0.010789449771672621,
+          "total_change": 368658238566641.9,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 25401081417224.14,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.08695955369595537,
+          "p_value": 0.04492914147874316,
+          "z_statistic": 2.0053172534053028,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.631455587384588,
+          "n_eff": 54.21579337596038,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    }
+  },
+  "karachi": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "karachi",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 49.86771304999999,
+        "2": 44.3969149,
+        "3": 44.976002,
+        "4": 48.3193654,
+        "5": 53.36800715,
+        "6": 58.18082155,
+        "7": 60.13364355,
+        "8": 44.526934399999995,
+        "9": 36.398131049999996,
+        "10": 38.6924303,
+        "11": 52.4420018,
+        "12": 54.995978050000005
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.19791238214552384,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -349.9352880898972,
+          "p_value": 0.13300082779812547,
+          "p_value_adjusted": 0.2971380829679582,
+          "ci_95_lower": -0.06071165391039965,
+          "ci_95_upper": 0.4565364182014473,
+          "r_squared": 0.00945862773924877,
+          "total_change": 3.958247642910477,
+          "total_change_pct": 8.101507478548788
+        },
+        "theil_sen": {
+          "slope_per_year": 0.17472100499999765,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.06080892608089261,
+          "p_value": 0.16090542805265584,
+          "z_statistic": 1.4020328811413727,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.34500834775500083,
+          "n_eff": 116.87510847139674,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.19784413854407198,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -398.6559391663051,
+          "p_value": 0.05985851355187257,
+          "p_value_adjusted": 0.15460793092631858,
+          "ci_95_lower": -0.008279318271071617,
+          "ci_95_upper": 0.40396759535921556,
+          "r_squared": 0.014800053079609299,
+          "total_change": 3.95688277088144,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.22096043242574154,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.10390516039051603,
+          "p_value": 0.016563990686996544,
+          "z_statistic": 2.396245526632329,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.2685425899652693,
+          "n_eff": 138.38698030086763,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "karachi",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.31003010599999997,
+        "2": 0.2837932715,
+        "3": 0.3397073005,
+        "4": 0.404640941,
+        "5": 0.486756938,
+        "6": 0.6068648825,
+        "7": 0.7342285640000001,
+        "8": 0.579861189,
+        "9": 0.4248908940000001,
+        "10": 0.34635059300000004,
+        "11": 0.3864700545,
+        "12": 0.311463857
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0002923046425458989,
+          "slope_unit": "dimensionless/year",
+          "intercept": -0.15440563881331953,
+          "p_value": 0.8652428740723455,
+          "p_value_adjusted": 0.9418986283098402,
+          "ci_95_lower": -0.0030972002167021892,
+          "ci_95_upper": 0.0036818095017939873,
+          "r_squared": 0.00012125330727352779,
+          "total_change": 0.005846092850917977,
+          "total_change_pct": 1.3452028004456935
+        },
+        "theil_sen": {
+          "slope_per_year": 0.00033865903355704516,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.011366806136680613,
+          "p_value": 0.7937661463364825,
+          "z_statistic": 0.26142322798103623,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.6765400092096266,
+          "n_eff": 46.303933913445356,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.00013664656983628157,
+          "slope_unit": "dimensionless/year",
+          "intercept": -0.27534283822010736,
+          "p_value": 0.8688462380980827,
+          "p_value_adjusted": 0.918344159523146,
+          "ci_95_lower": -0.001491830144550299,
+          "ci_95_upper": 0.001765123284222862,
+          "r_squared": 0.00011479734803676589,
+          "total_change": 0.0027329313967256316,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0002711422381981378,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.015550906555090655,
+          "p_value": 0.7203816840711015,
+          "z_statistic": 0.357948727543265,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.4369168025521246,
+          "n_eff": 94.04856784155243,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "karachi",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 7.5698281201,
+        "2": 6.1288920765,
+        "3": 6.47242855655,
+        "4": 4.192560274,
+        "5": 1.9861081200000001,
+        "6": 17.6760017475,
+        "7": 85.65635484999999,
+        "8": 109.617618705,
+        "9": 40.33044122,
+        "10": 1.900175936465,
+        "11": 1.825200150165,
+        "12": 7.622280327
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.7200159403880553,
+          "slope_unit": "mm/month/year",
+          "intercept": -1426.5839623749914,
+          "p_value": 0.286467338842483,
+          "p_value_adjusted": 0.4369099421644234,
+          "ci_95_lower": -0.607717322511284,
+          "ci_95_upper": 2.0477492032873945,
+          "r_squared": 0.0047723505417373024,
+          "total_change": 14.400318807761106,
+          "total_change_pct": 59.387270161205564
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0024146989183673508,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.007531380753138075,
+          "p_value": 0.8626893610202884,
+          "z_statistic": 0.17295174093872284,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.30137956015641426,
+          "n_eff": 128.8393568608902,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.6677856306758203,
+          "slope_unit": "mm/month/year",
+          "intercept": -1345.5880458117779,
+          "p_value": 0.22601954043423914,
+          "p_value_adjusted": 0.30174688733581223,
+          "ci_95_lower": -0.416003694289222,
+          "ci_95_upper": 1.7515749556408626,
+          "r_squared": 0.006152498311875698,
+          "total_change": 13.355712613516406,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.02728000000000001,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.0198047419804742,
+          "p_value": 0.6483232313896163,
+          "z_statistic": 0.4560928223322952,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.15578369883807483,
+          "n_eff": 175.3026214875245,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "karachi",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 5379207355000000.0,
+        "2": 4370665070000000.0,
+        "3": 3447277270000000.0,
+        "4": 2486419585000000.0,
+        "5": 1821106730000000.0,
+        "6": 1905182340000000.0,
+        "7": 1664698222500000.0,
+        "8": 1731822965000000.0,
+        "9": 2409213470000000.0,
+        "10": 3558585400000000.0,
+        "11": 4701750080000000.0,
+        "12": 5172849130000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 12848261937967.705,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -2.2668516336879924e+16,
+          "p_value": 0.42485976833888633,
+          "p_value_adjusted": 0.7927235576704675,
+          "ci_95_lower": -18814318607225.93,
+          "ci_95_upper": 44510842483161.34,
+          "r_squared": 0.002677805223453511,
+          "total_change": 256965238759354.1,
+          "total_change_pct": 7.978474495700522
+        },
+        "theil_sen": {
+          "slope_per_year": 10651813846153.883,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.03793584379358438,
+          "p_value": 0.3819221518301523,
+          "z_statistic": 0.8743601502011888,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.7893961610881073,
+          "n_eff": 28.246915042065687,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 12786321744127.502,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -2.5764438314416916e+16,
+          "p_value": 0.02173624527558302,
+          "p_value_adjusted": 0.1339086363348424,
+          "ci_95_lower": 1882772220540.5293,
+          "ci_95_upper": 23689871267714.477,
+          "r_squared": 0.021931684890715286,
+          "total_change": 255726434882550.03,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 13594054713474.402,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.11046025104602511,
+          "p_value": 0.010850755262563627,
+          "z_statistic": 2.547468809279821,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.3961341437466702,
+          "n_eff": 103.80650466141485,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    }
+  },
+  "islamabad": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "islamabad",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 31.923042599999995,
+        "2": 31.3436574,
+        "3": 29.5453413,
+        "4": 26.339363549999995,
+        "5": 29.71366175,
+        "6": 44.28286095,
+        "7": 62.258203550000005,
+        "8": 52.04431655,
+        "9": 41.57292245000001,
+        "10": 36.864001300000005,
+        "11": 36.720450799999995,
+        "12": 30.3454657
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.36339588739388073,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -694.4966057736697,
+          "p_value": 0.017142384648080572,
+          "p_value_adjusted": 0.15241624522200442,
+          "ci_95_lower": 0.0651711087396375,
+          "ci_95_upper": 0.661620666048124,
+          "r_squared": 0.023639065927428815,
+          "total_change": 7.267917747877615,
+          "total_change_pct": 19.254747742064325
+        },
+        "theil_sen": {
+          "slope_per_year": 0.28911606521736943,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.10306834030683402,
+          "p_value": 0.017456907239693287,
+          "z_statistic": 2.3769404267198833,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.4629616932903689,
+          "n_eff": 88.10155057472824,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.3380409142658727,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -681.1524422457335,
+          "p_value": 0.0007495726003956163,
+          "p_value_adjusted": 0.005909455943926161,
+          "ci_95_lower": 0.14304185310832396,
+          "ci_95_upper": 0.5330399754234214,
+          "r_squared": 0.04671369284524873,
+          "total_change": 6.760818285317454,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.30456511896551586,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.1524407252440725,
+          "p_value": 0.00043819781950604764,
+          "z_statistic": 3.5159413215541826,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.19732359460319832,
+          "n_eff": 160.8941293427659,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "significant",
+          "direction": "increasing"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "islamabad",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.308268632,
+        "2": 0.32965383299999995,
+        "3": 0.3218868455,
+        "4": 0.3147706645,
+        "5": 0.33501792249999995,
+        "6": 0.422731812,
+        "7": 0.5516897304999999,
+        "8": 0.472721677,
+        "9": 0.3798365915,
+        "10": 0.31727531999999997,
+        "11": 0.31920462950000006,
+        "12": 0.24303315649999999
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.001471092696314196,
+          "slope_unit": "dimensionless/year",
+          "intercept": -2.6045775485314384,
+          "p_value": 0.22291496509467384,
+          "p_value_adjusted": 0.4328188072927928,
+          "ci_95_lower": -0.0009004421556997393,
+          "ci_95_upper": 0.0038426275483281315,
+          "r_squared": 0.006235223232924136,
+          "total_change": 0.02942185392628392,
+          "total_change_pct": 8.180139443064698
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0012904207026578046,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.04951185495118549,
+          "p_value": 0.2536976679900147,
+          "z_statistic": 1.141414032323355,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.4081886032017835,
+          "n_eff": 100.86343186461605,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0014686462917064536,
+          "slope_unit": "dimensionless/year",
+          "intercept": -2.959322277788504,
+          "p_value": 0.06399685998868836,
+          "p_value_adjusted": 0.09198863816189258,
+          "ci_95_lower": -8.612041132888791e-05,
+          "ci_95_upper": 0.003023412994741795,
+          "r_squared": 0.014340953493858999,
+          "total_change": 0.029372925834129072,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0014567449985970105,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.08193863319386332,
+          "p_value": 0.05882664941750693,
+          "z_statistic": 1.889486653930628,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.09325496129040586,
+          "n_eff": 199.05586253497512,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "islamabad",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 79.99190910000002,
+        "2": 110.29298754999999,
+        "3": 126.85795875,
+        "4": 95.3168426,
+        "5": 60.32054700000001,
+        "6": 89.35668255,
+        "7": 240.3495847,
+        "8": 198.82991529999998,
+        "9": 114.46020345000002,
+        "10": 42.796742828999996,
+        "11": 38.92788250299999,
+        "12": 30.653916410000004
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -0.3863213213594495,
+          "slope_unit": "mm/month/year",
+          "intercept": 880.7837269344575,
+          "p_value": 0.6857176046935207,
+          "p_value_adjusted": 0.7577000777063616,
+          "ci_95_lower": -2.264665412555889,
+          "ci_95_upper": 1.4920227698369897,
+          "r_squared": 0.0006892788423741303,
+          "total_change": -7.72642642718899,
+          "total_change_pct": -7.549299891744631
+        },
+        "theil_sen": {
+          "slope_per_year": -0.20063888198757684,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": -0.01304044630404463,
+          "p_value": 0.7641516578341931,
+          "z_statistic": -0.30003342780592773,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.26140280269577437,
+          "n_eff": 140.52872482460037,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -0.2705698779149637,
+          "slope_unit": "mm/month/year",
+          "intercept": 545.1983039986518,
+          "p_value": 0.6849006826103038,
+          "p_value_adjusted": 0.6849006826103038,
+          "ci_95_lower": -1.582510910517963,
+          "ci_95_upper": 1.0413711546880358,
+          "r_squared": 0.0006930690602147127,
+          "total_change": -5.4113975582992735,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": -0.03780629433310863,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": -0.0020920502092050207,
+          "p_value": 0.9621479083610682,
+          "z_statistic": -0.04745837061809581,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": -0.0015523517618752493,
+          "n_eff": 240.0,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "islamabad",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 4125919210000000.0,
+        "2": 3673914865000000.0,
+        "3": 3152334255000000.0,
+        "4": 2677310150000000.0,
+        "5": 2809632490000000.0,
+        "6": 3063349325000000.0,
+        "7": 2633408110000000.0,
+        "8": 2488940745000000.0,
+        "9": 2669854445000000.0,
+        "10": 3154661970000000.0,
+        "11": 3994413420000000.0,
+        "12": 4484091810000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 51023310051042.414,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -9.956798385326714e+16,
+          "p_value": 4.10148990279477e-08,
+          "p_value_adjusted": 0.020521254232358163,
+          "ci_95_lower": 33298388830664.938,
+          "ci_95_upper": 68748231271419.89,
+          "r_squared": 0.1190349906231376,
+          "total_change": 1020466201020848.2,
+          "total_change_pct": 31.45717128893562
+        },
+        "theil_sen": {
+          "slope_per_year": 48567689658119.32,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.23493723849372386,
+          "p_value": 5.989899665159726e-08,
+          "z_statistic": 5.4191024212561265,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.6851614423327911,
+          "n_eff": 44.83917798138658,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 50459614366221.65,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -1.0167612294793662e+17,
+          "p_value": 1.359894501596297e-17,
+          "p_value_adjusted": 3.298137330106773e-06,
+          "ci_95_lower": 39709783966423.88,
+          "ci_95_upper": 61209444766019.414,
+          "r_squared": 0.26431592764751943,
+          "total_change": 1009192287324433.0,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 50159661584558.81,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.3298465829846583,
+          "p_value": 2.7755575615628914e-14,
+          "z_statistic": 7.608622502992683,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.5337053378268296,
+          "n_eff": 72.96754869493499,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    }
+  },
+  "peshawar": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "peshawar",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 30.3687208,
+        "2": 32.3606836,
+        "3": 31.139794499999994,
+        "4": 27.4702271,
+        "5": 28.544663300000003,
+        "6": 41.52717535000001,
+        "7": 62.696084899999995,
+        "8": 55.782386800000005,
+        "9": 44.62002225,
+        "10": 38.4622163,
+        "11": 36.645047950000006,
+        "12": 28.598790150000003
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.26995048401535005,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -505.765574207597,
+          "p_value": 0.08198490754747682,
+          "p_value_adjusted": 0.3125969969102043,
+          "ci_95_lower": -0.03451340188041807,
+          "ci_95_upper": 0.5744143699111182,
+          "r_squared": 0.012656461107909744,
+          "total_change": 5.399009680307001,
+          "total_change_pct": 14.13921438885044
+        },
+        "theil_sen": {
+          "slope_per_year": 0.2211628017086309,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.07887029288702929,
+          "p_value": 0.06895701518787045,
+          "z_statistic": 1.8187012875849935,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.48813092234052846,
+          "n_eff": 82.5522652570496,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.24297313540860085,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -489.59086784833073,
+          "p_value": 0.0116541773653253,
+          "p_value_adjusted": 0.03937419547483619,
+          "ci_95_lower": 0.054682761382244316,
+          "ci_95_upper": 0.4312635094349574,
+          "r_squared": 0.026434601120295054,
+          "total_change": 4.859462708172017,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.24244151188034024,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.12315202231520223,
+          "p_value": 0.004507637849088697,
+          "z_statistic": 2.8402628246185815,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.19719252235459167,
+          "n_eff": 160.9380204413194,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "significant",
+          "direction": "increasing"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "peshawar",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.27794858850000004,
+        "2": 0.3188466075,
+        "3": 0.32702228899999997,
+        "4": 0.31555566050000006,
+        "5": 0.317934064,
+        "6": 0.40227692349999994,
+        "7": 0.5635578239999999,
+        "8": 0.5061470305,
+        "9": 0.415221242,
+        "10": 0.34947721499999995,
+        "11": 0.326001761,
+        "12": 0.23207839499999997
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.000730014028073429,
+          "slope_unit": "dimensionless/year",
+          "intercept": -1.1083059665262927,
+          "p_value": 0.5712390579581631,
+          "p_value_adjusted": 0.7378789382112113,
+          "ci_95_lower": -0.001806279931921348,
+          "ci_95_upper": 0.003266307988068206,
+          "r_squared": 0.0013490384015087953,
+          "total_change": 0.01460028056146858,
+          "total_change_pct": 4.025750122022328
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0007030208114184454,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.024686192468619247,
+          "p_value": 0.569562416496366,
+          "z_statistic": 0.5686960682541311,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.47481626552059414,
+          "n_eff": 85.46427051410721,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0006319647797357594,
+          "slope_unit": "dimensionless/year",
+          "intercept": -1.2734090311675552,
+          "p_value": 0.4245515213305938,
+          "p_value_adjusted": 0.49275948782647366,
+          "ci_95_lower": -0.0009243784064081993,
+          "ci_95_upper": 0.0021883079658797182,
+          "r_squared": 0.0026813672302151703,
+          "total_change": 0.012639295594715189,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0008052465741089503,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.04693165969316597,
+          "p_value": 0.27930142027503635,
+          "z_statistic": 1.0818899742599808,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.1490615888376826,
+          "n_eff": 177.73217785961964,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "peshawar",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 55.51765693,
+        "2": 100.52743875000002,
+        "3": 109.173823,
+        "4": 95.9799648,
+        "5": 49.33538585000001,
+        "6": 39.915002525000006,
+        "7": 94.13906595,
+        "8": 102.49455825,
+        "9": 50.10372255,
+        "10": 34.1655959445,
+        "11": 35.22420062515,
+        "12": 21.209953235
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -1.4803935486798705,
+          "slope_unit": "mm/month/year",
+          "intercept": 3048.641864624077,
+          "p_value": 0.023010108036150813,
+          "p_value_adjusted": 0.06873373941976219,
+          "ci_95_lower": -2.7549728383517693,
+          "ci_95_upper": -0.20581425900797168,
+          "r_squared": 0.021523767162636154,
+          "total_change": -29.60787097359741,
+          "total_change_pct": -45.10035536669953
+        },
+        "theil_sen": {
+          "slope_per_year": -0.9837482451589621,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": -0.09194560669456067,
+          "p_value": 0.03397703213399206,
+          "z_statistic": -2.1203441596757977,
+          "direction": "decreasing"
+        },
+        "autocorrelation": {
+          "r1": 0.2159323019256805,
+          "n_eff": 154.758819417677,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "decreasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -1.3235313354002605,
+          "slope_unit": "mm/month/year",
+          "intercept": 2666.915640831525,
+          "p_value": 0.016619201030536036,
+          "p_value_adjusted": 0.03266077330140673,
+          "ci_95_lower": -2.4044758047104393,
+          "ci_95_upper": -0.24258686609008162,
+          "r_squared": 0.023862719666849497,
+          "total_change": -26.47062670800521,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": -0.9475316444186941,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": -0.09072524407252441,
+          "p_value": 0.036421504536918725,
+          "z_statistic": -2.0921902030113086,
+          "direction": "decreasing"
+        },
+        "autocorrelation": {
+          "r1": 0.11253779237495565,
+          "n_eff": 191.4460176452387,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "decreasing"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "peshawar",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 2537040660000000.0,
+        "2": 2336679075000000.0,
+        "3": 2087115635000000.0,
+        "4": 1833173110000000.0,
+        "5": 1963476930000000.0,
+        "6": 2195767035000000.0,
+        "7": 2151790365000000.0,
+        "8": 2088099045000000.0,
+        "9": 2171830830000000.0,
+        "10": 2311797700000000.0,
+        "11": 2737780415000000.0,
+        "12": 2905548460000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 45797625696626.586,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -9.000554084036925e+16,
+          "p_value": 2.3999629586514363e-20,
+          "p_value_adjusted": 3.041282507559098e-06,
+          "ci_95_lower": 36908995642014.67,
+          "ci_95_upper": 54686255751238.5,
+          "r_squared": 0.30210295585829283,
+          "total_change": 915952513932531.8,
+          "total_change_pct": 40.23202867085915
+        },
+        "theil_sen": {
+          "slope_per_year": 44262467650642.43,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.4311715481171548,
+          "p_value": 0.0,
+          "z_statistic": 9.946148350724656,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.5838191133012782,
+          "n_eff": 63.064911875888654,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 44624745897671.84,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -8.991886298380877e+16,
+          "p_value": 1.3257003368292761e-34,
+          "p_value_adjusted": 4.040504320410861e-15,
+          "ci_95_lower": 38566328254550.42,
+          "ci_95_upper": 50683163540793.266,
+          "r_squared": 0.469402642100783,
+          "total_change": 892494917953436.9,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 42968042030812.33,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.507810320781032,
+          "p_value": 0.0,
+          "z_statistic": 11.714173751039478,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.41260531067111483,
+          "n_eff": 99.79767481686498,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    }
+  },
+  "quetta": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "quetta",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 17.4655152,
+        "2": 23.9380981,
+        "3": 27.7988113,
+        "4": 28.38011265,
+        "5": 30.28036125,
+        "6": 34.91768245,
+        "7": 47.37352075,
+        "8": 35.96539905,
+        "9": 25.327853299999997,
+        "10": 21.889688,
+        "11": 17.193129950000003,
+        "12": 11.887025825
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -0.016412845187413563,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": 59.939982871388324,
+          "p_value": 0.8881058112169693,
+          "p_value_adjusted": 0.9467785590042911,
+          "ci_95_lower": -0.2459654696500764,
+          "ci_95_upper": 0.21313977927524927,
+          "r_squared": 8.335168276807359e-05,
+          "total_change": -0.32825690374827127,
+          "total_change_pct": -1.2217347187284007
+        },
+        "theil_sen": {
+          "slope_per_year": -0.0038174794063078055,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": -0.0012552301255230125,
+          "p_value": 0.9775399070102271,
+          "z_statistic": -0.028153270705650057,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.621869419618385,
+          "n_eff": 55.95477551635492,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -0.0008727519956943533,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": 1.7585952713241217,
+          "p_value": 0.9868829315359026,
+          "p_value_adjusted": 0.9901310573167319,
+          "ci_95_lower": -0.10534005987988268,
+          "ci_95_upper": 0.10359455588849398,
+          "r_squared": 1.1380667945815048e-06,
+          "total_change": -0.017455039913887065,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.01187366852211973,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.011227336122733612,
+          "p_value": 0.7962481503448255,
+          "z_statistic": 0.2582057113289619,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.27342918510558817,
+          "n_eff": 136.93497652969225,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "quetta",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.10772802705,
+        "2": 0.15719045595,
+        "3": 0.21446810399999996,
+        "4": 0.2534680425,
+        "5": 0.25193134549999996,
+        "6": 0.25612622650000005,
+        "7": 0.3532439085,
+        "8": 0.2831190865,
+        "9": 0.17589585550000003,
+        "10": 0.13499160500000001,
+        "11": 0.10908068940000001,
+        "12": 0.0696093019
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -0.0013531091597076084,
+          "slope_unit": "dimensionless/year",
+          "intercept": 2.9237526775024976,
+          "p_value": 0.17126241825476388,
+          "p_value_adjusted": 0.5660701214056783,
+          "ci_95_lower": -0.0032955435178433218,
+          "ci_95_upper": 0.0005893251984281048,
+          "r_squared": 0.007850502091050982,
+          "total_change": -0.027062183194152167,
+          "total_change_pct": -13.720592135850792
+        },
+        "theil_sen": {
+          "slope_per_year": -0.0012156312661498834,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": -0.05076708507670851,
+          "p_value": 0.2418514263822069,
+          "z_statistic": -1.1703716821920238,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.6884851393132717,
+          "n_eff": 44.27848657005183,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -0.0011858344432785293,
+          "slope_unit": "dimensionless/year",
+          "intercept": 2.3894564032062364,
+          "p_value": 0.0015697631550381052,
+          "p_value_adjusted": 0.023729243489413153,
+          "ci_95_lower": -0.001916229361068856,
+          "ci_95_upper": -0.0004554395254882025,
+          "r_squared": 0.04121007901441176,
+          "total_change": -0.023716688865570587,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": -0.0011660268969574958,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": -0.1306834030683403,
+          "p_value": 0.002578203922732003,
+          "z_statistic": -3.0140087238305933,
+          "direction": "decreasing"
+        },
+        "autocorrelation": {
+          "r1": 0.3185885638392352,
+          "n_eff": 124.0256052292916,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "decreasing"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "quetta",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 35.040913435,
+        "2": 42.748119055000004,
+        "3": 43.0005979425,
+        "4": 30.59676195,
+        "5": 12.6416767,
+        "6": 8.834040342,
+        "7": 22.370966075,
+        "8": 37.19107177005,
+        "9": 7.294320249515001,
+        "10": 3.14786415005,
+        "11": 11.808360885,
+        "12": 10.547316910000001
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.20593888769979418,
+          "slope_unit": "mm/month/year",
+          "intercept": -392.8650245930757,
+          "p_value": 0.5841130591024533,
+          "p_value_adjusted": 0.6636744427543813,
+          "ci_95_lower": -0.5341997998406408,
+          "ci_95_upper": 0.9460775752402292,
+          "r_squared": 0.0012608109062719475,
+          "total_change": 4.118777753995884,
+          "total_change_pct": 18.635456818917564
+        },
+        "theil_sen": {
+          "slope_per_year": -0.046738811751372546,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": -0.02290794979079498,
+          "p_value": 0.5977212492068764,
+          "z_statistic": -0.5276802991995859,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.2233037345368242,
+          "n_eff": 152.3800659218464,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.2951262297798359,
+          "slope_unit": "mm/month/year",
+          "intercept": -594.6793530063693,
+          "p_value": 0.38628492565315875,
+          "p_value_adjusted": 0.4645001684750555,
+          "ci_95_lower": -0.3747045447039474,
+          "ci_95_upper": 0.9649570042636191,
+          "r_squared": 0.003155442130180708,
+          "total_change": 5.902524595596717,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.14787114710614474,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.04850069735006973,
+          "p_value": 0.26352544573012837,
+          "z_statistic": 1.1180972853454205,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.16564540162189492,
+          "n_eff": 171.78903921563236,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "quetta",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 700122441000000.0,
+        "2": 686547396000000.0,
+        "3": 758738644500000.0,
+        "4": 845801705500000.0,
+        "5": 763546038000000.0,
+        "6": 971762628500000.0,
+        "7": 1094550044000000.0,
+        "8": 1100619391500000.0,
+        "9": 936484960000000.0,
+        "10": 664392491000000.0,
+        "11": 720367353000000.0,
+        "12": 733144787000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 5718699372662.703,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -1.0691839412582012e+16,
+          "p_value": 0.0034905468167182358,
+          "p_value_adjusted": 0.11862698952027194,
+          "ci_95_lower": 1900307987994.963,
+          "ci_95_upper": 9537090757330.443,
+          "r_squared": 0.03528420925540132,
+          "total_change": 114373987453254.06,
+          "total_change_pct": 13.757790044829207
+        },
+        "theil_sen": {
+          "slope_per_year": 4805444771151.138,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.11241283124128312,
+          "p_value": 0.009527729163490983,
+          "z_statistic": 2.592514042408861,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.5469259432670333,
+          "n_eff": 70.29281142332067,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 5552589604125.072,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -1.118846805231202e+16,
+          "p_value": 2.290352761222173e-08,
+          "p_value_adjusted": 5.634616582612562e-06,
+          "ci_95_lower": 3661215232984.0107,
+          "ci_95_upper": 7443963975266.134,
+          "r_squared": 0.12321824204275289,
+          "total_change": 111051792082501.44,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 5177033004447.322,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.23437935843793584,
+          "p_value": 6.436428856559928e-08,
+          "z_statistic": 5.4062323546478295,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.20235803356417645,
+          "n_eff": 159.21553031681037,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "significant",
+          "direction": "increasing"
+        }
+      }
+    }
+  },
+  "faisalabad": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "faisalabad",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 60.40645905,
+        "2": 47.852586650000006,
+        "3": 42.925415050000005,
+        "4": 43.05693785,
+        "5": 57.99426855,
+        "6": 76.080282,
+        "7": 81.46512,
+        "8": 59.9845577,
+        "9": 50.4298175,
+        "10": 75.15370845000001,
+        "11": 106.64434775,
+        "12": 83.26122135
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.2880277657216285,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -514.9380544374148,
+          "p_value": 0.2889964841873417,
+          "p_value_adjusted": 0.4566842326058948,
+          "ci_95_lower": -0.24590560952978285,
+          "ci_95_upper": 0.8219611409730398,
+          "r_squared": 0.004722653084993533,
+          "total_change": 5.760555314432571,
+          "total_change_pct": 8.80308794653691
+        },
+        "theil_sen": {
+          "slope_per_year": 0.34337606052253156,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.06778242677824267,
+          "p_value": 0.1180740678091814,
+          "z_statistic": 1.5629087137450874,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.335075013633055,
+          "n_eff": 119.53035979139963,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.17819810971718258,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -359.0691910801229,
+          "p_value": 0.30670377944366783,
+          "p_value_adjusted": 0.3417168318787261,
+          "ci_95_lower": -0.16449965508122133,
+          "ci_95_upper": 0.5208958745155865,
+          "r_squared": 0.004389554423073316,
+          "total_change": 3.5639621943436515,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.23375794287683407,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.06624825662482567,
+          "p_value": 0.12663274409912928,
+          "z_statistic": 1.5275160305722701,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.07146270777158763,
+          "n_eff": 207.98572691185578,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "faisalabad",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.4236384715,
+        "2": 0.393018604,
+        "3": 0.39624721999999996,
+        "4": 0.44961298349999995,
+        "5": 0.5672403305,
+        "6": 0.6919042455000001,
+        "7": 0.7879117274999999,
+        "8": 0.5890449910000001,
+        "9": 0.46272545749999994,
+        "10": 0.5421020585,
+        "11": 0.6737673805,
+        "12": 0.452619876
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0009649813986701536,
+          "slope_unit": "dimensionless/year",
+          "intercept": -1.4086180728203597,
+          "p_value": 0.5789095287561467,
+          "p_value_adjusted": 0.7118145161002934,
+          "ci_95_lower": -0.0024556648551430802,
+          "ci_95_upper": 0.004385627652483387,
+          "r_squared": 0.0012960020712016185,
+          "total_change": 0.019299627973403073,
+          "total_change_pct": 3.6018901769034577
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0011034906709061966,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.02894002789400279,
+          "p_value": 0.5048805194120451,
+          "z_statistic": 0.666830326142397,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.3803722896956605,
+          "n_eff": 107.732277432075,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0005385675226306014,
+          "slope_unit": "dimensionless/year",
+          "intercept": -1.085213558100662,
+          "p_value": 0.6074033256127926,
+          "p_value_adjusted": 0.650705624898774,
+          "ci_95_lower": -0.001523701313883331,
+          "ci_95_upper": 0.0026008363591445336,
+          "r_squared": 0.0011108474213245012,
+          "total_change": 0.010771350452612028,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0006619902518796979,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.0301255230125523,
+          "p_value": 0.4875698240146469,
+          "z_statistic": 0.6941792176850285,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.12425066046026868,
+          "n_eff": 186.95105004740475,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "faisalabad",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 26.183592741999995,
+        "2": 31.1149944505,
+        "3": 47.405450955000006,
+        "4": 28.623600864999997,
+        "5": 23.46836491,
+        "6": 53.435522819999996,
+        "7": 131.50758775,
+        "8": 97.3989045,
+        "9": 70.4923216,
+        "10": 10.614276430015,
+        "11": 5.182920432,
+        "12": 8.327592407500001
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.2206861428665885,
+          "slope_unit": "mm/month/year",
+          "intercept": -400.20298372100785,
+          "p_value": 0.690047154893891,
+          "p_value_adjusted": 0.7772721088622312,
+          "ci_95_lower": -0.8681509772492046,
+          "ci_95_upper": 1.3095232629823816,
+          "r_squared": 0.0006693924852693156,
+          "total_change": 4.41372285733177,
+          "total_change_pct": 9.9230286183242
+        },
+        "theil_sen": {
+          "slope_per_year": 0.051808269230768506,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.009972105997210599,
+          "p_value": 0.8186751587469066,
+          "z_statistic": 0.2292492975487827,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.3259736028506974,
+          "n_eff": 121.99815665112244,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.23924225711987704,
+          "slope_unit": "mm/month/year",
+          "intercept": -482.07314809655225,
+          "p_value": 0.5136698947236731,
+          "p_value_adjusted": 0.5136698947236731,
+          "ci_95_lower": -0.4812786525980144,
+          "ci_95_upper": 0.9597631668377684,
+          "r_squared": 0.0017945266121573988,
+          "total_change": 4.784845142397541,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.1499921159949075,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.02482566248256625,
+          "p_value": 0.5673802694159256,
+          "z_statistic": 0.5719139549494311,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": -0.010402570981425344,
+          "n_eff": 240.0,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "faisalabad",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 4099420405000000.0,
+        "2": 3612092615000000.0,
+        "3": 3097213775000000.0,
+        "4": 3158649370000000.0,
+        "5": 4049651555000000.0,
+        "6": 3780777985000000.0,
+        "7": 3171871360000000.0,
+        "8": 2831271780000000.0,
+        "9": 2951826465000000.0,
+        "10": 3513334840000000.0,
+        "11": 4188606105000000.0,
+        "12": 4616431230000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 37220863004392.35,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -7.141077666343393e+16,
+          "p_value": 2.0449329550495823e-05,
+          "p_value_adjusted": 0.026422828556247394,
+          "ci_95_lower": 20353604799482.117,
+          "ci_95_upper": 54088121209302.586,
+          "r_squared": 0.07356107009432411,
+          "total_change": 744417260087847.0,
+          "total_change_pct": 20.74011871674694
+        },
+        "theil_sen": {
+          "slope_per_year": 37392517727272.58,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.19581589958158996,
+          "p_value": 6.284371091513918e-06,
+          "z_statistic": 4.5165890003492875,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.5635524470898321,
+          "n_eff": 66.99321976272802,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 36336428122016.016,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -7.321790266586227e+16,
+          "p_value": 7.343352011580093e-09,
+          "p_value_adjusted": 0.0022493025954047133,
+          "ci_95_lower": 24403618889569.93,
+          "ci_95_upper": 48269237354462.1,
+          "r_squared": 0.13133979913572424,
+          "total_change": 726728562440320.2,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 42007648434482.95,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.2691771269177127,
+          "p_value": 5.332188024453899e-10,
+          "z_statistic": 6.209002759340365,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.5544849797348812,
+          "n_eff": 68.78394211429719,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    }
+  },
+  "multan": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "multan",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 66.50231744999999,
+        "2": 50.765783549999995,
+        "3": 46.545497,
+        "4": 48.637170350000005,
+        "5": 64.15404140000001,
+        "6": 84.88789825,
+        "7": 88.14602084999999,
+        "8": 65.55030675,
+        "9": 49.14748715,
+        "10": 68.97492175000001,
+        "11": 102.4981305,
+        "12": 87.87143700000001
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.349072232229727,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -634.7404636095665,
+          "p_value": 0.18863536086149865,
+          "p_value_adjusted": 0.3720200467256633,
+          "ci_95_lower": -0.17251688149340821,
+          "ci_95_upper": 0.8706613459528623,
+          "r_squared": 0.007250378034046379,
+          "total_change": 6.98144464459454,
+          "total_change_pct": 10.171089841164687
+        },
+        "theil_sen": {
+          "slope_per_year": 0.3373792280895184,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.06520223152022316,
+          "p_value": 0.1327398811213314,
+          "z_statistic": 1.503384655681713,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.3635900602720751,
+          "n_eff": 112.01195284763686,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.2586898387680342,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -521.260025117589,
+          "p_value": 0.1404910358198951,
+          "p_value_adjusted": 0.23334838406978972,
+          "ci_95_lower": -0.08590168044447577,
+          "ci_95_upper": 0.6032813579805442,
+          "r_squared": 0.009105926762073113,
+          "total_change": 5.1737967753606835,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.23855479929612156,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.06680613668061366,
+          "p_value": 0.12346626825292284,
+          "z_statistic": 1.5403860971805674,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.2067376082047479,
+          "n_eff": 157.76667001709797,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "multan",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.433038449,
+        "2": 0.390899532,
+        "3": 0.4103577675,
+        "4": 0.47908294000000007,
+        "5": 0.5781289135,
+        "6": 0.715370245,
+        "7": 0.8019667054999999,
+        "8": 0.593788236,
+        "9": 0.451360329,
+        "10": 0.49471231400000004,
+        "11": 0.620289908,
+        "12": 0.4522985564999999
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0010440369253285993,
+          "slope_unit": "dimensionless/year",
+          "intercept": -1.5686265798704608,
+          "p_value": 0.5505223057795355,
+          "p_value_adjusted": 0.7237264165681853,
+          "ci_95_lower": -0.002396299158735905,
+          "ci_95_upper": 0.004484373009393103,
+          "r_squared": 0.0014994281026610157,
+          "total_change": 0.020880738506571985,
+          "total_change_pct": 3.902155330952069
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0011163325842696455,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.03472803347280335,
+          "p_value": 0.4235038321674742,
+          "z_statistic": 0.8003572672034801,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.47344193232780934,
+          "n_eff": 85.76784294558153,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0007459257325995247,
+          "slope_unit": "dimensionless/year",
+          "intercept": -1.5030403511880424,
+          "p_value": 0.48617205466293495,
+          "p_value_adjusted": 0.6135775981064155,
+          "ci_95_lower": -0.0013608331569757316,
+          "ci_95_upper": 0.0028526846221747807,
+          "r_squared": 0.0020399616884172467,
+          "total_change": 0.014918514651990494,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0005891814228886054,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.02510460251046025,
+          "p_value": 0.5630287764151649,
+          "z_statistic": 0.578348618210354,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.30657486537910317,
+          "n_eff": 127.37274894747637,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "multan",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 12.057264311050002,
+        "2": 25.555537275,
+        "3": 41.463494975,
+        "4": 21.939840575,
+        "5": 16.8713161075,
+        "6": 37.443241735,
+        "7": 71.33509579999999,
+        "8": 66.4916558,
+        "9": 29.558161235,
+        "10": 6.944868305499999,
+        "11": 3.4027202461000003,
+        "12": 8.283696302000001
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.342158882856981,
+          "slope_unit": "mm/month/year",
+          "intercept": -661.0045745678875,
+          "p_value": 0.3887351939155281,
+          "p_value_adjusted": 0.5231257367886462,
+          "ci_95_lower": -0.43844477855417735,
+          "ci_95_upper": 1.1227625442681393,
+          "r_squared": 0.003123081821327034,
+          "total_change": 6.84317765713962,
+          "total_change_pct": 24.057090792312987
+        },
+        "theil_sen": {
+          "slope_per_year": 0.0022288076096180797,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.002615062761506276,
+          "p_value": 0.9525336864628484,
+          "z_statistic": 0.05952533547234462,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.2873894886365666,
+          "n_eff": 132.84753700168298,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.36941670104170565,
+          "slope_unit": "mm/month/year",
+          "intercept": -744.3746525990368,
+          "p_value": 0.24221170494610128,
+          "p_value_adjusted": 0.2930362356734033,
+          "ci_95_lower": -0.25131750321379764,
+          "ci_95_upper": 0.990150905297209,
+          "r_squared": 0.005742065134440422,
+          "total_change": 7.3883340208341135,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.10559843586854828,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": 0.02482566248256625,
+          "p_value": 0.5673788487335063,
+          "z_statistic": 0.5719160518746105,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.1047356864785708,
+          "n_eff": 194.4930700392567,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "multan",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 3814526705000000.0,
+        "2": 3116625030000000.0,
+        "3": 2607338600000000.0,
+        "4": 2882252470000000.0,
+        "5": 3167572390000000.0,
+        "6": 2976323095000000.0,
+        "7": 2663041120000000.0,
+        "8": 2305260795000000.0,
+        "9": 2359881470000000.0,
+        "10": 2707356385000000.0,
+        "11": 3321271125000000.0,
+        "12": 3926064935000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -17175256789874.791,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": 3.759543527493104e+16,
+          "p_value": 0.014073703715637475,
+          "p_value_adjusted": 0.22283083665379277,
+          "ci_95_lower": -30853493695401.85,
+          "ci_95_upper": -3497019884347.7285,
+          "r_squared": 0.02506508662119389,
+          "total_change": -343505135797495.8,
+          "total_change_pct": -11.49887720462651
+        },
+        "theil_sen": {
+          "slope_per_year": -15639867482517.941,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": -0.10285913528591353,
+          "p_value": 0.017686625464529815,
+          "z_statistic": -2.372114151741772,
+          "direction": "decreasing"
+        },
+        "autocorrelation": {
+          "r1": 0.5944822447365558,
+          "n_eff": 61.03815930500171,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "decreasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": -16993669066476.852,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": 3.4242243168950856e+16,
+          "p_value": 6.659738202810845e-05,
+          "p_value_adjusted": 0.02142818392630724,
+          "ci_95_lower": -25239136695127.047,
+          "ci_95_upper": -8748201437826.657,
+          "r_squared": 0.06477496772358826,
+          "total_change": -339873381329537.0,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": -12534525522028.996,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": -0.1380055788005579,
+          "p_value": 0.0014579368812448479,
+          "z_statistic": -3.1829283480644937,
+          "direction": "decreasing"
+        },
+        "autocorrelation": {
+          "r1": 0.4929422855249142,
+          "n_eff": 81.51276352336247,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "decreasing"
+        }
+      }
+    }
+  },
+  "hyderabad": {
+    "pm25": {
+      "variable": "pm25",
+      "region": "hyderabad",
+      "unit": "\u00b5g/m\u00b3",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 59.96883435000001,
+        "2": 52.206536549999996,
+        "3": 53.66594740000001,
+        "4": 59.730071800000005,
+        "5": 65.20917945,
+        "6": 65.4270137,
+        "7": 65.8253245,
+        "8": 49.996411849999994,
+        "9": 41.959980449999996,
+        "10": 44.72321165,
+        "11": 65.45085739999999,
+        "12": 67.10450245000001
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.10389554644525122,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -151.7438701246812,
+          "p_value": 0.48481334474004734,
+          "p_value_adjusted": 0.6475738429684723,
+          "ci_95_lower": -0.18862912191277997,
+          "ci_95_upper": 0.39642021480328243,
+          "r_squared": 0.002052692210548379,
+          "total_change": 2.077910928905024,
+          "total_change_pct": 3.6071300537879436
+        },
+        "theil_sen": {
+          "slope_per_year": 0.09959258461538492,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.029497907949790795,
+          "p_value": 0.49669418729086035,
+          "z_statistic": 0.6797003927506942,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.3945448123265019,
+          "n_eff": 104.19833321757652,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.10379120736818348,
+          "slope_unit": "\u00b5g/m\u00b3/year",
+          "intercept": -209.1392828468897,
+          "p_value": 0.3635370405789779,
+          "p_value_adjusted": 0.5293461322917302,
+          "ci_95_lower": -0.12080085983329503,
+          "ci_95_upper": 0.328383274569662,
+          "r_squared": 0.003470322939959969,
+          "total_change": 2.0758241473636696,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.11411345720139317,
+          "slope_unit": "\u00b5g/m\u00b3/year"
+        },
+        "mann_kendall": {
+          "tau": 0.048744769874476984,
+          "p_value": 0.26113280902551383,
+          "z_statistic": 1.1237176907369466,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.3471437760347952,
+          "n_eff": 116.30940701284297,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "aod": {
+      "variable": "aod",
+      "region": "hyderabad",
+      "unit": "dimensionless",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 0.3542785555,
+        "2": 0.3292581255,
+        "3": 0.3944032635,
+        "4": 0.4798475215000001,
+        "5": 0.550971533,
+        "6": 0.6003302925,
+        "7": 0.7030894015,
+        "8": 0.5591732254999999,
+        "9": 0.425315647,
+        "10": 0.38537825049999996,
+        "11": 0.45341286,
+        "12": 0.35525383950000006
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.0002873228290248376,
+          "slope_unit": "dimensionless/year",
+          "intercept": -0.11306279086004789,
+          "p_value": 0.8510393297973696,
+          "p_value_adjusted": 0.9271306546266141,
+          "ci_95_lower": -0.0027234762920814726,
+          "ci_95_upper": 0.0032981219501311476,
+          "r_squared": 0.00014847713214960478,
+          "total_change": 0.005746456580496752,
+          "total_change_pct": 1.2334291698022302
+        },
+        "theil_sen": {
+          "slope_per_year": 7.307879241516753e-05,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.002789400278940028,
+          "p_value": 0.949331767257382,
+          "z_statistic": 0.06354595387846727,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.6062846166392967,
+          "n_eff": 58.82624475621659,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.00019152424319866674,
+          "slope_unit": "dimensionless/year",
+          "intercept": -0.38592135004531347,
+          "p_value": 0.8295143514532246,
+          "p_value_adjusted": 0.8904727224789519,
+          "ci_95_lower": -0.0015587864256839555,
+          "ci_95_upper": 0.0019418349120812889,
+          "r_squared": 0.00019519999343120542,
+          "total_change": 0.0038304848639733346,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 0.000287348322115399,
+          "slope_unit": "dimensionless/year"
+        },
+        "mann_kendall": {
+          "tau": 0.013877266387726638,
+          "p_value": 0.7494698199642145,
+          "z_statistic": 0.3193385277183735,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.41327963414304714,
+          "n_eff": 99.63554586354147,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "rain_mm": {
+      "variable": "rain_mm",
+      "region": "hyderabad",
+      "unit": "mm/month",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 3.992304323,
+        "2": 3.6529682365000005,
+        "3": 4.737420377015001,
+        "4": 4.632840015049999,
+        "5": 2.8580762424999997,
+        "6": 18.10656124,
+        "7": 70.146557365,
+        "8": 113.43359521,
+        "9": 45.433802355,
+        "10": 1.451544076515,
+        "11": 1.5102000267300002,
+        "12": 4.045500240499999
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.4974048307337103,
+          "slope_unit": "mm/month/year",
+          "intercept": -979.4372864527754,
+          "p_value": 0.4300368327612343,
+          "p_value_adjusted": 0.5873563543231128,
+          "ci_95_lower": -0.7422007533249264,
+          "ci_95_upper": 1.7370104147923469,
+          "r_squared": 0.002618554310459542,
+          "total_change": 9.948096614674206,
+          "total_change_pct": 43.56808854765655
+        },
+        "theil_sen": {
+          "slope_per_year": -0.0008061482905982932,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": -0.0031380753138075313,
+          "p_value": 0.9429273073784286,
+          "z_statistic": -0.07159111972053415,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.35281776533453707,
+          "n_eff": 114.81497382709286,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 0.44052150236047427,
+          "slope_unit": "mm/month/year",
+          "intercept": -887.6508272563557,
+          "p_value": 0.3780831819728422,
+          "p_value_adjusted": 0.4782372952528424,
+          "ci_95_lower": -0.5421951901386705,
+          "ci_95_upper": 1.423238194859619,
+          "r_squared": 0.0032659100618011028,
+          "total_change": 8.810430047209486,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": -0.0010000320142639137,
+          "slope_unit": "mm/month/year"
+        },
+        "mann_kendall": {
+          "tau": -0.0011157601115760112,
+          "p_value": 0.9801061398471631,
+          "z_statistic": -0.02493584010243269,
+          "direction": "no trend"
+        },
+        "autocorrelation": {
+          "r1": 0.21142963193977074,
+          "n_eff": 156.22606822933022,
+          "warning": false
+        },
+        "flags": {
+          "non_linear": true,
+          "high_autocorrelation": false
+        },
+        "verdict": {
+          "tier": "no_trend",
+          "direction": "stable"
+        }
+      }
+    },
+    "no2": {
+      "variable": "no2",
+      "region": "hyderabad",
+      "unit": "molecules/cm\u00b2",
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      },
+      "month_means": {
+        "1": 2300420870000000.0,
+        "2": 2121119280000000.0,
+        "3": 2132838085000000.0,
+        "4": 2179503840000000.0,
+        "5": 2013088100000000.0,
+        "6": 2014601435000000.0,
+        "7": 1729981780000000.0,
+        "8": 1695335310000000.0,
+        "9": 1985533690000000.0,
+        "10": 2205057215000000.0,
+        "11": 2226638075000000.0,
+        "12": 2186443525000000.0
+      },
+      "raw": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 7287359249466.155,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -1.2618148787257636e+16,
+          "p_value": 0.012992531472735411,
+          "p_value_adjusted": 0.13586706244038563,
+          "ci_95_lower": 1551436100034.086,
+          "ci_95_upper": 13023282398898.225,
+          "r_squared": 0.025644745562248605,
+          "total_change": 145747184989323.1,
+          "total_change_pct": 7.054968241376999
+        },
+        "theil_sen": {
+          "slope_per_year": 6182284020023.074,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.09386331938633194,
+          "p_value": 0.030419532277833783,
+          "z_statistic": 2.16458432768298,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.4629240706580215,
+          "n_eff": 88.10998850001596,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      },
+      "anomalies": {
+        "n_observations": 240,
+        "pct_missing": 0.0,
+        "ols": {
+          "slope_per_year": 7496350013715.517,
+          "slope_unit": "molecules/cm\u00b2/year",
+          "intercept": -1.5105145277636766e+16,
+          "p_value": 0.00036218950799253975,
+          "p_value_adjusted": 0.009219091447347545,
+          "ci_95_lower": 3414924913901.372,
+          "ci_95_upper": 11577775113529.66,
+          "r_squared": 0.05213960980960408,
+          "total_change": 149927000274310.34,
+          "total_change_pct": null
+        },
+        "theil_sen": {
+          "slope_per_year": 7770924896907.198,
+          "slope_unit": "molecules/cm\u00b2/year"
+        },
+        "mann_kendall": {
+          "tau": 0.15760111576011157,
+          "p_value": 0.00027799202488010266,
+          "z_statistic": 3.6349894376809315,
+          "direction": "increasing"
+        },
+        "autocorrelation": {
+          "r1": 0.3004258907068296,
+          "n_eff": 129.10984580528634,
+          "warning": true
+        },
+        "flags": {
+          "non_linear": false,
+          "high_autocorrelation": true
+        },
+        "verdict": {
+          "tier": "caution",
+          "direction": "increasing"
+        }
+      }
+    }
+  }
+}

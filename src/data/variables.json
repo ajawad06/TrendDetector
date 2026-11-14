@@ -1,0 +1,58 @@
+[
+  {
+    "id": "pm25",
+    "name": "Particulate Matter (PM2.5)",
+    "unit": "µg/m³",
+    "priority": "P0",
+    "pct_change_ok": true,
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null,
+    "display_scale": 1.0,
+    "display_unit": "µg/m³",
+    "why_it_matters": "Fine particulate matter penetrates deeply into the lungs and bloodstream, driving acute and chronic cardiovascular and respiratory morbidity."
+  },
+  {
+    "id": "aod",
+    "name": "Aerosol Optical Depth",
+    "unit": "dimensionless",
+    "priority": "P0",
+    "pct_change_ok": true,
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null,
+    "display_scale": 1.0,
+    "display_unit": "dimensionless",
+    "why_it_matters": "AOD measures total column atmospheric particles, reflecting urban smog accumulation, dust storms, and regional haze."
+  },
+  {
+    "id": "rain_mm",
+    "name": "Monthly Rainfall",
+    "unit": "mm/month",
+    "priority": "P0",
+    "pct_change_ok": true,
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null,
+    "display_scale": 1.0,
+    "display_unit": "mm/month",
+    "why_it_matters": "Shifts in monsoon and winter rainfall directly determine urban flash flooding, agricultural water security, and drought stress."
+  },
+  {
+    "id": "no2",
+    "name": "Nitrogen Dioxide Column",
+    "unit": "molecules/cm²",
+    "priority": "P0",
+    "pct_change_ok": true,
+    "provider": null,
+    "product": null,
+    "version": null,
+    "citation": null,
+    "display_scale": 1e15,
+    "display_unit": "×10¹⁵ molecules/cm²",
+    "why_it_matters": "Tropospheric NO₂ is a primary byproduct of fossil fuel combustion from traffic and thermal power generation, serving as an urban emission tracer."
+  }
+]

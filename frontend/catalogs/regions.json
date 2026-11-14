@@ -1,122 +1,100 @@
-[
-  {
-    "id": "pakistan",
-    "name": "Pakistan",
-    "boundary_type": "country_polygon",
-    "bbox": { "west": 60.87, "south": 23.63, "east": 77.84, "north": 37.08 },
-    "country": "Pakistan",
-    "available_variables": ["rainfall", "soil_moisture", "aod", "temperature", "ndvi"],
-    "boundary_source": "Natural Earth / GADM",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean using cosine-latitude cell weights over the country polygon.",
-    "subregion_of": null
-  },
-  {
-    "id": "punjab",
-    "name": "Punjab / Lahore Airshed",
-    "boundary_type": "province_boundary",
-    "bbox": { "west": 69.33, "south": 27.70, "east": 75.38, "north": 34.02 },
-    "country": "Pakistan",
-    "available_variables": ["rainfall", "soil_moisture", "aod"],
-    "boundary_source": "GADM Level 1",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over the Punjab province boundary.",
-    "subregion_of": "pakistan"
-  },
-  {
-    "id": "lahore_airshed",
-    "name": "Lahore Metropolitan Airshed",
-    "boundary_type": "bounding_box",
-    "bbox": { "west": 73.80, "south": 31.10, "east": 74.80, "north": 31.80 },
-    "country": "Pakistan",
-    "available_variables": ["aod"],
-    "boundary_source": "Custom bounding box centered on Lahore",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over a 1° × 0.7° box centered on Lahore.",
-    "subregion_of": "punjab"
-  },
-  {
-    "id": "sindh",
-    "name": "Sindh / Karachi Coast",
-    "boundary_type": "province_boundary",
-    "bbox": { "west": 66.00, "south": 23.63, "east": 71.00, "north": 28.50 },
-    "country": "Pakistan",
-    "available_variables": ["rainfall", "soil_moisture"],
-    "boundary_source": "GADM Level 1",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over the Sindh province boundary.",
-    "subregion_of": "pakistan"
-  },
-  {
-    "id": "karachi",
-    "name": "Karachi Metropolitan Region",
-    "boundary_type": "bounding_box",
-    "bbox": { "west": 66.80, "south": 24.70, "east": 67.50, "north": 25.20 },
-    "country": "Pakistan",
-    "available_variables": ["aod"],
-    "boundary_source": "Custom bounding box centered on Karachi",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over a 0.7° × 0.5° box centered on Karachi.",
-    "subregion_of": "sindh"
-  },
-  {
-    "id": "balochistan",
-    "name": "Balochistan",
-    "boundary_type": "province_boundary",
-    "bbox": { "west": 60.87, "south": 24.89, "east": 70.17, "north": 32.10 },
-    "country": "Pakistan",
-    "available_variables": ["rainfall", "soil_moisture", "ndvi"],
-    "boundary_source": "GADM Level 1",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over the Balochistan province boundary.",
-    "subregion_of": "pakistan"
-  },
-  {
-    "id": "indus_basin",
-    "name": "Indus River Basin",
-    "boundary_type": "basin_polygon",
-    "bbox": { "west": 66.00, "south": 23.50, "east": 77.00, "north": 37.00 },
-    "country": "Pakistan",
-    "available_variables": ["rainfall", "soil_moisture", "temperature"],
-    "boundary_source": "HydroSHEDS / HydroBASINS",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over the Indus Basin polygon (extends into India and Afghanistan).",
-    "subregion_of": null
-  },
-  {
-    "id": "northern_pakistan",
-    "name": "Northern Pakistan (Mountains)",
-    "boundary_type": "bounding_box",
-    "bbox": { "west": 70.00, "south": 33.50, "east": 77.00, "north": 37.08 },
-    "country": "Pakistan",
-    "available_variables": ["rainfall", "temperature"],
-    "boundary_source": "Custom bounding box (northern highlands)",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over the northern highlands bounding box.",
-    "subregion_of": "pakistan"
-  },
-  {
-    "id": "southern_pakistan",
-    "name": "Southern Pakistan (Plains & Coast)",
-    "boundary_type": "bounding_box",
-    "bbox": { "west": 63.00, "south": 23.63, "east": 72.00, "north": 28.00 },
-    "country": "Pakistan",
-    "available_variables": ["rainfall", "temperature"],
-    "boundary_source": "Custom bounding box (southern plains and coast)",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over the southern plains and coastline.",
-    "subregion_of": "pakistan"
-  },
-  {
-    "id": "california",
-    "name": "California",
-    "boundary_type": "state_boundary",
-    "bbox": { "west": -124.48, "south": 32.53, "east": -114.13, "north": 42.01 },
-    "country": "United States",
-    "available_variables": ["soil_moisture"],
-    "boundary_source": "US Census Bureau / Natural Earth",
-    "aggregation_method": "area_weighted_mean",
-    "aggregation_note": "Area-weighted mean over the California state boundary.",
-    "subregion_of": null
-  }
-]
+{
+  "regions": [
+    {
+      "id": "lahore",
+      "name": "Lahore",
+      "lat": 31.52,
+      "lon": 74.36,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "karachi",
+      "name": "Karachi",
+      "lat": 24.86,
+      "lon": 67.01,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "islamabad",
+      "name": "Islamabad",
+      "lat": 33.68,
+      "lon": 73.05,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "peshawar",
+      "name": "Peshawar",
+      "lat": 34.01,
+      "lon": 71.58,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "faisalabad",
+      "name": "Faisalabad",
+      "lat": 31.42,
+      "lon": 73.08,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "multan",
+      "name": "Multan",
+      "lat": 30.2,
+      "lon": 71.47,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "quetta",
+      "name": "Quetta",
+      "lat": 30.18,
+      "lon": 66.98,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "hyderabad",
+      "name": "Hyderabad",
+      "lat": 25.4,
+      "lon": 68.37,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    }
+  ]
+}

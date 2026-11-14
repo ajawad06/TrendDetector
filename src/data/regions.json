@@ -1,0 +1,100 @@
+{
+  "regions": [
+    {
+      "id": "lahore",
+      "name": "Lahore",
+      "lat": 31.52,
+      "lon": 74.36,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "karachi",
+      "name": "Karachi",
+      "lat": 24.86,
+      "lon": 67.01,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "islamabad",
+      "name": "Islamabad",
+      "lat": 33.68,
+      "lon": 73.05,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "peshawar",
+      "name": "Peshawar",
+      "lat": 34.01,
+      "lon": 71.58,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "faisalabad",
+      "name": "Faisalabad",
+      "lat": 31.42,
+      "lon": 73.08,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "multan",
+      "name": "Multan",
+      "lat": 30.2,
+      "lon": 71.47,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "quetta",
+      "name": "Quetta",
+      "lat": 30.18,
+      "lon": 66.98,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    },
+    {
+      "id": "hyderabad",
+      "name": "Hyderabad",
+      "lat": 25.4,
+      "lon": 68.37,
+      "boundary_type": "point",
+      "n_observations": 240,
+      "period": {
+        "start": "2005-01-01",
+        "end": "2024-12-01"
+      }
+    }
+  ]
+}
