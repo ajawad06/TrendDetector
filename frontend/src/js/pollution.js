@@ -45,7 +45,7 @@ class PollutionIndexView {
   render() {
     const m = this.data.meta;
     const header = this.compact ? `<h2 class="gap-top">Pollution index, all cities</h2>
-      <p class="muted">Live now-cast, ranking, and the twenty-year trend. ${fmtDate(m.period[0])} to ${fmtDate(m.period[1])}.</p>` : `
+      <p class="muted">Live now-cast for each city, from the 0–100 Pollution Index. <a href="#/pollution">See the full ranking and twenty-year trend</a>.</p>` : `
       <div class="section-header section-header-green">
         <span class="section-label">Primary Indicator</span>
         <h3 class="section-title">Pakistan Pollution Index (PI)</h3>
@@ -55,9 +55,7 @@ class PollutionIndexView {
       <div class="pi-method"><b>How PI is built.</b> Each variable is scaled 0–100 with fixed bounds (PM2.5 ${m.bounds.pm25.join('–')} µg/m³, NO₂ 0–1.5×10¹⁶ molecules/cm², AOD 0–2). Air = ${m.weights.pm25}·PM2.5 + ${m.weights.no2}·NO₂ + ${m.weights.aod}·AOD; PI = Air × (1 − ${m.rain_max_discount}·min(rain/${m.rain_cap_mm} mm, 1)).
         Tree loss and CO₂ from the original spec were removed because the dataset has no such columns; weights were renormalised, nothing was estimated.
         City rankings stay stable across alternative weight sets (Spearman ρ ${Math.min(...m.weight_set_rank_correlation)}–1.0). ${esc(m.disclaimer)}</div>`;
-    this.root.innerHTML = `
-      ${header}
-      <div class="pi-card"><div class="pi-head"><h4>Live now-cast</h4><small id="pi-live-meta" class="pi-note"></small></div><div id="pi-live" class="pi-live"><small class="pi-note">Loading live data…</small></div></div>
+    const workspace = this.compact ? '' : `
       <div class="pi-grid">
         <div class="pi-card"><h4>Ranking · ${fmtDate(m.period[1])}</h4><div id="pi-rank"></div>
           <div class="pi-legend">${this.cats.map((c, i) => `<span><i style="background:${CAT_COLORS[i]}"></i>${esc(c.name)}</span>`).join('')}</div></div>
@@ -69,7 +67,11 @@ class PollutionIndexView {
           <div class="pi-note">▲ peak and ▼ dip mark months where PI departs from that city’s normal seasonal level by more than ${m.event_threshold_sigma}σ. Chart markers follow the focus city.</div>
           <div id="pi-stats"></div>
         </div>
-      </div>
+      </div>`;
+    this.root.innerHTML = `
+      ${header}
+      <div class="pi-card"><div class="pi-head"><h4>Live now-cast</h4><small id="pi-live-meta" class="pi-note"></small></div><div id="pi-live" class="pi-live"><small class="pi-note">Loading live data…</small></div></div>
+      ${workspace}
       ${this.compact ? '' : `<div class="pi-grid pi-grid-2">
         <div class="pi-card"><h4>Biggest peaks · <span id="pi-f1"></span></h4><div id="pi-peaks" class="pi-events"></div></div>
         <div class="pi-card"><h4>Deepest dips · <span id="pi-f2"></span></h4><div id="pi-dips" class="pi-events"></div></div>
@@ -77,14 +79,15 @@ class PollutionIndexView {
       ${this.compact ? '' : '<div class="pi-card"><h4>Seasonal pattern · average PI by calendar month</h4><div id="pi-heat" class="pi-heat"></div></div>'}
       ${method}`;
 
-    this.renderRanking(); this.renderChips();
-    if (!this.compact) this.renderHeat();
-    this.canvas = this.root.querySelector('#pi-canvas');
-    this.root.querySelector('#pi-focus').addEventListener('change', e => { this.focus = e.target.value; this.compare.add(this.focus); this.refresh(); });
-    this.canvas.addEventListener('mousemove', e => this.onMove(e));
-    this.canvas.addEventListener('mouseleave', () => { this.hover = -1; this.root.querySelector('#pi-tip').style.display = 'none'; this.draw(); });
-    window.addEventListener('resize', () => this.draw());
-    this.refresh();
+    if (!this.compact) {
+      this.renderRanking(); this.renderChips(); this.renderHeat();
+      this.canvas = this.root.querySelector('#pi-canvas');
+      this.root.querySelector('#pi-focus').addEventListener('change', e => { this.focus = e.target.value; this.compare.add(this.focus); this.refresh(); });
+      this.canvas.addEventListener('mousemove', e => this.onMove(e));
+      this.canvas.addEventListener('mouseleave', () => { this.hover = -1; this.root.querySelector('#pi-tip').style.display = 'none'; this.draw(); });
+      window.addEventListener('resize', () => this.draw());
+      this.refresh();
+    }
     this.loadLive();
     setInterval(() => this.loadLive(), 30 * 60 * 1000);
   }

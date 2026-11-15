@@ -2,6 +2,8 @@
   "buildCommand": "echo 'static site, no build needed'",
   "outputDirectory": ".",
   "rewrites": [
-    { "source": "/health", "destination": "/api/health" }
+    { "source": "/health", "destination": "/api/health" },
+    { "source": "/lib/(.*)", "destination": "/__blocked__" },
+    { "source": "/api/(.*)\\.js", "destination": "/__blocked__" }
   ]
 }
