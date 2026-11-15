@@ -40,9 +40,12 @@ export class RegionMap {
         scrollWheelZoom: false
       });
 
-      // OpenStreetMap clean tiles (styled dark via CSS filter)
+      // OpenStreetMap tiles, darkened with a CSS filter on the tile pane only (.tiles-dark in components.css)
+      // so the map matches the dark UI. CARTO Dark Matter was tried first, but its tiles now come back
+      // stamped "API key required" without an account, so the filter approach is used instead.
+      container.classList.add('tiles-dark');
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 18
       }).addTo(this.map);
 
@@ -58,14 +61,17 @@ export class RegionMap {
     // Clear existing
     Object.values(this.markers).forEach(m => m.remove());
     this.markers = {};
+    this.popOrder = {};
+    this.popUntil = performance.now() + 700;   // markers pop in once; icon refreshes inside this window keep the animation
 
-    regions.forEach(city => {
+    regions.forEach((city, order) => {
       if (city.lat === undefined || city.lon === undefined) return;
 
       const cityId = city.id.toLowerCase();
       const trend = this.currentTrends[cityId] || { direction: 'stable', tier: 'no_trend' };
 
-      const markerIcon = this._createMarkerIcon(cityId, trend, cityId === this.activeCityId);
+      this.popOrder[cityId] = order;
+      const markerIcon = this._createMarkerIcon(cityId, trend, cityId === this.activeCityId, order);   // order: staggered pop-in on first render only
       const marker = L.marker([city.lat, city.lon], { icon: markerIcon, title: city.name, alt: city.name, keyboard: true }).addTo(this.map);
 
       const arrow = trend.direction === 'increasing' ? '↑' : trend.direction === 'decreasing' ? '↓' : '→';
@@ -88,23 +94,25 @@ export class RegionMap {
     Object.entries(this.markers).forEach(([cityId, marker]) => {
       const trend = this.currentTrends[cityId] || { direction: 'stable', tier: 'no_trend' };
       const isSelected = cityId === this.activeCityId;
-      marker.setIcon(this._createMarkerIcon(cityId, trend, isSelected));
+      marker.setIcon(this._createMarkerIcon(cityId, trend, isSelected, this._pop(cityId)));
     });
   }
+
+  _pop(cityId) { return performance.now() < (this.popUntil || 0) ? (this.popOrder?.[cityId] ?? -1) : -1; }
 
   setActiveCity(cityId) {
     this.activeCityId = cityId.toLowerCase();
     Object.entries(this.markers).forEach(([id, marker]) => {
       const trend = this.currentTrends[id] || { direction: 'stable', tier: 'no_trend' };
       const isSelected = id === this.activeCityId;
-      marker.setIcon(this._createMarkerIcon(id, trend, isSelected));
+      marker.setIcon(this._createMarkerIcon(id, trend, isSelected, this._pop(id)));
     });
   }
 
-  _createMarkerIcon(cityId, trend, isSelected) {
+  _createMarkerIcon(cityId, trend, isSelected, popOrder = -1) {
     const dir = trend.direction || 'stable';
     const arrow = dir === 'increasing' ? '↑' : dir === 'decreasing' ? '↓' : '→';
-    const html = `<div class="pin pin-${dir}${isSelected ? ' is-selected' : ''}" aria-hidden="true">${arrow}</div>`;
+    const html = `<div class="pin pin-${dir}${isSelected ? ' is-selected' : ''}${popOrder >= 0 ? ' pin-pop' : ''}"${popOrder >= 0 ? ` style="--i:${popOrder}"` : ''} aria-hidden="true">${arrow}</div>`;
     return L.divIcon({
       html,
       className: 'pin-wrap',

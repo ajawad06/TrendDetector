@@ -5,9 +5,9 @@ import { esc as _esc } from './util.js';
  * Data: pollution_index.json, built from the real CSV by
  * scripts/build_pollution_index.py. Nothing is computed from mock values.
  */
-const CAT_COLORS = palette('--cat');
+const CAT_COLORS = palette('--aq');           // five air-quality bands, tokens.css
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const LINE_COLORS = palette('--line');
+const LINE_COLORS = palette('--chart');       // eight-city chart palette, tokens.css
 const PATHS = ['./data/pollution_index.json'];
 
 const catIdx = (v, cats) => Math.max(0, cats.findIndex(c => v <= c.max));
@@ -44,12 +44,12 @@ class PollutionIndexView {
 
   render() {
     const m = this.data.meta;
-    const header = this.compact ? `<h2 class="gap-top">Pollution index, all cities</h2>
-      <p class="muted">Live now-cast for each city, from the 0–100 Pollution Index. <a href="#/pollution">See the full ranking and twenty-year trend</a>.</p>` : `
-      <div class="section-header section-header-green">
-        <span class="section-label">Primary Indicator</span>
-        <h3 class="section-title">Pakistan Pollution Index (PI)</h3>
-        <p class="section-desc">One 0–100 score per city and month, combining PM2.5, NO₂ and aerosol load, softened by rainfall wash-out. Observations ${fmtDate(m.period[0])} – ${fmtDate(m.period[1])}.</p>
+    const header = this.compact ? `<div class="section-head"><h2>Pollution index, all cities</h2>
+      <p>Live now-cast for each city, from the 0–100 Pollution Index. <a href="#/pollution">See the full ranking and twenty-year trend</a>.</p></div>` : `
+      <div class="section-head">
+        <span class="eyebrow">Primary Indicator</span>
+        <h2>Pakistan Pollution Index (PI)</h2>
+        <p>One 0–100 score per city and month, combining PM2.5, NO₂ and aerosol load, softened by rainfall wash-out. Observations ${fmtDate(m.period[0])} – ${fmtDate(m.period[1])}.</p>
       </div>`;
     const method = this.compact ? '' : `
       <div class="pi-method"><b>How PI is built.</b> Each variable is scaled 0–100 with fixed bounds (PM2.5 ${m.bounds.pm25.join('–')} µg/m³, NO₂ 0–1.5×10¹⁶ molecules/cm², AOD 0–2). Air = ${m.weights.pm25}·PM2.5 + ${m.weights.no2}·NO₂ + ${m.weights.aod}·AOD; PI = Air × (1 − ${m.rain_max_discount}·min(rain/${m.rain_cap_mm} mm, 1)).
@@ -57,26 +57,26 @@ class PollutionIndexView {
         City rankings stay stable across alternative weight sets (Spearman ρ ${Math.min(...m.weight_set_rank_correlation)}–1.0). ${esc(m.disclaimer)}</div>`;
     const workspace = this.compact ? '' : `
       <div class="pi-grid">
-        <div class="pi-card"><h4>Ranking · ${fmtDate(m.period[1])}</h4><div id="pi-rank"></div>
+        <div class="pi-card"><h3>Ranking · ${fmtDate(m.period[1])}</h3><div id="pi-rank"></div>
           <div class="pi-legend">${this.cats.map((c, i) => `<span><i style="background:${CAT_COLORS[i]}"></i>${esc(c.name)}</span>`).join('')}</div></div>
         <div class="pi-card pi-wide">
-          <div class="pi-head"><h4>Trend, peaks &amp; dips</h4>
+          <div class="pi-head"><h3>Trend, peaks &amp; dips</h3>
             <label>Focus city <select id="pi-focus" class="form-select">${this.names.map(n => `<option ${n === this.focus ? 'selected' : ''}>${n}</option>`).join('')}</select></label></div>
           <div class="pi-chips" id="pi-chips"></div>
-          <div class="pi-canvas-wrap"><canvas id="pi-canvas"></canvas><div id="pi-tip" class="pi-tip"></div></div>
+          <div class="pi-canvas-wrap"><canvas id="pi-canvas" role="img" aria-label="Pollution Index over time for the selected cities"></canvas><div id="pi-tip" class="pi-tip"></div></div>
           <div class="pi-note">▲ peak and ▼ dip mark months where PI departs from that city’s normal seasonal level by more than ${m.event_threshold_sigma}σ. Chart markers follow the focus city.</div>
           <div id="pi-stats"></div>
         </div>
       </div>`;
     this.root.innerHTML = `
       ${header}
-      <div class="pi-card"><div class="pi-head"><h4>Live now-cast</h4><small id="pi-live-meta" class="pi-note"></small></div><div id="pi-live" class="pi-live"><small class="pi-note">Loading live data…</small></div></div>
+      <div class="pi-card"><div class="pi-head"><h3>Live now-cast</h3><small id="pi-live-meta" class="pi-note"></small></div><div id="pi-live" class="pi-live"><span class="pi-live-skel" role="status" aria-label="Loading live data…">${'<i class="skel"></i>'.repeat(4)}</span></div></div>
       ${workspace}
       ${this.compact ? '' : `<div class="pi-grid pi-grid-2">
-        <div class="pi-card"><h4>Biggest peaks · <span id="pi-f1"></span></h4><div id="pi-peaks" class="pi-events"></div></div>
-        <div class="pi-card"><h4>Deepest dips · <span id="pi-f2"></span></h4><div id="pi-dips" class="pi-events"></div></div>
+        <div class="pi-card"><h3>Biggest peaks · <span id="pi-f1"></span></h3><div id="pi-peaks" class="pi-events"></div></div>
+        <div class="pi-card"><h3>Deepest dips · <span id="pi-f2"></span></h3><div id="pi-dips" class="pi-events"></div></div>
       </div>`}
-      ${this.compact ? '' : '<div class="pi-card"><h4>Seasonal pattern · average PI by calendar month</h4><div id="pi-heat" class="pi-heat"></div></div>'}
+      ${this.compact ? '' : '<div class="pi-card"><h3>Seasonal pattern · average PI by calendar month</h3><div id="pi-heat" class="pi-heat"></div></div>'}
       ${method}`;
 
     if (!this.compact) {
@@ -114,7 +114,7 @@ class PollutionIndexView {
     const past = pts.slice(0, split < 0 ? n : split + 1).map((p, i) => xy(p, i)).join(' ');
     const fut = split < 0 ? '' : pts.slice(split).map((p, i) => xy(p, i + split)).join(' ');
     return `<div class="pi-live-card"><span>${name}</span><b style="color:${this.color(c.pi)}">${c.pi.toFixed(1)}</b><small>${esc(c.category)}</small>
-      <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${past}" fill="none" stroke="${tok('--line-1')}" stroke-width="1.4"/>${fut ? `<polyline points="${fut}" fill="none" stroke="${tok('--series-trend')}" stroke-width="1.4" stroke-dasharray="3 2"/>` : ''}</svg>
+      <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${past}" fill="none" stroke="${tok('--chart-1')}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>${fut ? `<polyline points="${fut}" fill="none" stroke="${tok('--chart-2')}" stroke-width="1.6" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"/>` : ''}</svg>
       <small>PM2.5 ${c.pm25 ?? '–'} µg/m³ · ${DRIVER[c.driver]} is main driver</small></div>`;
   }
 
@@ -170,7 +170,7 @@ class PollutionIndexView {
 
   renderHeat() {
     const names = this.data.ranking_latest.map(r => r.city);
-    this.root.querySelector('#pi-heat').innerHTML = `<div class="pi-heat-grid"><span></span>${MONTHS.map(m => `<span class="pi-hm">${m}</span>`).join('')}
+    this.root.querySelector('#pi-heat').innerHTML = `<div class="pi-heat-grid" role="img" aria-label="Average Pollution Index by city and calendar month"><span></span>${MONTHS.map(m => `<span class="pi-hm">${m}</span>`).join('')}
       ${names.map(n => `<span class="pi-hn">${n}</span>` + this.data.cities[n].seasonal.map((v, i) =>
         `<span class="pi-hc" title="${n}, ${MONTHS[i]}: ${v} (${this.catName(v)})" style="background:${this.color(v)};opacity:${0.35 + 0.65 * Math.min(v / 60, 1)}">${Math.round(v)}</span>`).join('')).join('')}</div>`;
   }
@@ -195,7 +195,7 @@ class PollutionIndexView {
       const hi = Math.min(c.max, g.ymax);
       ctx.fillStyle = CAT_COLORS[i] + '22'; ctx.fillRect(g.pad.l, g.Y(hi), g.w - g.pad.l - g.pad.r, g.Y(lo) - g.Y(hi)); lo = c.max;
     });
-    ctx.font = '11px sans-serif'; ctx.fillStyle = tok('--text-muted'); ctx.textAlign = 'right';
+    ctx.font = `500 11px ${tok('--font-mono', 'monospace')}`; ctx.fillStyle = tok('--text-2'); ctx.textAlign = 'right';
     for (let v = 0; v <= g.ymax; v += 20) ctx.fillText(v, g.pad.l - 6, g.Y(v) + 4);
     ctx.textAlign = 'center';
     const dates = this.data.cities[this.focus].dates;
@@ -210,12 +210,12 @@ class PollutionIndexView {
     const f = this.data.cities[this.focus];             // peak / dip markers
     const mark = (list, up) => list.forEach(e => {
       const i = dates.indexOf(e.month), x = g.X(i), y = g.Y(f.pi[i]), d = up ? -9 : 9;
-      ctx.fillStyle = up ? tok('--up') : tok('--down'); ctx.beginPath();
+      ctx.fillStyle = up ? tok('--trend-up') : tok('--trend-down'); ctx.beginPath();
       ctx.moveTo(x, y + d); ctx.lineTo(x - 4.5, y + d + (up ? -7 : 7)); ctx.lineTo(x + 4.5, y + d + (up ? -7 : 7)); ctx.fill();
     });
     mark(f.peaks, true); mark(f.dips, false);
     if (this.hover >= 0) {
-      ctx.strokeStyle = tok('--text'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(g.X(this.hover), g.pad.t); ctx.lineTo(g.X(this.hover), g.h - g.pad.b); ctx.stroke();
+      ctx.strokeStyle = tok('--text-3'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(g.X(this.hover), g.pad.t); ctx.lineTo(g.X(this.hover), g.h - g.pad.b); ctx.stroke();
     }
   }
 
