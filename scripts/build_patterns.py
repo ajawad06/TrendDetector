@@ -84,7 +84,7 @@ def weekend():
 
 out = {"patterns": [weekend(), burning(), washout(), winter_no2(), summer_haze()],
        "source": "data/raw/pk_city_monthly_final.csv", "period": ["2005-01", "2024-12"]}
-for rel in ["frontend/data", "frontend/public/data", "public/data"]:
+for rel in ["frontend/data"]:
     os.makedirs(os.path.join(ROOT, rel), exist_ok=True)
     json.dump(out, open(os.path.join(ROOT, rel, "patterns.json"), "w"), separators=(",", ":"))
 for p in out["patterns"]: print(f"{p['status']:<32} {p['title']}")

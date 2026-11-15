@@ -1,7 +1,7 @@
 """
 Trend Detector — Data Service
 Loads real observation series and catalog data.
-Strict single source of truth: reads from public/data/series.json.
+Strict single source of truth: reads from frontend/data/series.json.
 """
 
 import json
@@ -86,16 +86,16 @@ class DataService:
                 return t
         return None
 
-    # ── Time Series Data from public/data/series.json ──
+    # ── Time Series Data from frontend/data/series.json ──
 
     def _load_series_json(self) -> Optional[Dict[str, Any]]:
         if self._series_cache is not None:
             return self._series_cache
 
         possible_paths = [
-            Path(__file__).resolve().parent.parent.parent / "public" / "data" / "series.json",
+            Path(__file__).resolve().parent.parent.parent / "frontend" / "data" / "series.json",
             Path(__file__).resolve().parent.parent / "data" / "series.json",
-            Path(os.getcwd()) / "public" / "data" / "series.json"
+            Path(os.getcwd()) / "frontend" / "data" / "series.json"
         ]
 
         for p in possible_paths:

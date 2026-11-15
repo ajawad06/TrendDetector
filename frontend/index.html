@@ -2,343 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trend Detector — NASA Earth System Trend Detective</title>
-  
-  <!-- Cinematic & Professional Typography: Syne (Headings) & Plus Jakarta Sans (Interface) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Are air pollution and rainfall in Pakistan's cities rising or falling? Monthly NASA-derived trends, 2005–2024.">
+  <title>Trend Detector: Pakistan air and rain trends</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Leaflet Map CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  
-  <!-- Custom Design System Stylesheet -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=Syne:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/css/tokens.css">
   <link rel="stylesheet" href="./src/css/style.css">
+  <link rel="stylesheet" href="./src/css/pollution.css">
   <link rel="icon" href="./src/img/favicon.svg" type="image/svg+xml">
 </head>
 <body>
-
-  <!-- Cinematic Background Video (Aesthetic Atmosphere) -->
-  <div class="video-bg-container" aria-hidden="true">
-    <video autoplay muted loop playsinline id="hero-bg-video">
-      <source src="./HeroTD.mp4" type="video/mp4">
-    </video>
-    <div class="video-bg-overlay"></div>
-  </div>
-
-  <!-- Top Navigation Bar (Green Surface) -->
-  <header class="site-header">
-    <div class="header-container">
-      <a href="#" class="brand-wrapper">
-        <div class="brand-icon">
-          <i data-icon="search"></i>
-        </div>
-        <div>
-          <div class="brand-title">Trend Detector</div>
-          <span class="brand-sub">Earth System Trend Detective</span>
-        </div>
-      </a>
-
-      <div class="nav-actions">
-        <!-- Live Integration Status Indicator -->
-        <div id="backend-status-pill">
-          <span id="backend-status-dot"></span>
-          <span id="backend-status-text">2005–2024 Observational Record</span>
-        </div>
-
-        <!-- Learning Mode Toggle ("Explain Like I'm 15") -->
-        <div class="learning-toggle-wrapper" title="Toggle simplified plain-language explanations for all statistics">
-          <span>Learning Mode</span>
-          <label class="switch">
-            <input type="checkbox" id="learning-mode-toggle">
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('pollution-index').scrollIntoView({behavior:'smooth'})">
-          Pollution Index
-        </button>
-      </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#/home">Trend Detector</a>
+      <nav class="nav-links" aria-label="Main">
+        <a data-nav="home" href="#/home">Home</a>
+        <a data-nav="explore" href="#/explore">Explore</a>
+        <a data-nav="discover" href="#/discover">Discover</a>
+        <a data-nav="pollution" href="#/pollution">Pollution</a>
+        <a data-nav="compare" href="#/compare">Compare</a>
+        <a data-nav="data" href="#/data">Data</a>
+        <a data-nav="about" href="#/about">About</a>
+      </nav>
+      <label class="switch"><input type="checkbox" id="plain-toggle"> <span>Plain<span class="wide"> language</span></span></label>
+      <button class="btn" id="ask-btn" aria-controls="drawer" aria-expanded="false">Ask</button>
     </div>
   </header>
 
-  <!-- Hero Section (Frosted Atmospheric Glass Banner) -->
-  <section class="hero-section">
-    <div class="hero-container">
-      <div class="hero-tag">NASA Space Apps Challenge 2026 · Pakistan Pollution Index</div>
-      <h1 class="hero-title">Earth System Trend Detective</h1>
-      <p class="hero-subtitle">
-        Analyzing two decades (2005–2024, 240 monthly observations) of verified Earth system time series across 8 urban stations. Evaluating environmental trajectory, spatial divergence, and statistical confidence.
-      </p>
-      
-      <div class="hero-features">
-        <div class="hero-pill"><i data-icon="wind"></i> Particulate Matter (PM2.5)</div>
-        <div class="hero-pill hero-pill-brown"><i data-icon="sun"></i> Aerosol Optical Depth (AOD)</div>
-        <div class="hero-pill"><i data-icon="cloud-rain"></i> Monthly Rainfall (rain_mm)</div>
-        <div class="hero-pill hero-pill-brown"><i data-icon="zap"></i> Tropospheric NO₂ Column</div>
-        <div class="hero-pill"><i data-icon="map-pin"></i> 8 Monitored Stations</div>
-      </div>
+  <main id="main" tabindex="-1"></main>
+
+  <footer class="site"><div class="wrap">
+    <a href="#/data">Data &amp; method</a><a href="#/about">About</a>
+    <span>Trends show what happened, not why.</span>
+  </div></footer>
+
+  <nav class="tabbar" aria-label="Main (mobile)">
+    <a data-nav="home" href="#/home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 11l9-8 9 8v10H3z"/></svg>Home</a>
+    <a data-nav="explore" href="#/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 17l5-6 4 4 8-9"/></svg>Explore</a>
+    <a data-nav="discover" href="#/discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>Discover</a>
+    <a data-nav="pollution" href="#/pollution"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8h12a3 3 0 100-3M3 13h16a3 3 0 110 3M3 18h8"/></svg>Pollution</a>
+    <a data-nav="compare" href="#/compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>Compare</a>
+  </nav>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+    <header><strong id="drawer-title">Ask about the data</strong><button class="btn" id="drawer-close" aria-label="Close assistant">Close</button></header>
+    <div class="chat" id="chat" aria-live="polite"><div class="chat-msg chat-bot">Ask about any of the 4 variables in the 8 cities (2005–2024). Answers use only this dataset.</div></div>
+    <div class="prompts">
+      <button class="chip" data-prompt="Is PM2.5 increasing in Lahore?">PM2.5 in Lahore?</button>
+      <button class="chip" data-prompt="Compare rainfall trends between Peshawar and Karachi">Rain: Peshawar vs Karachi</button>
+      <button class="chip" data-prompt="Explain the Mann-Kendall test in plain terms">What is Mann-Kendall?</button>
     </div>
-  </section>
+    <form class="chat-form" id="chat-form"><input type="text" id="chat-input" aria-label="Your question" placeholder="Type a question" autocomplete="off"><button class="btn btn-primary" id="chat-send" type="submit">Send</button></form>
+  </aside>
 
-  <!-- Main Container -->
-  <main class="main-content">
-    
-    <!-- Learning Mode Banner (shown when active) -->
-    <div id="learning-mode-banner" style="display:none;">
-      <b><i data-icon="info"></i> Learning Mode Active:</b> Statistical terminology is translated into plain, intuitive explanations. Statistical significance indicates that a multi-year pattern is mathematically unlikely to be random variation, but does not establish isolated causality or guarantee future trends.
-    </div>
-
-    <!-- Primary: Pollution Index (built from real data by scripts/build_pollution_index.py) -->
-    <section id="pollution-index" class="pi-section" style="margin-bottom:2.25rem;"></section>
-
-    <!-- Section 1: Guided Demo Missions (Brown Heading Accent) -->
-    <section style="margin-bottom:2.25rem;">
-      <div class="section-header section-header-brown">
-        <span class="section-label">Case Studies</span>
-        <h3 class="section-title">Guided Missions</h3>
-        <p class="section-desc">Focused investigations based on verified observational records (2005–2024).</p>
-      </div>
-      <div class="missions-grid" id="missions-grid">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
-
-    <!-- Section 2: Domain Selection (Green Heading Accent) -->
-    <section class="exploration-section">
-      <div class="section-header section-header-green">
-        <span class="section-label">Exploration Pathway</span>
-        <h3 class="section-title">Domain Selection</h3>
-        <p class="section-desc">Select an environmental domain to load recommended variables and monitoring stations.</p>
-      </div>
-
-      <!-- Topic Selection Cards -->
-      <div id="topics-wizard-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.75rem;">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Recommendation Box (Un-nested Flat Container) -->
-      <div id="topic-recommendation-container" style="display:none;"></div>
-    </section>
-
-    <!-- Section 3: Trend Opposites Explorer (Brown Heading Accent) -->
-    <section style="margin-bottom:2.25rem;">
-      <div class="section-header section-header-brown">
-        <span class="section-label">Spatial Divergence</span>
-        <h3 class="section-title">Contrasting Regional Trajectories</h3>
-        <p class="section-desc">
-          Atmospheric and climate variables can exhibit opposite trends across different geographic locations over identical observation windows.
-        </p>
-      </div>
-
-      <div class="opposites-grid">
-        <!-- Rendered dynamically from real data -->
-      </div>
-    </section>
-
-    <!-- Section 4: Main Workspace (Controls, Station Map, Story Card, Charts & Impact Analysis) -->
-    <div class="workspace-grid" id="investigation-workspace">
-      
-      <!-- Left Column: Controls & Geographic Map (Warm Brown Accents) -->
-      <aside class="control-panel">
-        <h3 class="panel-title panel-title-brown">
-          <i data-icon="settings"></i> Analysis Parameters
-        </h3>
-
-        <div class="form-group">
-          <label class="form-label" for="select-variable">Variable</label>
-          <select id="select-variable" class="form-select"></select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="select-region">Monitoring Station</label>
-          <select id="select-region" class="form-select"></select>
-        </div>
-
-        <!-- Anomaly Mode Switch -->
-        <div class="anomaly-toggle-box">
-          <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--color-text-main);">
-            <span>Seasonal Anomalies</span>
-            <input type="checkbox" id="toggle-anomalies" checked style="width:15px; height:15px; accent-color:var(--color-secondary-tan);">
-          </label>
-          <div style="font-size:0.73rem; color:var(--color-text-muted); margin-top:0.3rem; line-height:1.4;">
-            Removes the 12-month annual cycle to reveal the multi-decadal signal.
-          </div>
-        </div>
-
-        <!-- Interactive Map (SRD §15) -->
-        <div style="margin-top:1rem;">
-          <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; color:var(--color-secondary-tan); margin-bottom:0.4rem; letter-spacing:0.04em;">
-            Observation Stations
-          </div>
-          <div id="map-container" class="map-frame"></div>
-          <div style="font-size:0.72rem; color:var(--color-text-muted); margin-top:0.4rem;">
-            Station markers reflect estimated direction (↑ increasing, ↓ decreasing). Click to select.
-          </div>
-        </div>
-      </aside>
-
-      <!-- Right Column: Results, Story Card, Visualizer & Impact Analysis (Green Surface) -->
-      <section>
-        
-        <!-- Priority 2: Trend Story Generator Card (SRD §7) -->
-        <div id="story-card-container">
-          <!-- Rendered dynamically via generateTrendStory(analysis) -->
-        </div>
-
-        <!-- Time Series Chart Card -->
-        <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title-group">
-              <h3 id="chart-main-title">Monthly Time Series & Trend Fit</h3>
-              <span class="chart-subtitle" id="chart-sub-title">240 monthly observations (2005–2024)</span>
-            </div>
-
-            <!-- Export Buttons -->
-            <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
-              <button class="btn btn-outline btn-sm" id="btn-export-csv" title="Export displayed series as CSV">
-                <i data-icon="download"></i> CSV
-              </button>
-              <button class="btn btn-outline btn-sm" id="btn-export-png" title="Download chart snapshot as PNG">
-                <i data-icon="camera"></i> PNG
-              </button>
-              <button class="btn btn-outline btn-sm" id="btn-export-md" title="Export investigation report in Markdown">
-                <i data-icon="file-text"></i> Summary
-              </button>
-            </div>
-          </div>
-
-          <div class="chart-canvas-wrapper">
-            <canvas id="trend-canvas"></canvas>
-          </div>
-
-          <!-- Chart Legend -->
-          <div class="chart-legend" style="display:flex; justify-content:center; gap:1.5rem; margin-top:0.85rem; font-size:0.8rem; color:var(--color-text-muted); flex-wrap:wrap;">
-            <div style="display:flex; align-items:center; gap:0.45rem;">
-              <span style="display:inline-block; width:16px; height:2px; background:#8EB69B;"></span>
-              <span>Observed Series</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.45rem;">
-              <span style="display:inline-block; width:16px; height:3px; background:#DAF1DE;"></span>
-              <span>OLS Linear Trend Fit</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.45rem;">
-              <span style="display:inline-block; width:16px; height:1px; border-top:1px dashed #D3A376;"></span>
-              <span>Climatological Baseline</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Priority 5: Why This Matters Section -->
-        <div id="why-this-matters-container">
-          <!-- Rendered dynamically -->
-        </div>
-
-        <!-- Priority 7: Dataset Confidence Meter (SRD §11) -->
-        <div id="confidence-meter-container" style="margin-top:1.25rem;">
-          <!-- Rendered dynamically -->
-        </div>
-
-      </section>
-    </div>
-
-    <!-- Section 5: Ranked Decadal Trends (Brown Heading Accent) -->
-    <section style="margin-top:3rem; margin-bottom:2.25rem;">
-      <div class="section-header section-header-brown">
-        <span class="section-label">Statistical Ranking</span>
-        <h3 class="section-title">Ranked Multi-Decadal Trends</h3>
-        <p class="section-desc">Series ranked by statistical confidence with False Discovery Rate (FDR) validation.</p>
-      </div>
-
-      <div class="hotspots-grid" id="hotspots-grid">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
-
-    <!-- Section 6: Data Provenance Section (Green Heading Accent) -->
-    <section style="margin-bottom:2.5rem;">
-      <div class="section-header section-header-green">
-        <span class="section-label">Dataset Provenance</span>
-        <h3 class="section-title">Observational Series & Parameters</h3>
-        <p class="section-desc">Atmospheric variables included in the official 2005–2024 monthly observation record.</p>
-      </div>
-
-      <div class="nasa-showcase-grid" id="nasa-showcase-grid">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
-
-    <!-- Minor trend patterns (data-backed, from scripts/build_patterns.py) -->
-    <section id="minor-patterns" style="margin:2.25rem 0;"></section>
-
-  </main>
-
-  <!-- Priority 9: Assistant FAB & Drawer -->
-  <button class="assistant-fab" id="assistant-fab" title="Ask Trend Detective Assistant">
-    <i data-icon="bot"></i>
-    <span>Trend Assistant</span>
-  </button>
-
-  <div class="assistant-drawer" id="assistant-drawer">
-    <div class="drawer-header">
-      <div style="display:flex; align-items:center; gap:0.45rem; font-weight:700; font-size:0.9rem;">
-        <i data-icon="bot"></i>
-        <span>Trend Detective Assistant</span>
-      </div>
-      <button id="btn-close-assistant" style="background:none; border:none; color:var(--color-text-main); font-size:1.1rem; cursor:pointer;">
-        <i data-icon="x"></i>
-      </button>
-    </div>
-
-    <div class="chat-history" id="assistant-history">
-      <div class="chat-msg chat-bot">
-        <b>Earth System Detective Assistant</b><br>
-        Grounded strictly in the 2005–2024 monthly observational series (240 observations per station). You can ask questions such as:<br><br>
-        • <i>"Is PM2.5 increasing in Lahore?"</i><br>
-        • <i>"Compare rainfall trends between Peshawar and Karachi"</i><br>
-        • <i>"What is happening to NO₂ in Multan vs Peshawar?"</i><br>
-        • <i>"Explain the Mann-Kendall test in plain terms"</i>
-      </div>
-    </div>
-
-    <div class="chat-input-area">
-      <input type="text" id="assistant-input" class="form-input" placeholder="Inquire about PM2.5, AOD, Rainfall, or NO2..." style="flex:1;">
-      <button class="btn btn-secondary btn-sm" id="btn-assistant-send">Send</button>
-    </div>
-  </div>
-
-  <!-- Footer with Data Provenance (Frosted Glass Ground) -->
-  <footer class="site-footer">
-    <div class="footer-container">
-      <div>
-        <h4 style="color:#FFFFFF; font-weight:700; font-size:1rem; margin-bottom:0.4rem; font-family:'Syne', sans-serif;">Trend Detector</h4>
-        <p style="max-width:400px; line-height:1.45; color:var(--color-text-muted);">
-          NASA Space Apps Challenge 2026: Earth System Trend Detective. Operating exclusively on real observations (pk_city_monthly_final.csv).
-        </p>
-      </div>
-
-      <div class="footer-citations">
-        <h5 style="color:#FFFFFF; margin-bottom:0.4rem; font-weight:600;">Monitored Series</h5>
-        <div>Particulate Matter (pm25, µg/m³)</div>
-        <div>Aerosol Optical Depth (aod, dimensionless)</div>
-        <div>Monthly Rainfall (rain_mm, mm/month)</div>
-        <div>Nitrogen Dioxide Column (no2, molecules/cm²)</div>
-      </div>
-
-      <div>
-        <h5 style="color:#FFFFFF; margin-bottom:0.4rem; font-weight:600;">Methodological Note</h5>
-        <p style="max-width:380px; line-height:1.45; font-size:0.78rem; color:var(--color-text-muted);">
-          A trend indicates mathematical persistence across historical data; it does not in isolation establish singular physical causation or project future states.
-        </p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Leaflet Map JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  
-  <!-- Main Application ES Module -->
-  <script type="module" src="./src/js/app.js"></script>
+  <script type="module" src="./src/js/main.js"></script>
 </body>
 </html>

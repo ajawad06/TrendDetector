@@ -29,30 +29,24 @@ const indexPath = path.join(FRONTEND_DIR, 'index.html');
 check(fs.existsSync(indexPath), 'index.html exists');
 
 const html = fs.readFileSync(indexPath, 'utf-8');
-check(html.includes('id="missions-grid"'), 'Missions grid container present (SRD §6)');
-check(html.includes('id="trend-canvas"'), 'HTML5 Chart canvas present (SRD §17)');
-check(html.includes('id="story-card-container"'), 'Story Card container present (SRD §7)');
-check(html.includes('id="confidence-meter-container"'), 'Confidence Meter container present (SRD §11)');
-check(html.includes('id="learning-mode-toggle"'), 'Learning Mode toggle present (SRD §12)');
-check(html.includes('id="map-container"'), 'Leaflet map container present (SRD §15)');
-check(html.includes('id="assistant-drawer"'), 'AI Assistant drawer present (SRD §13)');
-check(html.includes('id="btn-export-csv"'), 'CSV export button present (SRD §18)');
-check(html.includes('id="btn-export-md"'), 'Markdown export button present (SRD §18)');
+check(html.includes('id="main"'), 'Main landmark present');
+check(html.includes('class="skip-link"'), 'Skip link present');
+check(html.includes('id="drawer"') && html.includes('aria-modal="true"'), 'Assistant slide-over (dialog) present');
+check(html.includes('id="plain-toggle"'), 'Plain-language switch present');
+['home', 'explore', 'discover', 'pollution', 'compare', 'data', 'about'].forEach(r => check(html.includes(`href="#/${r}"`), `Nav link for #/${r}`));
+check(!/style="/.test(html), 'No inline styles in index.html');
+check(!/<video/.test(html), 'No background video');
+check(!fs.existsSync(path.join(FRONTEND_DIR, 'HeroTD.mp4')), 'Hero video file removed');
 
-// 2. Check CSS and requested color palette tokens (Primary Green & Secondary Brown)
+// 2. Single token file; no hardcoded hex in JS modules (canvas reads tokens)
 const cssPath = path.join(SRC_DIR, 'css', 'style.css');
 check(fs.existsSync(cssPath), 'style.css exists');
-const css = fs.readFileSync(cssPath, 'utf-8');
-check(css.includes('#051F20') || css.includes('#09201A'), 'Color: Primary Deep Green integrated');
-check(css.includes('#0B2B26') || css.includes('#0E2B23'), 'Color: Primary Surface Green integrated');
-check(css.includes('#235347') || css.includes('#245B4D'), 'Color: Primary Forest Action integrated');
-check(css.includes('#8EB69B'), 'Color: Sage Green (#8EB69B) integrated');
-check(css.includes('#DAF1DE'), 'Color: Mint Highlight (#DAF1DE) integrated');
-check(css.includes('#3E2522'), 'Color: Secondary Espresso Brown (#3E2522) integrated');
-check(css.includes('#D3A376'), 'Color: Secondary Warm Tan (#D3A376) integrated');
+check(fs.existsSync(path.join(SRC_DIR, 'css', 'tokens.css')), 'tokens.css exists');
+const hexIn = (f) => (fs.readFileSync(path.join(SRC_DIR, 'js', f), 'utf-8').match(/#[0-9A-Fa-f]{6}\b/g) || []);
+['main.js', 'chart.js', 'map.js', 'pollution.js'].forEach(f => check(hexIn(f).length === 0, `No hardcoded hex in ${f}`));
 
 // 3. Check JavaScript files
-const jsFiles = ['api.js', 'stats.js', 'chart.js', 'map.js', 'app.js'];
+const jsFiles = ['api.js', 'stats.js', 'chart.js', 'map.js', 'main.js', 'router.js', 'util.js', 'theme.js'];
 jsFiles.forEach(f => {
   const p = path.join(SRC_DIR, 'js', f);
   check(fs.existsSync(p), `JavaScript module exists: src/js/${f}`);

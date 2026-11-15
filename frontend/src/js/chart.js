@@ -6,10 +6,12 @@
  * - OLS fitted linear trend line
  * - Preserves legitimate zeros (rain_mm = 0 is a real value)
  * - Supports NO2 display scaling (x10^15)
- * - Clean, flat, calm palette: Forest green primary (#09201A / #0E2B23),
- *   Sage observed series (#8EB69B), Pale Mint OLS line (#DAF1DE),
- *   Warm Tan secondary baseline (#D3A376). No glow, no neon.
+ * - Clean, flat, calm palette: Forest green primary,
+ *   Sage observed series, Pale Mint OLS line,
+ *   Warm Tan secondary baseline. No glow, no neon.
  */
+
+import { tok as T } from './theme.js';
 
 export class TrendChart {
   constructor(canvasElement) {
@@ -116,12 +118,12 @@ export class TrendChart {
     // Draw Flat Grids & Labels
     this._drawGrid(ctx, padding, plotWidth, plotHeight, minY, maxY);
 
-    // Draw Zero reference line for anomalies in secondary tan (#D3A376)
+    // Draw Zero reference line for anomalies in secondary tan
     if (this.useAnomalies && minY <= 0 && maxY >= 0) {
       const zeroY = getY(0);
       if (zeroY >= padding.top && zeroY <= padding.top + plotHeight) {
         ctx.save();
-        ctx.strokeStyle = "rgba(211, 163, 118, 0.5)";
+        ctx.strokeStyle = T('--series-trend');
         ctx.setLineDash([3, 3]);
         ctx.lineWidth = 1.0;
         ctx.beginPath();
@@ -132,9 +134,9 @@ export class TrendChart {
       }
     }
 
-    // 1. Draw Primary Series Line in Sage Green (#8EB69B) - Flat, Clean
+    // 1. Draw Primary Series Line in Sage Green - Flat, Clean
     ctx.save();
-    ctx.strokeStyle = "#8EB69B";
+    ctx.strokeStyle = T('--series-obs');
     ctx.lineWidth = 1.6;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -159,7 +161,7 @@ export class TrendChart {
     ctx.stroke();
     ctx.restore();
 
-    // 2. Draw OLS Trend Line in Pale Mint (#DAF1DE) - Crisp 2.4px, No Glow
+    // 2. Draw OLS Trend Line in Pale Mint - Crisp 2.4px, No Glow
     if (this.olsResult && totalPts > 1) {
       const slope = this.olsResult.slope_per_year / scale;
       const periodYears = 20.0;
@@ -176,7 +178,7 @@ export class TrendChart {
       const y2 = getY(lastYVal);
 
       ctx.save();
-      ctx.strokeStyle = "#DAF1DE";
+      ctx.strokeStyle = T('--accent');
       ctx.lineWidth = 2.4;
       ctx.beginPath();
       ctx.moveTo(getX(0), y1);
@@ -195,8 +197,8 @@ export class TrendChart {
         const y = getY(val);
 
         ctx.save();
-        ctx.fillStyle = "#DAF1DE";
-        ctx.strokeStyle = "#09201A";
+        ctx.fillStyle = T('--accent');
+        ctx.strokeStyle = T('--surface');
         ctx.lineWidth = 2.0;
         ctx.beginPath();
         ctx.arc(x, y, 4.5, 0, Math.PI * 2);
@@ -211,9 +213,9 @@ export class TrendChart {
 
   _drawGrid(ctx, pad, w, h, minY, maxY) {
     ctx.save();
-    ctx.strokeStyle = "rgba(142, 182, 155, 0.12)";
+    ctx.strokeStyle = T('--grid');
     ctx.lineWidth = 0.8;
-    ctx.fillStyle = "#8EB69B";
+    ctx.fillStyle = T('--series-obs');
     ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
 
     // Horizontal grid lines
@@ -260,7 +262,7 @@ export class TrendChart {
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = "center";
     ctx.font = "600 11px 'Plus Jakarta Sans', -apple-system, sans-serif";
-    ctx.fillStyle = "#E4F0E8";
+    ctx.fillStyle = T('--text');
     ctx.fillText(this.useAnomalies ? `Anomaly (${this.displayUnit})` : `Observed (${this.displayUnit})`, 0, 0);
     ctx.restore();
 
@@ -283,30 +285,30 @@ export class TrendChart {
     const boxY = Math.max(6, y - boxH / 2);
 
     ctx.save();
-    ctx.fillStyle = "#0E2B23";
-    ctx.strokeStyle = "#1B453A";
+    ctx.fillStyle = T('--surface');
+    ctx.strokeStyle = T('--border');
     ctx.lineWidth = 1.0;
     ctx.beginPath();
     ctx.roundRect(boxX, boxY, boxW, boxH, 6);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = T('--text');
     ctx.textAlign = "left";
     ctx.font = "600 11px 'Plus Jakarta Sans', -apple-system, sans-serif";
     ctx.fillText(text1, boxX + 10, boxY + 16);
 
     ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
-    ctx.fillStyle = "#8EB69B";
+    ctx.fillStyle = T('--series-obs');
     ctx.fillText(text2, boxX + 10, boxY + 32);
-    ctx.fillStyle = "#D3A376";
+    ctx.fillStyle = T('--series-trend');
     ctx.fillText(text3, boxX + 10, boxY + 48);
     ctx.restore();
   }
 
   _renderEmpty(ctx, w, h) {
     ctx.save();
-    ctx.fillStyle = "#8EB69B";
+    ctx.fillStyle = T('--series-obs');
     ctx.font = "13px 'Plus Jakarta Sans', -apple-system, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("Select a variable and city station to display observations", w / 2, h / 2);

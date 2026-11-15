@@ -1,15 +1,15 @@
 /** "Minor trend patterns" section. All numbers come from patterns.json (scripts/build_patterns.py). */
-const PATHS = ['./data/patterns.json', './public/data/patterns.json', '/data/patterns.json'];
+const PATHS = ['./data/patterns.json'];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmtP = p => (p < 0.001 ? 'p < 0.001' : `p = ${p.toFixed(3)}`);
 
 export async function initPatterns(root) {
   let data = null;
   for (const p of PATHS) { try { const r = await fetch(p); if (r.ok) { data = await r.json(); break; } } catch (e) { /* next */ } }
-  if (!data) { root.innerHTML = '<div class="pi-error">Pattern data not found (patterns.json). Run <code>python scripts/build_patterns.py</code>.</div>'; return; }
+  if (!data) { console.info('Pattern data missing. Rebuild with: python scripts/build_patterns.py'); root.innerHTML = '<div class="state"><p>Minor patterns could not be loaded.</p><button class="btn" data-retry>Retry</button></div>'; root.querySelector('[data-retry]').addEventListener('click', () => initPatterns(root)); return; }
   const list = [...data.patterns].sort((a, b) => !!a.untested - !!b.untested);
   root.innerHTML = `
-    <div class="section-header section-header-brown">
+    <div class="section-head">
       <span class="section-label">Seasonal &amp; Behavioural Signals</span>
       <h3 class="section-title">Minor Trend Patterns</h3>
       <p class="section-desc">Smaller recurring patterns, each tested on the ${data.period[0]} – ${data.period[1]} monthly record. Claims the data cannot test are labelled as such.</p>

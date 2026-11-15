@@ -64,9 +64,8 @@ let cachedSeriesData = null;
 function getSeriesData() {
   if (cachedSeriesData) return cachedSeriesData;
   const paths = [
-    path.join(PROJECT_ROOT, 'public', 'data', 'series.json'),
-    path.join(ROOT_DIR, 'public', 'data', 'series.json'),
-    path.join(ROOT_DIR, 'data', 'series.json')
+    path.join(ROOT_DIR, 'data', 'series.json'),
+    path.join(PROJECT_ROOT, 'frontend', 'data', 'series.json')
   ];
   for (const p of paths) {
     if (fs.existsSync(p)) {
@@ -142,7 +141,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Series JSON Direct Endpoint
-  if (req.url === '/api/series' || req.url === '/public/data/series.json' || req.url === '/data/series.json') {
+  if (req.url === '/api/series' || req.url === '/data/series.json') {
     const series = getSeriesData();
     if (series) {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });

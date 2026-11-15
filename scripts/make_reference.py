@@ -142,7 +142,7 @@ def compute_series_stats(dates, values, unit, is_anomaly=False):
     }
 
 def main():
-    series_file = os.path.join("public", "data", "series.json")
+    series_file = os.path.join("frontend", "data", "series.json")
     if not os.path.exists(series_file):
         print(f"File {series_file} not found. Running build_data.py first...")
         import subprocess

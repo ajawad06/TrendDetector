@@ -7,8 +7,8 @@ const fs = require('fs');
 const path = require('path');
 
 const BACKEND_DIR = path.join(__dirname, '..');
-const CATALOG_DIR = path.join(BACKEND_DIR, 'catalogs');
-const SERIES_PATH = path.join(BACKEND_DIR, '..', 'public', 'data', 'series.json');
+const CATALOG_DIR = path.join(BACKEND_DIR, '..', 'frontend', 'catalogs');
+const SERIES_PATH = path.join(BACKEND_DIR, '..', 'frontend', 'data', 'series.json');
 
 console.log('=== RUNNING TREND DETECTOR INTEGRITY SUITE (REAL DATASET) ===\n');
 
@@ -76,7 +76,7 @@ assert(missionIds.includes('quetta_clearing'), 'Mission: Quetta Clearing Skies p
 assert(missionIds.includes('peshawar_rain_shift'), 'Mission: Peshawar Rainfall Decline vs Karachi present');
 
 // 5. Validate Real Series JSON File
-assert(fs.existsSync(SERIES_PATH), 'public/data/series.json exists');
+assert(fs.existsSync(SERIES_PATH), 'frontend/data/series.json exists');
 const series = JSON.parse(fs.readFileSync(SERIES_PATH, 'utf-8'));
 
 let totalZeros = 0;

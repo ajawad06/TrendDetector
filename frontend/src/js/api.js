@@ -27,12 +27,7 @@ class ApiClient {
     if (this.seriesCache) return this.seriesCache;
 
     const pathsToTry = [
-      './public/data/series.json',
-      'public/data/series.json',
-      '/public/data/series.json',
-      './data/series.json',
-      'data/series.json',
-      '/data/series.json'
+      './data/series.json'
     ];
 
     for (const p of pathsToTry) {
@@ -46,17 +41,14 @@ class ApiClient {
       } catch (e) {}
     }
 
-    throw new Error('FATAL: Could not load observation dataset (public/data/series.json). Synthetic fallbacks are disabled.');
+    throw new Error('FATAL: Could not load observation dataset (data/series.json). Synthetic fallbacks are disabled.');
   }
 
   async getMetadata() {
     if (this.metadataCache) return this.metadataCache;
 
     const pathsToTry = [
-      './data/metadata.json',
-      'data/metadata.json',
-      '/data/metadata.json',
-      '../data/metadata.json'
+      './data/metadata.json'
     ];
 
     for (const p of pathsToTry) {
@@ -234,10 +226,7 @@ class ApiClient {
 
   async _loadCatalog(filename) {
     const pathsToTry = [
-      `./catalogs/${filename}`,
-      `catalogs/${filename}`,
-      `/catalogs/${filename}`,
-      `./frontend/catalogs/${filename}`
+      `./catalogs/${filename}`
     ];
 
     for (const p of pathsToTry) {

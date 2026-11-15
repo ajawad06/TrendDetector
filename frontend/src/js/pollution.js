@@ -1,12 +1,14 @@
+import { tok, palette } from './theme.js';
+import { esc as _esc } from './util.js';
 /**
  * Pollution Index section: ranking, peak/dip trend chart, seasonal heatmap.
  * Data: pollution_index.json, built from the real CSV by
  * scripts/build_pollution_index.py. Nothing is computed from mock values.
  */
-const CAT_COLORS = ['#6FBF73', '#E6C84F', '#F29B3F', '#E0584B', '#9C3B7A'];
+const CAT_COLORS = palette('--cat');
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const LINE_COLORS = ['#DAF1DE', '#D3A376', '#8EB69B', '#7FB2E5', '#E58FB0', '#C9B6F2', '#F2E29B', '#9AD6D0'];
-const PATHS = ['./data/pollution_index.json', './public/data/pollution_index.json', '/data/pollution_index.json'];
+const LINE_COLORS = palette('--line');
+const PATHS = ['./data/pollution_index.json'];
 
 const catIdx = (v, cats) => Math.max(0, cats.findIndex(c => v <= c.max));
 const fmtDate = d => `${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
@@ -19,7 +21,9 @@ export async function initPollutionIndex(root) {
     try { const r = await fetch(p); if (r.ok) { data = await r.json(); break; } } catch (e) { /* next */ }
   }
   if (!data) {
-    root.innerHTML = '<div class="pi-error">Pollution index data could not be loaded (pollution_index.json). Run <code>python scripts/build_pollution_index.py</code>.</div>';
+    console.info('Pollution index data missing. Rebuild with: python scripts/build_pollution_index.py');
+    root.innerHTML = '<div class="state"><p>The pollution index could not be loaded.</p><button class="btn" data-retry>Retry</button></div>';
+    root.querySelector('[data-retry]').addEventListener('click', () => initPollutionIndex(root));
     return;
   }
   new PollutionIndexView(root, data).render();
@@ -100,7 +104,7 @@ class PollutionIndexView {
     const past = pts.slice(0, split < 0 ? n : split + 1).map((p, i) => xy(p, i)).join(' ');
     const fut = split < 0 ? '' : pts.slice(split).map((p, i) => xy(p, i + split)).join(' ');
     return `<div class="pi-live-card"><span>${name}</span><b style="color:${this.color(c.pi)}">${c.pi.toFixed(1)}</b><small>${esc(c.category)}</small>
-      <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${past}" fill="none" stroke="#DAF1DE" stroke-width="1.4"/>${fut ? `<polyline points="${fut}" fill="none" stroke="#D3A376" stroke-width="1.4" stroke-dasharray="3 2"/>` : ''}</svg>
+      <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${past}" fill="none" stroke="${tok('--line-1')}" stroke-width="1.4"/>${fut ? `<polyline points="${fut}" fill="none" stroke="${tok('--series-trend')}" stroke-width="1.4" stroke-dasharray="3 2"/>` : ''}</svg>
       <small>PM2.5 ${c.pm25 ?? '–'} µg/m³ · ${DRIVER[c.driver]} is main driver</small></div>`;
   }
 
@@ -180,7 +184,7 @@ class PollutionIndexView {
       const hi = Math.min(c.max, g.ymax);
       ctx.fillStyle = CAT_COLORS[i] + '22'; ctx.fillRect(g.pad.l, g.Y(hi), g.w - g.pad.l - g.pad.r, g.Y(lo) - g.Y(hi)); lo = c.max;
     });
-    ctx.font = '11px sans-serif'; ctx.fillStyle = '#8EB69B'; ctx.textAlign = 'right';
+    ctx.font = '11px sans-serif'; ctx.fillStyle = tok('--text-muted'); ctx.textAlign = 'right';
     for (let v = 0; v <= g.ymax; v += 20) ctx.fillText(v, g.pad.l - 6, g.Y(v) + 4);
     ctx.textAlign = 'center';
     const dates = this.data.cities[this.focus].dates;
@@ -195,12 +199,12 @@ class PollutionIndexView {
     const f = this.data.cities[this.focus];             // peak / dip markers
     const mark = (list, up) => list.forEach(e => {
       const i = dates.indexOf(e.month), x = g.X(i), y = g.Y(f.pi[i]), d = up ? -9 : 9;
-      ctx.fillStyle = up ? '#E0584B' : '#7FB2E5'; ctx.beginPath();
+      ctx.fillStyle = up ? tok('--up') : tok('--down'); ctx.beginPath();
       ctx.moveTo(x, y + d); ctx.lineTo(x - 4.5, y + d + (up ? -7 : 7)); ctx.lineTo(x + 4.5, y + d + (up ? -7 : 7)); ctx.fill();
     });
     mark(f.peaks, true); mark(f.dips, false);
     if (this.hover >= 0) {
-      ctx.strokeStyle = '#FFE0B2'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(g.X(this.hover), g.pad.t); ctx.lineTo(g.X(this.hover), g.h - g.pad.b); ctx.stroke();
+      ctx.strokeStyle = tok('--text'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(g.X(this.hover), g.pad.t); ctx.lineTo(g.X(this.hover), g.h - g.pad.b); ctx.stroke();
     }
   }
 

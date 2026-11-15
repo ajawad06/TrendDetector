@@ -10,7 +10,7 @@
 
 **Trend Detector** is an interactive Earth-system investigation platform designed to empower students, researchers, and citizen scientists to become data detectives.
 
-The system is built **exclusively on verified real-world monthly observations** from `data/raw/pk_city_monthly_final.csv`:
+The system is built **exclusively on verified real-world monthly observations** from `data/raw/pk_city_monthly_final.csv` (the only copy of the CSV; derived JSON lives in `frontend/data/`):
 - **Period**: 2005-01-01 to 2024-12-01 (240 consecutive monthly observations per city, 20 years).
 - **Locations**: 8 Pakistani cities (Lahore, Karachi, Islamabad, Peshawar, Quetta, Faisalabad, Multan, Hyderabad).
 - **Variables**:

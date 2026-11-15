@@ -21,7 +21,7 @@ from scipy import stats
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CSV = os.path.join(ROOT, "data", "raw", "pk_city_monthly_final.csv")
-OUT_DIRS = ["frontend/data", "frontend/public/data", "public/data"]
+OUT_DIRS = ["frontend/data"]
 
 BOUNDS = {"pm25": (5, 150), "no2": (0, 1.5e16), "aod": (0, 2.0)}
 W_AIR = {"pm25": 0.50, "no2": 0.30, "aod": 0.20}

@@ -26,17 +26,14 @@ class Settings(BaseSettings):
 
     # ── Data Paths ──
     data_dir: str = "./data/prepared"
-    catalog_dir: str = "./catalogs"
+    catalog_dir: str = "../frontend/catalogs"
 
     @property
     def resolved_catalog_dir(self):
         from pathlib import Path
-        p = Path(self.catalog_dir)
-        if not p.exists():
-            backend_p = Path(__file__).resolve().parent.parent / self.catalog_dir.lstrip("./")
-            if backend_p.exists():
-                return backend_p
-        return p
+        # Single source of truth: frontend/catalogs (resolved relative to backend/)
+        backend_dir = Path(__file__).resolve().parent.parent
+        return (backend_dir / self.catalog_dir).resolve()
 
     @property
     def resolved_data_dir(self):

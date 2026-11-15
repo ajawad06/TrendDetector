@@ -3,7 +3,7 @@
 build_data.py — Data Layer Build & Validation Script for Trend Detector
 
 Reads data/raw/pk_city_monthly_final.csv, performs strict validation,
-and writes public/data/series.json and public/data/regions.json.
+and writes frontend/data/series.json and frontend/data/regions.json.
 
 Validation fails loudly if:
 - Columns differ from expected schema
@@ -153,11 +153,7 @@ def validate_and_build(csv_path):
         raise ValueError(f"FATAL: Expected exactly 39 legitimate rain_mm zero values, found {total_zeros}")
 
     # Output targets
-    output_dirs = [
-        os.path.join("public", "data"),
-        os.path.join("frontend", "public", "data"),
-        os.path.join("frontend", "data")
-    ]
+    output_dirs = [os.path.join("frontend", "data")]
     for od in output_dirs:
         os.makedirs(od, exist_ok=True)
         series_file = os.path.join(od, "series.json")

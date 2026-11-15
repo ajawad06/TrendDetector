@@ -16,7 +16,7 @@ async function runTests() {
 
   const statsModule = await import('../frontend/src/js/stats.js');
   const refPath = path.join(__dirname, 'reference_results.json');
-  const seriesPath = path.join(__dirname, '..', 'public', 'data', 'series.json');
+  const seriesPath = path.join(__dirname, '..', 'frontend', 'data', 'series.json');
 
   assert(fs.existsSync(refPath), 'Reference results file must exist!');
   assert(fs.existsSync(seriesPath), 'Series data file must exist!');
