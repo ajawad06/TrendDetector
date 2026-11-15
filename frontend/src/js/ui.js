@@ -135,6 +135,18 @@ function prepCount(el) {
   el.innerHTML = `<span aria-hidden="true">${esc(final)}</span><span class="sr-only">${esc(final)}</span>`;
 }
 function enhance(scope) {
+  // Large cards get a slightly stronger entrance (scale+fade); keep existing data-reveal.
+  scope.querySelectorAll('.card.card-link[data-reveal]:not([data-reveal="stagger"]), .card.result, .card.chart-card, .card.aq').forEach((el) => {
+    if (!el.hasAttribute('data-reveal')) el.setAttribute('data-reveal', 'card');
+    else if (el.getAttribute('data-reveal') === '') el.setAttribute('data-reveal', 'card');
+  });
+  // Section / page headings: underline wipe when scrolled into view
+  scope.querySelectorAll('.section-head:not([data-seen]), .page-head:not([data-seen])').forEach((el) => {
+    el.dataset.seen = '1';
+    el.classList.add('heading-in');
+    if (reducedMotion()) { el.classList.add('is-visible'); return; }
+    io.observe(el);
+  });
   scope.querySelectorAll('[data-reveal]:not([data-seen]), [data-count]:not([data-seen]), .gauge:not([data-seen])').forEach((el) => {
     el.dataset.seen = '1';
     if (el.dataset.reveal === 'stagger') [...el.children].forEach((c, i) => c.style.setProperty('--i', i));
@@ -195,26 +207,52 @@ function buildStarfield() {
 let navToken = 0, firstView = true;
 const cleanups = [];
 export const onLeave = (fn) => cleanups.push(fn);
+const LEAVE_MS = 180;
+
+function runRender(main, render) {
+  cleanups.splice(0).forEach((fn) => { try { fn(); } catch { /* ignore */ } });
+  main.classList.remove('view-leave'); main.style.removeProperty('--leave-y');
+  render();
+  window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
+}
+
 /**
- * Runs `render` with the outgoing view fading out (150ms) and the incoming view rising in (350ms).
- * The router scrolls to top straight away; --leave-y keeps the outgoing view visually in place meanwhile.
+ * Runs `render` with outgoing fade+shift (180ms) and incoming rise (400ms).
+ * Uses the View Transitions API when available; CSS classes are the fallback.
+ * --leave-y keeps the outgoing view visually in place while the router would scroll.
  */
 export function viewTransition(main, render) {
   const token = ++navToken;
-  const enter = () => {
-    cleanups.splice(0).forEach((fn) => { try { fn(); } catch { /* ignore */ } });
-    main.classList.remove('view-leave'); main.style.removeProperty('--leave-y');
-    render();
-    window.scrollTo(0, 0);
+  const enterCss = () => {
+    runRender(main, render);
     if (reducedMotion()) return;
     main.classList.remove('view-enter'); void main.offsetWidth; main.classList.add('view-enter');
-    const done = (e) => { if (e.target !== main) return; main.classList.remove('view-enter'); main.removeEventListener('animationend', done); };   // ignore animationend bubbling up from children
+    root.classList.add('route-ready');
+    const done = (e) => {
+      if (e.target !== main) return;
+      main.classList.remove('view-enter');
+      main.removeEventListener('animationend', done);
+    };
     main.addEventListener('animationend', done);
   };
-  if (firstView || reducedMotion()) { firstView = false; enter(); return; }
+  if (firstView || reducedMotion()) { firstView = false; enterCss(); return; }
+
+  // Prefer View Transitions API; fall back to class-based leave/enter.
+  if (typeof document.startViewTransition === 'function') {
+    try {
+      const vt = document.startViewTransition(() => {
+        if (token !== navToken) return;
+        runRender(main, render);
+        root.classList.add('route-ready');
+      });
+      vt.finished.catch(() => {});
+      return;
+    } catch { /* fall through to CSS */ }
+  }
+
   main.style.setProperty('--leave-y', `${-window.scrollY}px`);
   main.classList.remove('view-enter'); main.classList.add('view-leave');
-  setTimeout(() => { if (token === navToken) enter(); }, 150);
+  setTimeout(() => { if (token === navToken) enterCss(); }, LEAVE_MS);
 }
 
 /* ---------- scrollspy for the About table of contents (19) ---------- */
@@ -288,4 +326,27 @@ export function initUI(main) {
   document.fonts?.ready.then(relayout);
   requestAnimationFrame(placeNav);
   onScroll();
+
+  // Nav links: one-time 40ms stagger on first load
+  if (!reducedMotion()) {
+    const links = [...document.querySelectorAll('.nav-links a')];
+    links.forEach((a, i) => a.style.setProperty('--i', i));
+    root.classList.add('nav-enter');
+    const clearNav = (e) => {
+      if (!e.target.matches?.('.nav-links a')) return;
+      root.classList.remove('nav-enter');
+      document.removeEventListener('animationend', clearNav);
+    };
+    document.addEventListener('animationend', clearNav);
+    setTimeout(() => root.classList.remove('nav-enter'), 800);
+  }
+
+  // Ask button → mascot wiggle (micro-interaction; Phase 3 wiring kept here)
+  const ask = document.getElementById('ask-btn');
+  ask?.addEventListener('pointerenter', () => {
+    const m = document.getElementById('mascot');
+    if (!m || reducedMotion()) return;
+    m.classList.remove('is-wiggle'); void m.offsetWidth; m.classList.add('is-wiggle');
+    m.addEventListener('animationend', () => m.classList.remove('is-wiggle'), { once: true });
+  });
 }
