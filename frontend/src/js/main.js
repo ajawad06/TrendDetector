@@ -162,10 +162,11 @@ async function renderAirBox(box, state) {
   box.innerHTML = `<div class="aq-top"><div><small class="muted">Your city</small><h2 class="aq-city">${esc(c.name)}</h2>
       ${far ? `<small class="muted">Closest tracked city: ${esc(region.name)}, about ${c.km} km away. The numbers below are for ${esc(region.name)}.</small>` : ''}</div>
       <button class="btn" id="aq-change">Change city</button></div>
-    <div class="aq-grid">
-      <div class="aq-stat"><span class="aq-label">Pollution index</span><b class="aq-num">${esc(fmt1(air.pi))}<small> / 100</small></b><span class="aq-pill">${esc(air.cat)}</span><small class="muted">${esc(air.piNote)}</small></div>
-      <div class="aq-stat"><span class="aq-label">Daily smoke equivalent</span><b class="aq-num">≈ ${esc(fmt1(air.cigs))}<small> cigarettes a day</small></b><small class="muted">Breathing the past year’s average air is like smoking this many.</small></div>
-      <div class="aq-stat"><span class="aq-label">Life expectancy at risk</span><b class="aq-num">≈ ${esc(fmt1(air.years))}<small> years</small></b><small class="muted">If this level of air lasted a lifetime, compared with the WHO guideline.</small></div>
+    <div class="aq-hero"><b>${esc(fmt1(air.pi))}</b><span class="aq-scale">/ 100</span><span class="aq-cat">${esc(air.cat)}</span></div>
+    <p class="aq-note muted"><small>${esc(air.piNote)}</small></p>
+    <div class="aq-facts">
+      <div class="aq-fact"><b>≈ ${esc(fmt1(air.cigs))} cigarettes a day</b><span>Daily smoke equivalent — breathing the past year’s average air is like smoking this many.</span></div>
+      <div class="aq-fact"><b>≈ ${esc(fmt1(air.years))} years</b><span>Life expectancy at risk if this level of air lasted a lifetime, compared with the WHO guideline.</span></div>
     </div>
     <p class="aq-foot muted"><small>Based on average PM2.5 of ${esc(air.pm25.toFixed(1))} µg/m³ for ${esc(air.period)}. Rules of thumb: 22 µg/m³ ≈ 1 cigarette a day (Berkeley Earth); about 1 year of life per 10 µg/m³ above the WHO guideline of ${WHO_PM25} µg/m³ (Air Quality Life Index). Estimates, not medical advice. The index is a satellite and model composite, not a regulatory AQI.</small></p>
     <a href="${exploreHref('pm25', region.id)}">See how PM2.5 is changing in ${esc(region.name)}</a>`;
