@@ -1,4 +1,6 @@
 {
+  "buildCommand": "echo 'static site, no build needed'",
+  "outputDirectory": ".",
   "rewrites": [
     { "source": "/health", "destination": "/api/health" }
   ]
