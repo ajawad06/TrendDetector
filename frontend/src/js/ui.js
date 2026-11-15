@@ -1,9 +1,12 @@
 /**
  * Trend Detector — presentation behaviours (no data, statistics or routing logic).
  * Scroll reveal, count-up, sliding indicators, disclosures, toasts, scroll progress,
- * starfield, route transition, scrollspy. Everything animates transform/opacity only.
+ * starfield, Earth background, route transition, scrollspy.
+ * Everything animates transform/opacity only (plus stroke-dashoffset / clip-path where needed).
  */
 import { esc } from './util.js';
+import { initEarthBg, setEarthRoute, setEarthCity, setEarthAnimEnabled, isEarthAnimEnabled } from './earth-bg.js';
+export { setEarthRoute, setEarthCity, setEarthAnimEnabled, isEarthAnimEnabled };
 
 const root = document.documentElement;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -132,6 +135,18 @@ function prepCount(el) {
   el.innerHTML = `<span aria-hidden="true">${esc(final)}</span><span class="sr-only">${esc(final)}</span>`;
 }
 function enhance(scope) {
+  // Large cards get a slightly stronger entrance (scale+fade); keep existing data-reveal.
+  scope.querySelectorAll('.card.card-link[data-reveal]:not([data-reveal="stagger"]), .card.result, .card.chart-card, .card.aq').forEach((el) => {
+    if (!el.hasAttribute('data-reveal')) el.setAttribute('data-reveal', 'card');
+    else if (el.getAttribute('data-reveal') === '') el.setAttribute('data-reveal', 'card');
+  });
+  // Section / page headings: underline wipe when scrolled into view
+  scope.querySelectorAll('.section-head:not([data-seen]), .page-head:not([data-seen])').forEach((el) => {
+    el.dataset.seen = '1';
+    el.classList.add('heading-in');
+    if (reducedMotion()) { el.classList.add('is-visible'); return; }
+    io.observe(el);
+  });
   scope.querySelectorAll('[data-reveal]:not([data-seen]), [data-count]:not([data-seen]), .gauge:not([data-seen])').forEach((el) => {
     el.dataset.seen = '1';
     if (el.dataset.reveal === 'stagger') [...el.children].forEach((c, i) => c.style.setProperty('--i', i));
@@ -192,26 +207,52 @@ function buildStarfield() {
 let navToken = 0, firstView = true;
 const cleanups = [];
 export const onLeave = (fn) => cleanups.push(fn);
+const LEAVE_MS = 180;
+
+function runRender(main, render) {
+  cleanups.splice(0).forEach((fn) => { try { fn(); } catch { /* ignore */ } });
+  main.classList.remove('view-leave'); main.style.removeProperty('--leave-y');
+  render();
+  window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
+}
+
 /**
- * Runs `render` with the outgoing view fading out (150ms) and the incoming view rising in (350ms).
- * The router scrolls to top straight away; --leave-y keeps the outgoing view visually in place meanwhile.
+ * Runs `render` with outgoing fade+shift (180ms) and incoming rise (400ms).
+ * Uses the View Transitions API when available; CSS classes are the fallback.
+ * --leave-y keeps the outgoing view visually in place while the router would scroll.
  */
 export function viewTransition(main, render) {
   const token = ++navToken;
-  const enter = () => {
-    cleanups.splice(0).forEach((fn) => { try { fn(); } catch { /* ignore */ } });
-    main.classList.remove('view-leave'); main.style.removeProperty('--leave-y');
-    render();
-    window.scrollTo(0, 0);
+  const enterCss = () => {
+    runRender(main, render);
     if (reducedMotion()) return;
     main.classList.remove('view-enter'); void main.offsetWidth; main.classList.add('view-enter');
-    const done = (e) => { if (e.target !== main) return; main.classList.remove('view-enter'); main.removeEventListener('animationend', done); };   // ignore animationend bubbling up from children
+    root.classList.add('route-ready');
+    const done = (e) => {
+      if (e.target !== main) return;
+      main.classList.remove('view-enter');
+      main.removeEventListener('animationend', done);
+    };
     main.addEventListener('animationend', done);
   };
-  if (firstView || reducedMotion()) { firstView = false; enter(); return; }
+  if (firstView || reducedMotion()) { firstView = false; enterCss(); return; }
+
+  // Prefer View Transitions API; fall back to class-based leave/enter.
+  if (typeof document.startViewTransition === 'function') {
+    try {
+      const vt = document.startViewTransition(() => {
+        if (token !== navToken) return;
+        runRender(main, render);
+        root.classList.add('route-ready');
+      });
+      vt.finished.catch(() => {});
+      return;
+    } catch { /* fall through to CSS */ }
+  }
+
   main.style.setProperty('--leave-y', `${-window.scrollY}px`);
   main.classList.remove('view-enter'); main.classList.add('view-leave');
-  setTimeout(() => { if (token === navToken) enter(); }, 150);
+  setTimeout(() => { if (token === navToken) enterCss(); }, LEAVE_MS);
 }
 
 /* ---------- scrollspy for the About table of contents (19) ---------- */
@@ -248,6 +289,20 @@ export function initUI(main) {
   io = new IntersectionObserver(onVisible, { threshold: 0.15 });
   bar = document.querySelector('.scroll-progress');
   buildStarfield();
+  // Earth mounts once after first paint (lazy three.js); route/city hooks in main.js
+  initEarthBg();
+  const { page: bootPage } = (() => {
+    try {
+      const raw = String(location.hash).replace(/^#\/?/, '');
+      return { page: raw.split('?')[0].split('/')[0] || 'home' };
+    } catch { return { page: 'home' }; }
+  })();
+  setEarthRoute(bootPage);
+  window.addEventListener('hashchange', () => {
+    const raw = String(location.hash).replace(/^#\/?/, '');
+    const p = raw.split('?')[0].split('/')[0] || 'home';
+    setEarthRoute(p === 'explore' || p === 'discover' ? 'trends' : p);
+  });
   window.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('click', onDisclosureClick);
   document.addEventListener('click', (e) => {            // close an open export menu when clicking elsewhere
@@ -271,4 +326,55 @@ export function initUI(main) {
   document.fonts?.ready.then(relayout);
   requestAnimationFrame(placeNav);
   onScroll();
+
+  // Nav links: one-time 40ms stagger on first load
+  if (!reducedMotion()) {
+    const links = [...document.querySelectorAll('.nav-links a')];
+    links.forEach((a, i) => a.style.setProperty('--i', i));
+    root.classList.add('nav-enter');
+    const clearNav = (e) => {
+      if (!e.target.matches?.('.nav-links a')) return;
+      root.classList.remove('nav-enter');
+      document.removeEventListener('animationend', clearNav);
+    };
+    document.addEventListener('animationend', clearNav);
+    setTimeout(() => root.classList.remove('nav-enter'), 800);
+  }
+
+  // Ask button → mascot wiggle (micro-interaction; Phase 3 wiring kept here)
+  const ask = document.getElementById('ask-btn');
+  ask?.addEventListener('pointerenter', () => {
+    const m = document.getElementById('mascot');
+    if (!m || reducedMotion()) return;
+    m.classList.remove('is-wiggle'); void m.offsetWidth; m.classList.add('is-wiggle');
+    m.addEventListener('animationend', () => m.classList.remove('is-wiggle'), { once: true });
+  });
+
+  // Card spotlight + button ripple (desktop / fine pointer only for spotlight)
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+  document.addEventListener('pointermove', (e) => {
+    if (!fine.matches) return;
+    const card = e.target.closest?.('.card-link');
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    card.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  }, { passive: true });
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest?.('.btn');
+    if (!btn || reducedMotion()) return;
+    const r = btn.getBoundingClientRect();
+    const rip = document.createElement('span');
+    rip.className = 'ripple';
+    rip.style.left = `${e.clientX - r.left}px`;
+    rip.style.top = `${e.clientY - r.top}px`;
+    btn.appendChild(rip);
+    rip.addEventListener('animationend', () => rip.remove(), { once: true });
+  });
+  // Sticky table header shadow when the scroller moves
+  document.addEventListener('scroll', (e) => {
+    const scroller = e.target?.closest?.('.scroll-x, [data-scroller]') || (e.target?.classList?.contains?.('scroll-x') ? e.target : null);
+    if (!scroller || scroller === document || scroller === document.documentElement) return;
+    scroller.closest('.table-wrap')?.classList.toggle('is-scrolled', scroller.scrollTop > 2 || scroller.scrollLeft > 2);
+  }, true);
 }

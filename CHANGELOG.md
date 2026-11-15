@@ -1,5 +1,8 @@
 # Changelog — "Deep Space Observatory" redesign
 
+> **Follow-up (Earth + motion):** see [`CHANGELOG-earth-motion.md`](./CHANGELOG-earth-motion.md)
+> on branch `feat/earth-bg-animations` — animated Earth background and deeper transitions/hovers.
+
 Branch `redesign/deep-space`. Visual and interaction layer only.
 
 **Not changed:** data files, catalogs, `stats.js` (Mann-Kendall, Sen's slope, confidence levels),

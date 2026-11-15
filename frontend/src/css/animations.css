@@ -1,17 +1,21 @@
 /* ==========================================================================
    Trend Detector — shared keyframes and motion utilities.
-   Only transform and opacity are animated here (plus stroke-dashoffset for
-   SVG draw-ins). Durations and easings come from the motion tokens.
+   Only transform and opacity are animated here (plus stroke-dashoffset and
+   clip-path where needed). Durations and easings come from the motion tokens.
    Behaviour hooks live in src/js/ui.js; `.motion` is set on <html> only when
    JS is running and the user has not asked for reduced motion.
+   Extends the Phase 6 system — do not duplicate elsewhere.
    ========================================================================== */
 
 @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-@keyframes view-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes fade-up-sm { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes view-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes view-out { from { opacity: 1; transform: translateY(var(--leave-y, 0px)); } to { opacity: 0; transform: translateY(calc(var(--leave-y, 0px) - 8px)); } }
+@keyframes child-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes pop-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
 @keyframes pop-menu { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes panel-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
 @keyframes grow-x { from { transform: scaleX(0); } to { transform: none; } }
 @keyframes shimmer { to { transform: translateX(100%); } }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -31,10 +35,44 @@
 @keyframes bubble-in { from { opacity: 0; transform: translateX(8px) scale(0.92); } to { opacity: 1; transform: none; } }
 @keyframes bubble-out { to { opacity: 0; transform: translateX(8px) scale(0.92); } }
 @keyframes star-trail { from { opacity: 0.8; transform: translate(0, 0) scale(1); } to { opacity: 0; transform: translate(var(--dx, 0px), var(--dy, 12px)) scale(0.3); } }
+@keyframes word-up {
+  from { opacity: 0; transform: translateY(0.55em); clip-path: inset(100% 0 0 0); }
+  to { opacity: 1; transform: none; clip-path: inset(0 0 -10% 0); }
+}
+/* Large-card reveal: scale + fade only (no filter blur — hard motion budget). */
+@keyframes card-up {
+  from { opacity: 0; transform: translateY(16px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes underline-wipe { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes nav-fade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes cross-out { to { opacity: 0; } }
+@keyframes cross-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes foot-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+@keyframes sheen-sweep { from { transform: translateX(-120%) skewX(-18deg); } to { transform: translateX(220%) skewX(-18deg); } }
+@keyframes ripple-out { from { opacity: 0.45; transform: scale(0); } to { opacity: 0; transform: scale(2.4); } }
 
-/* 1. route change */
-.motion #main.view-leave { animation: view-out var(--dur-fast) var(--ease-in-out) both; pointer-events: none; }
-.motion #main.view-enter { animation: view-in 350ms var(--ease-out) both; }
+/* ---- View Transitions API (when supported) ---- */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root) { animation: view-out 180ms var(--ease-in-out) both; }
+  ::view-transition-new(root) { animation: view-in 400ms var(--ease-out) both; }
+}
+
+/* 1. route change — CSS fallback when View Transitions API is unavailable */
+.motion #main.view-leave { animation: view-out 180ms var(--ease-in-out) both; pointer-events: none; }
+.motion #main.view-enter { animation: view-in 400ms var(--ease-out) both; }
+.motion #main.view-enter > .container > * {
+  opacity: 0;
+  animation: child-in 400ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 50ms + 40ms);
+}
+.motion #main.view-enter > .container > *:nth-child(1) { --i: 0; }
+.motion #main.view-enter > .container > *:nth-child(2) { --i: 1; }
+.motion #main.view-enter > .container > *:nth-child(3) { --i: 2; }
+.motion #main.view-enter > .container > *:nth-child(4) { --i: 3; }
+.motion #main.view-enter > .container > *:nth-child(5) { --i: 4; }
+.motion #main.view-enter > .container > *:nth-child(6) { --i: 5; }
 
 /* 2. scroll reveal (IntersectionObserver adds .is-visible once) */
 .motion [data-reveal] { opacity: 0; }
@@ -43,15 +81,46 @@
 .motion [data-reveal="stagger"] > * { opacity: 0; }
 .motion [data-reveal="stagger"].is-visible { animation: none; }
 .motion [data-reveal="stagger"].is-visible > * { animation: fade-up var(--dur-reveal) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
+.motion [data-reveal="card"].is-visible { animation: card-up var(--dur-reveal) var(--ease-out) both; }
 
-/* 3. hero */
-.motion .hero h1 .w { display: inline-block; opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
-.motion .hero .lead, .motion .hero-actions { opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) 320ms both; }
-.motion .hero-actions { animation-delay: 420ms; }
-.motion .hero-viz { opacity: 0; animation: fade-up var(--dur-reveal) var(--ease-out) 200ms both; }
+/* 3. hero — clipped word rise, then subtitle / actions / location card */
+.motion .hero h1 .w {
+  display: inline-block; opacity: 0;
+  animation: word-up var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+.motion .hero .lead { opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) 360ms both; }
+.motion .hero-actions { opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) 420ms both; }
+.motion .hero-viz { opacity: 0; transform: scale(0.97); animation: hero-card 600ms var(--ease-out) 280ms both; }
+@keyframes hero-card {
+  from { opacity: 0; transform: scale(0.97) translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
 .motion .spark-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.2s var(--ease-in-out) 500ms forwards; }
 .motion .spark-area, .motion .spark-dot { opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) 1.6s both; }
 .motion body::before { animation: aurora 20s ease-in-out infinite alternate; }
+
+/* 4. section headings — green underline wipe when scrolled into view */
+.motion .section-head h2, .motion .page-head h1, .motion .about-body h2 {
+  position: relative; display: inline-block; max-width: 100%;
+}
+.motion .section-head h2::after, .motion .page-head h1::after, .motion .about-body h2::after {
+  content: ""; position: absolute; left: 0; bottom: -4px; width: 100%; max-width: 3.5rem;
+  height: 2px; background: var(--primary); border-radius: 2px;
+  transform: scaleX(0); transform-origin: left center;
+}
+.motion .heading-in.is-visible::after,
+.motion .section-head.is-visible h2::after,
+.motion .page-head.is-visible h1::after {
+  animation: underline-wipe 500ms var(--ease-out) both;
+}
+
+/* Nav links: first-load stagger (once) */
+.motion.nav-enter .nav-links a {
+  opacity: 0;
+  animation: nav-fade var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
 
 /* 5. gauge sweep */
 .motion .gauge-fill { stroke-dashoffset: 100; transition: stroke-dashoffset var(--dur-reveal) var(--ease-out) 150ms; }
@@ -61,6 +130,16 @@
 .motion .pi-bar span, .motion .pt-bar span { transform-origin: left; animation: grow-x 600ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
 .menu[open] .pop { animation: pop-menu 120ms var(--ease-out) both; }
 
+/* 8. tab / filter content cross-fade */
+.motion .tab-body.is-out { animation: cross-out 120ms var(--ease-in-out) both; pointer-events: none; }
+.motion .tab-body.is-in { animation: cross-in 200ms var(--ease-out) both; }
+
+/* 9. chat panel / scrim already transition in components; reinforce scale origin */
+.motion .drawer.open { animation: panel-in var(--dur-base) var(--ease-out) both; }
+
+/* 11. skeleton → content cross-fade */
+.motion .skel-done { animation: cross-in 200ms var(--ease-out) both; }
+
 /* 12. skeleton shimmer + orbit spinner: see components.css (.skel, .orbit) */
 
 /* 13. map markers */
@@ -69,11 +148,18 @@
 /* 14. trend badges: one-time pulse on first reveal */
 .motion .badge.pulse { animation: badge-pulse 600ms var(--ease-out) 200ms 1 both; }
 
+/* 12 (footer). secondary chrome fades in last on each route */
+.motion #main.view-enter ~ .site,
+.motion.route-ready .site {
+  animation: foot-in var(--dur-slow) var(--ease-out) 480ms both;
+}
+
 /* mascot idle */
 .motion .mascot-float { animation: float 4s ease-in-out infinite; }
 .motion .m-halo { animation: antenna-pulse 2.4s ease-in-out infinite; }
 .motion .m-eye { animation: blink 5.5s linear infinite; }
 .motion .m-flame path { animation: flicker 0.5s ease-in-out infinite; }
+.motion .mascot.is-wiggle .mascot-tilt { animation: wiggle 420ms var(--ease-out); }
 
 /* Reduced motion: no transforms, parallax, glide, shimmer or loops.
    Only opacity fades of 150ms or less remain. */
@@ -87,4 +173,5 @@
   .orbit { animation: none !important; }
   .card-link:hover, .btn:active, .chip:active, .card-link:active, .mascot:hover svg, .pin-wrap:hover .pin { transform: none !important; }
   .mascot-tilt, .m-flame { transform: none !important; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
 }
