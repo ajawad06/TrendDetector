@@ -46,7 +46,7 @@ async def export_series_csv(
     writer.writerow(["# Trend Detector Time Series Export"])
     writer.writerow([f"# Variable: {variable['name']} ({variable_id})"])
     writer.writerow([f"# Region: {region['name']} ({region_id})"])
-    writer.writerow([f"# Dataset: {variable['dataset']} ({variable['provider']})"])
+    writer.writerow([f"# Dataset: {variable.get('dataset') or variable.get('product') or 'Source: not specified'} ({variable.get('provider') or 'Source: not specified'})"])
     writer.writerow([f"# Unit: {variable['unit']}"])
     writer.writerow([f"# Citation: {variable.get('citation', '')}"])
     writer.writerow([f"# Disclaimer: A trend does not prove cause or future continuation."])
