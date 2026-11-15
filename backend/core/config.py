@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
 
     # ── AI Assistant ──
-    gemini_api_key: str = ""
+    groq_api_key: str = ""
 
     # ── Data Paths ──
     data_dir: str = "./data/prepared"

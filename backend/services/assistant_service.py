@@ -15,7 +15,8 @@ from core.config import settings
 
 logger = logging.getLogger("trend_detector.assistant")
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "openai/gpt-oss-120b"
 
 VALID_VARIABLES = ["pm25", "aod", "rain_mm", "no2"]
 VALID_CITIES = ["lahore", "karachi", "islamabad", "peshawar", "quetta", "faisalabad", "multan", "hyderabad"]
@@ -136,33 +137,42 @@ class AssistantService:
             f"- Direction: {'increasing' if slope_per_year > 0 else 'decreasing'}\n"
         )
 
-        api_key = os.getenv("GEMINI_API_KEY", "") or getattr(settings, "gemini_api_key", "")
+        api_key = os.getenv("GROQ_API_KEY", "") or getattr(settings, "groq_api_key", "")
         if api_key:
             try:
                 user_prompt = f"Grounded Context:\n{grounded_context}\n\nUser asked: \"{message}\"\n\nProvide a friendly, scientifically accurate 2-paragraph response for students."
                 async with httpx.AsyncClient(timeout=8.0) as client:
                     resp = await client.post(
-                        f"{GEMINI_API_URL}?key={api_key}",
-                        headers={"Content-Type": "application/json"},
+                        GROQ_API_URL,
+                        headers={
+                            "Content-Type": "application/json",
+                            "Authorization": f"Bearer {api_key}"
+                        },
                         json={
-                            "contents": [{"role": "user", "parts": [{"text": f"{self._system_prompt}\n\n{user_prompt}"}]}],
-                            "generationConfig": {
-                                "temperature": 0.2,
-                                "maxOutputTokens": 2048,
-                                "thinkingConfig": {"thinkingBudget": 0}
-                            }
+                            "model": GROQ_MODEL,
+                            "messages": [
+                                {"role": "system", "content": self._system_prompt},
+                                {"role": "user", "content": user_prompt}
+                            ],
+                            "temperature": 0.2,
+                            "max_tokens": 2048
                         }
                     )
                 if resp.status_code == 200:
                     resp_data = resp.json()
-                    ai_text = resp_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    ai_text = resp_data["choices"][0]["message"]["content"].strip()
                     return {
                         "reply": ai_text,
                         "is_ai_generated": True,
-                        "analysis_ref": {"variable": var_id, "region": city_id}
+                        "analysis_ref": {
+                            "variable": var_id,
+                            "region": city_id,
+                            "narrative": grounded_context,
+                            "data_url": f"/api/analysis/{var_id}/{city_id}"
+                        }
                     }
             except Exception as e:
-                logger.warning(f"Gemini API call failed: {e}")
+                logger.warning(f"Groq API call failed: {e}")
 
         # Grounded fallback
         fallback = (
@@ -175,7 +185,12 @@ class AssistantService:
         return {
             "reply": fallback,
             "is_ai_generated": False,
-            "analysis_ref": {"variable": var_id, "region": city_id}
+            "analysis_ref": {
+                "variable": var_id,
+                "region": city_id,
+                "narrative": grounded_context,
+                "data_url": f"/api/analysis/{var_id}/{city_id}"
+            }
         }
 
     def _build_system_prompt(self) -> str:

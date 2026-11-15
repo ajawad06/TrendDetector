@@ -163,7 +163,7 @@ class ApiClient {
       }
     }
 
-    // Try server-side Gemini if backend is available
+    // Try server-side Groq if backend is available
     if (this.isBackendAvailable) {
       try {
         const res = await fetch('/api/assistant/chat', {
