@@ -11,7 +11,7 @@ import { tok, palette } from './theme.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const main = $('#main');
-const S = { vars: [], regions: [], missions: [], hotspots: [], terms: [], meta: {}, series: null, plain: false };
+const S = { vars: [], regions: [], missions: [], hotspots: [], terms: [], meta: {}, series: null };
 const DIR = {
   increasing: { cls: 'up', icon: '↑', text: 'Increasing' },
   decreasing: { cls: 'down', icon: '↓', text: 'Decreasing' },
@@ -48,7 +48,7 @@ function headline({ v, r, analysis: a }) {
   if (t === 'caution') return `${v.name} may be ${d} in ${r.name}. Interpret with caution.`;
   return `No clear long-term trend in ${v.name} in ${r.name}.`;
 }
-const term = (technical, plain, hint) => (S.plain ? esc(plain) : `<abbr title="${esc(hint || plain)}">${esc(technical)}</abbr>`);
+const term = (technical, plain, hint) => `<abbr title="${esc(hint || plain)}">${esc(technical)}</abbr>`;
 
 /* ---------- shared UI ---------- */
 function selectors(varId, cityId) {
@@ -178,8 +178,12 @@ async function home() {
   main.innerHTML = `<div class="wrap"><section class="hero">
       <h1>Is Pakistan’s air getting better or worse?</h1>
       <p>Twenty years of monthly pollution and rainfall records for eight cities, tested for real trends.</p>
-      <a class="btn btn-primary" href="${exploreHref(loadSelection().var, loadSelection().city)}">Start investigating</a></section>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="${exploreHref(loadSelection().var, loadSelection().city)}">Start investigating</a>
+        <a class="btn" href="#/compare">Compare cities</a>
+      </div></section>
     <section class="card aq" id="air-box" aria-live="polite" aria-label="Air where you live"></section>
+    <section id="home-pi" class="stack" aria-label="Pollution index, all cities"></section>
     <h2 class="gap-top">Featured missions</h2>
     <div class="grid cols-3">${feat.map((m) => `<a class="card card-link" href="${exploreHref(m.variable, m.region)}"><h3>${esc(m.title)}</h3><p class="muted">${esc(m.question)}</p><small>${esc(m.result_summary)}</small></a>`).join('')}</div>
     <div id="pi-snap" class="stack"></div></div>`;
@@ -190,6 +194,7 @@ async function home() {
     // If the browser already granted permission earlier, skip the prompt and show the city straight away.
     navigator.permissions?.query({ name: 'geolocation' }).then((p) => { if (p.state === 'granted' && $('#locate')) $('#locate').click(); }).catch(() => {});
   }
+  initPollutionIndex($('#home-pi'), { compact: true });
   loadPI().then((j) => {
     const t = j.ranking_latest[0];
     $('#pi-snap').innerHTML = `<h2>Most polluted city</h2><a class="card card-link" href="#/pollution"><h3>${esc(t.city)}: ${esc(t.category)}</h3><p class="muted">Highest Pollution Index in the latest month (${esc(t.pi)} on a 0 to 100 scale).</p><small>See the full ranking</small></a>`;
@@ -267,7 +272,7 @@ function exportAs(kind, cur, anom) {
 const TABS = [['explorer', 'Explorer'], ['missions', 'Missions'], ['contrasts', 'Contrasts'], ['ranked', 'Ranked hotspots'], ['patterns', 'Minor patterns']];
 function trends(params) {
   const tab = TABS.some((t) => t[0] === params.tab) ? params.tab : 'explorer';
-  const pairs = [['rain_mm', 'peshawar', 'karachi', 'Rainfall: northwest valley vs southern coast'], ['no2', 'peshawar', 'multan', 'NO₂: Peshawar vs Multan'], ['pm25', 'lahore', 'faisalabad', 'PM2.5: Lahore vs Faisalabad']];
+  const pairs = [['rain_mm', 'peshawar', 'karachi', 'Rainfall: northwest valley vs southern coast'], ['no2', 'peshawar', 'multan', 'Traffic fumes: Peshawar vs Multan'], ['pm25', 'lahore', 'faisalabad', 'Smog: Lahore vs Faisalabad']];
   const bodies = {
     missions: () => `<p class="muted">Guided questions, each with the answer the data gives.</p><div class="grid cols-2">${S.missions.map((m) => `<a class="card card-link" href="${exploreHref(m.variable, m.region)}"><h3>${esc(m.title)}</h3><p class="muted">${esc(m.question)}</p><small>${esc(m.result_summary)}</small></a>`).join('')}</div>`,
     contrasts: () => `<p class="muted">Pairs of cities that behave differently for the same variable.</p><div class="grid cols-2">${pairs.map(([vr, a, b, t]) => { const x = analyze(vr, a), y = analyze(vr, b), v = x.v, sc = v.display_scale || 1;
@@ -276,7 +281,7 @@ function trends(params) {
     ranked: () => `<p class="muted">The strongest trends in the record, ranked.</p><div class="grid">${S.hotspots.map((h) => `<a class="card card-link" href="${exploreHref(h.variable, h.region)}"><h3>${esc(h.rank)}. ${esc(h.title)}</h3><p><span class="badge ${(DIR[h.direction] || DIR.flat).cls}"><span aria-hidden="true">${(DIR[h.direction] || DIR.flat).icon}</span> ${(DIR[h.direction] || DIR.flat).text}</span> <small>${esc(h.rate)}</small></p><p class="muted">${esc(h.significance)}. ${esc(h.why_it_matters)}</p></a>`).join('')}</div>`,
   };
   main.innerHTML = `<div class="wrap stack"><h1>Trends</h1>
-    <p class="muted">Every trend we found in one place: explore any series, follow guided missions, see contrasts and rankings, and check the smaller seasonal and behavioural patterns.</p>
+    <p class="muted">Every trend we found in one place: explore any series, follow guided missions, see contrasts and rankings, and check the smaller seasonal and behavioural patterns. Want two or more cities side by side instead? <a href="#/compare">Compare cities</a>.</p>
     <div class="tabs" role="tablist" aria-label="Trend views">${TABS.map(([k, l]) => `<button role="tab" id="tab-${k}" aria-controls="tab-body" data-tab="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
     <div id="tab-body" role="tabpanel" aria-labelledby="tab-${tab}"></div></div>`;
   main.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
@@ -337,18 +342,38 @@ function drawLines(cv, seriesList, dates, unit) {
 
 function dataPage() {
   const n = S.series[S.regions[0].id].variables[S.vars[0].id].length;
-  main.innerHTML = `<div class="wrap stack"><h1>Data and method</h1>
-    <p>${S.regions.length} cities, ${S.vars.length} variables, ${n} monthly observations each (2005 to 2024). Values come from <code>pk_city_monthly_final.csv</code>; nothing is simulated.</p>
-    <h2>Variables</h2><div class="scroll-x"><table><thead><tr><th>Variable</th><th>Unit</th><th>Source</th></tr></thead><tbody>${S.vars.map((v) => { const m = S.meta[v.id] || {}; return `<tr><th scope="row">${esc(v.name)}</th><td>${esc(v.display_unit || v.unit)}</td><td>${esc(m.product && m.provider ? `${m.product} via ${m.provider}` : 'Not specified')}</td></tr>`; }).join('')}</tbody></table></div>
-    <h2>How trends are judged</h2><p>Each series has its seasonal cycle removed (anomalies). A straight line is fitted, then checked with a rank-based test, with a correction for how similar one month is to the next. Many series are tested at once, so results are adjusted for false discoveries. Confidence rates record length, missing data and month-to-month similarity.</p>
-    <h2>Glossary</h2><dl class="facts">${S.terms.map((t) => `<dt>${esc(t.term)}</dt><dd>${esc(t.plain_meaning)} <small>${esc(t.why_we_use_it || '')}</small></dd>`).join('')}</dl>
-    <h2>Limitations</h2><p>One point per city, monthly resolution, 20 years. Nearby cities can share underlying data. A trend describes association over time and does not show cause.</p></div>`;
-}
-function about() {
-  main.innerHTML = `<div class="wrap stack"><h1>About</h1><p>Trend Detector was built for the NASA Space Apps Challenge 2026. It asks one question: are air pollution and rainfall in Pakistan’s cities changing, and can we be confident?</p>
+  main.innerHTML = `<div class="wrap stack"><h1>About</h1>
+    <p>Trend Detector was built for the <strong>NASA Space Apps Challenge 2026</strong> — <em>Be an Earth System Trend Detective</em>. It asks one question: are air pollution and rainfall in Pakistan's cities changing, and can we be confident?</p>
     <p class="note"><strong>Trend does not mean cause.</strong> A rising line shows what happened, not why it happened.</p>
-    <p>Data: monthly city observations, 2005 to 2024 (see <a href="#/data">Data and method</a>). Source code: <a href="https://github.com/fuzailfaraz/TrendDetector">GitHub</a>.</p></div>`;
+
+    <h2>Datasets and data pipeline</h2>
+    <p>NASA datasets (GES DISC), 2005 to 2024, monthly. ${S.regions.length} cities, ${S.vars.length} variables, ${n} monthly observations each; nothing is simulated.</p>
+    <div class="scroll-x"><table><thead><tr><th>Variable</th><th>Dataset</th><th>Resolution</th></tr></thead><tbody>${S.vars.map((v) => { const m = S.meta[v.id] || {}; const ds = m.product ? (m.version ? `${m.product} ${m.version}` : m.product) : 'Not specified'; return `<tr><th scope="row">${esc(v.name)}</th><td>${esc(ds)}</td><td>${esc(m.resolution || '—')}</td></tr>`; }).join('')}</tbody></table></div>
+    <h3>Pipeline</h3>
+    <ul>
+      <li>Downloaded with the NASA <code>earthaccess</code> Python library in Google Colab.</li>
+      <li>Averaged around 8 Pakistani cities (Lahore, Karachi, Islamabad, Peshawar, Faisalabad, Multan, Quetta, Hyderabad).</li>
+      <li>Output: one table of 1,920 city-month rows with no missing values.</li>
+    </ul>
+
+    <h2>Analysis</h2>
+    <p>Pollution Index (0 to 100) from PM2.5, NO2 and AOD, adjusted for rainfall.</p>
+    <p>Trend test: Mann-Kendall with Sen's slope and a 95% confidence interval.</p>
+
+    <h2>Glossary</h2><dl class="facts">${S.terms.map((t) => `<dt>${esc(t.term)}</dt><dd>${esc(t.plain_meaning)} <small>${esc(t.why_we_use_it || '')}</small></dd>`).join('')}</dl>
+
+    <h2>Limitations</h2>
+    <ul>
+      <li>PM2.5 is model-derived and NO2 is a satellite column, not a ground reading.</li>
+      <li>Coarse grid, so nearby cities look alike.</li>
+      <li>Not an official air quality index.</li>
+    </ul>
+
+    <h2>AI disclosure</h2><p>AI tools were used during development: <strong>Claude Code</strong> for coding and implementation, <strong>Antigravity</strong> for UI design, and <strong>Perplexity</strong> for research. All statistics shown (trend, significance, confidence) are computed directly from the dataset by deterministic code, not generated by AI.</p>
+
+    <p>Source code: <a href="https://github.com/fuzailfaraz/TrendDetector">GitHub</a>.</p></div>`;
 }
+const legacyAbout = () => location.replace(buildHash('data'));
 const notFound = () => { main.innerHTML = `<div class="wrap state"><h1>Page not found</h1><p class="muted">That page does not exist.</p><a class="btn btn-primary" href="#/home">Go home</a></div>`; };
 
 /* ---------- assistant slide-over ---------- */
@@ -378,17 +403,12 @@ function assistant() {
 
 /* ---------- boot ---------- */
 async function boot() {
-  try {
-    S.plain = localStorage.getItem('td:plain') === '1';
-  } catch { /* private mode */ }
-  const pt = $('#plain-toggle'); pt.checked = S.plain;
-  pt.addEventListener('change', () => { S.plain = pt.checked; try { localStorage.setItem('td:plain', S.plain ? '1' : '0'); } catch { /* ignore */ } window.dispatchEvent(new HashChangeEvent('hashchange')); });
   assistant();
   try {
     S.series = await api.getSeriesData();
     const [v, r, m, h, t, meta] = await Promise.all([api.getVariables(), api.getRegions(), api.getMissions(), fetch('./catalogs/hotspots.json').then((x) => x.json()).catch(() => []), api.getLearningTerms(), api.getMetadata()]);
-    Object.assign(S, { vars: v.variables, regions: r.regions, missions: m.missions || m, hotspots: h, terms: t.terms || [], meta: meta || {} });
+    Object.assign(S, { vars: v.variables, regions: r.regions, missions: m.missions || m, hotspots: h, terms: t.learning_terms?.terms || [], meta: meta || {} });
   } catch (e) { console.error(e); return stateBox('The data could not be loaded.', true); }
-  startRouter({ home, trends, explore: legacyExplore, discover: legacyDiscover, pollution, compare, data: dataPage, about }, notFound);
+  startRouter({ home, trends, explore: legacyExplore, discover: legacyDiscover, pollution, compare, data: dataPage, about: legacyAbout }, notFound);
 }
 boot();

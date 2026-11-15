@@ -4,9 +4,10 @@
     "name": "PM2.5 Column Observation",
     "measured_variable": "Particulate Matter (PM2.5)",
     "years": "2005–2024",
-    "provider": null,
-    "product_name": null,
+    "provider": "NASA GES DISC",
+    "product_name": "MERRA-2 Aerosol Diagnostics (M2TMNXAER)",
     "version": null,
+    "resolution": "~50 km",
     "citation": null
   },
   {
@@ -14,9 +15,10 @@
     "name": "Aerosol Optical Depth",
     "measured_variable": "Aerosol Optical Depth (AOD)",
     "years": "2005–2024",
-    "provider": null,
-    "product_name": null,
+    "provider": "NASA GES DISC",
+    "product_name": "MERRA-2 Aerosol Diagnostics (M2TMNXAER)",
     "version": null,
+    "resolution": "~50 km",
     "citation": null
   },
   {
@@ -24,9 +26,10 @@
     "name": "Precipitation Time Series",
     "measured_variable": "Monthly Rainfall (rain_mm)",
     "years": "2005–2024",
-    "provider": null,
-    "product_name": null,
-    "version": null,
+    "provider": "NASA GES DISC",
+    "product_name": "GPM IMERG",
+    "version": "V07",
+    "resolution": "~10 km",
     "citation": null
   },
   {
@@ -34,9 +37,10 @@
     "name": "Tropospheric NO₂ Column",
     "measured_variable": "Nitrogen Dioxide (no2)",
     "years": "2005–2024",
-    "provider": null,
-    "product_name": null,
-    "version": null,
+    "provider": "NASA GES DISC",
+    "product_name": "OMI Aura (OMNO2d)",
+    "version": "v004",
+    "resolution": "~25 km",
     "citation": null
   }
 ]

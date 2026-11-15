@@ -70,10 +70,10 @@ class ApiClient {
     }
 
     return {
-      pm25: { label: "Particulate Matter (PM2.5)", unit: "µg/m³", provider: null, product: null },
-      aod: { label: "Aerosol Optical Depth", unit: "dimensionless", provider: null, product: null },
+      pm25: { label: "Smog (PM2.5)", unit: "µg/m³", provider: null, product: null },
+      aod: { label: "Haze (AOD)", unit: "dimensionless", provider: null, product: null },
       rain_mm: { label: "Monthly Rainfall", unit: "mm/month", provider: null, product: null },
-      no2: { label: "Nitrogen Dioxide Column", unit: "molecules/cm²", display_scale: 1e15, display_unit: "×10¹⁵ molecules/cm²", provider: null, product: null }
+      no2: { label: "Traffic fumes (NO₂)", unit: "molecules/cm²", display_scale: 1e15, display_unit: "×10¹⁵ molecules/cm²", provider: null, product: null }
     };
   }
 
@@ -155,19 +155,17 @@ class ApiClient {
       }
     }
 
-    // Try server-side Groq if backend is available
-    if (this.isBackendAvailable) {
-      try {
-        const res = await fetch('/api/assistant/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text })
-        });
-        if (res.ok) {
-          return await res.json();
-        }
-      } catch (e) {}
-    }
+    // Always try the real (Groq-backed) assistant endpoint first; fall back below if it's unreachable.
+    try {
+      const res = await fetch('/api/assistant/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {}
 
     // Grounded client-side statistical response using real series
     let matchedVar = 'pm25';

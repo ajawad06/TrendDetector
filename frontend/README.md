@@ -10,7 +10,7 @@ Static, vanilla-JS (ES modules) app for the NASA Space Apps 2026 challenge. It s
 - `api/` serverless functions (assistant chat, live PI). `server.js` local dev server.
 
 ## Pages (hash routes)
-`#/home`, `#/trends?tab=explorer&var=pm25&city=lahore` (tabs: explorer, missions, contrasts, hotspots, patterns; `#/explore` and `#/discover` redirect here), `#/pollution`, `#/compare`, `#/data`, `#/about`. See `../docs/REDESIGN.md` for the audit, IA and migration status.
+`#/home`, `#/trends?tab=explorer&var=pm25&city=lahore` (tabs: explorer, missions, contrasts, hotspots, patterns; `#/explore` and `#/discover` redirect here), `#/pollution`, `#/compare`, `#/data` (data and about, merged; `#/about` redirects here). See `../docs/REDESIGN.md` for the audit, IA and migration status.
 
 ## Run and test
 `npm run dev`, then from the repo root: `node tests/test_stats.js`, `node tests/test_live_pi.js`, `node tests/test_router_escape.mjs`, `node backend/tests/verify_integrity.js`, `python3 tests/test_pollution_index.py`.

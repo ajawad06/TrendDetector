@@ -13,9 +13,9 @@ const PATHS = ['./data/pollution_index.json'];
 const catIdx = (v, cats) => Math.max(0, cats.findIndex(c => v <= c.max));
 const fmtDate = d => `${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const DRIVER = { pm25: 'PM2.5', no2: 'NO₂', aod: 'AOD' };
+const DRIVER = { pm25: 'Smog', no2: 'Traffic fumes', aod: 'Haze' };
 
-export async function initPollutionIndex(root) {
+export async function initPollutionIndex(root, opts = {}) {
   let data = null;
   for (const p of PATHS) {
     try { const r = await fetch(p); if (r.ok) { data = await r.json(); break; } } catch (e) { /* next */ }
@@ -23,15 +23,16 @@ export async function initPollutionIndex(root) {
   if (!data) {
     console.info('Pollution index data missing. Rebuild with: python scripts/build_pollution_index.py');
     root.innerHTML = '<div class="state"><p>The pollution index could not be loaded.</p><button class="btn" data-retry>Retry</button></div>';
-    root.querySelector('[data-retry]').addEventListener('click', () => initPollutionIndex(root));
+    root.querySelector('[data-retry]').addEventListener('click', () => initPollutionIndex(root, opts));
     return;
   }
-  new PollutionIndexView(root, data).render();
+  new PollutionIndexView(root, data, opts).render();
 }
 
 class PollutionIndexView {
-  constructor(root, data) {
+  constructor(root, data, opts = {}) {
     this.root = root; this.data = data; this.cats = data.meta.categories;
+    this.compact = !!opts.compact;
     this.names = Object.keys(data.cities);
     this.focus = data.ranking_latest[0].city;       // most polluted city right now
     this.compare = new Set([this.focus]);
@@ -43,12 +44,19 @@ class PollutionIndexView {
 
   render() {
     const m = this.data.meta;
-    this.root.innerHTML = `
+    const header = this.compact ? `<h2 class="gap-top">Pollution index, all cities</h2>
+      <p class="muted">Live now-cast, ranking, and the twenty-year trend. ${fmtDate(m.period[0])} to ${fmtDate(m.period[1])}.</p>` : `
       <div class="section-header section-header-green">
         <span class="section-label">Primary Indicator</span>
         <h3 class="section-title">Pakistan Pollution Index (PI)</h3>
         <p class="section-desc">One 0–100 score per city and month, combining PM2.5, NO₂ and aerosol load, softened by rainfall wash-out. Observations ${fmtDate(m.period[0])} – ${fmtDate(m.period[1])}.</p>
-      </div>
+      </div>`;
+    const method = this.compact ? '' : `
+      <div class="pi-method"><b>How PI is built.</b> Each variable is scaled 0–100 with fixed bounds (PM2.5 ${m.bounds.pm25.join('–')} µg/m³, NO₂ 0–1.5×10¹⁶ molecules/cm², AOD 0–2). Air = ${m.weights.pm25}·PM2.5 + ${m.weights.no2}·NO₂ + ${m.weights.aod}·AOD; PI = Air × (1 − ${m.rain_max_discount}·min(rain/${m.rain_cap_mm} mm, 1)).
+        Tree loss and CO₂ from the original spec were removed because the dataset has no such columns; weights were renormalised, nothing was estimated.
+        City rankings stay stable across alternative weight sets (Spearman ρ ${Math.min(...m.weight_set_rank_correlation)}–1.0). ${esc(m.disclaimer)}</div>`;
+    this.root.innerHTML = `
+      ${header}
       <div class="pi-card"><div class="pi-head"><h4>Live now-cast</h4><small id="pi-live-meta" class="pi-note"></small></div><div id="pi-live" class="pi-live"><small class="pi-note">Loading live data…</small></div></div>
       <div class="pi-grid">
         <div class="pi-card"><h4>Ranking · ${fmtDate(m.period[1])}</h4><div id="pi-rank"></div>
@@ -62,16 +70,15 @@ class PollutionIndexView {
           <div id="pi-stats"></div>
         </div>
       </div>
-      <div class="pi-grid pi-grid-2">
+      ${this.compact ? '' : `<div class="pi-grid pi-grid-2">
         <div class="pi-card"><h4>Biggest peaks · <span id="pi-f1"></span></h4><div id="pi-peaks" class="pi-events"></div></div>
         <div class="pi-card"><h4>Deepest dips · <span id="pi-f2"></span></h4><div id="pi-dips" class="pi-events"></div></div>
-      </div>
-      <div class="pi-card"><h4>Seasonal pattern · average PI by calendar month</h4><div id="pi-heat" class="pi-heat"></div></div>
-      <div class="pi-method"><b>How PI is built.</b> Each variable is scaled 0–100 with fixed bounds (PM2.5 ${m.bounds.pm25.join('–')} µg/m³, NO₂ 0–1.5×10¹⁶ molecules/cm², AOD 0–2). Air = ${m.weights.pm25}·PM2.5 + ${m.weights.no2}·NO₂ + ${m.weights.aod}·AOD; PI = Air × (1 − ${m.rain_max_discount}·min(rain/${m.rain_cap_mm} mm, 1)).
-        Tree loss and CO₂ from the original spec were removed because the dataset has no such columns; weights were renormalised, nothing was estimated.
-        City rankings stay stable across alternative weight sets (Spearman ρ ${Math.min(...m.weight_set_rank_correlation)}–1.0). ${esc(m.disclaimer)}</div>`;
+      </div>`}
+      ${this.compact ? '' : '<div class="pi-card"><h4>Seasonal pattern · average PI by calendar month</h4><div id="pi-heat" class="pi-heat"></div></div>'}
+      ${method}`;
 
-    this.renderRanking(); this.renderChips(); this.renderHeat();
+    this.renderRanking(); this.renderChips();
+    if (!this.compact) this.renderHeat();
     this.canvas = this.root.querySelector('#pi-canvas');
     this.root.querySelector('#pi-focus').addEventListener('change', e => { this.focus = e.target.value; this.compare.add(this.focus); this.refresh(); });
     this.canvas.addEventListener('mousemove', e => this.onMove(e));
@@ -148,6 +155,7 @@ class PollutionIndexView {
   }
 
   renderEvents() {
+    if (this.compact) return;
     const c = this.data.cities[this.focus];
     this.root.querySelector('#pi-f1').textContent = this.root.querySelector('#pi-f2').textContent = this.focus;
     const row = (e, up) => `<div class="pi-event"><b class="${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${fmtDate(e.month)}</b>

@@ -3,27 +3,30 @@
     "label": "Particulate Matter (PM2.5)",
     "unit": "µg/m³",
     "description": "Fine inhalable atmospheric particles with diameters that are generally 2.5 micrometers and smaller.",
-    "provider": null,
-    "product": null,
+    "provider": "NASA GES DISC",
+    "product": "MERRA-2 Aerosol Diagnostics (M2TMNXAER)",
     "version": null,
+    "resolution": "~50 km",
     "citation": null
   },
   "aod": {
     "label": "Aerosol Optical Depth",
     "unit": "dimensionless",
     "description": "Measure of light extinction by atmospheric aerosol particles (dust, smoke, haze) across the atmospheric column.",
-    "provider": null,
-    "product": null,
+    "provider": "NASA GES DISC",
+    "product": "MERRA-2 Aerosol Diagnostics (M2TMNXAER)",
     "version": null,
+    "resolution": "~50 km",
     "citation": null
   },
   "rain_mm": {
     "label": "Monthly Rainfall",
     "unit": "mm/month",
     "description": "Total monthly accumulated precipitation at the city coordinate.",
-    "provider": null,
-    "product": null,
-    "version": null,
+    "provider": "NASA GES DISC",
+    "product": "GPM IMERG",
+    "version": "V07",
+    "resolution": "~10 km",
     "citation": null
   },
   "no2": {
@@ -32,9 +35,10 @@
     "display_scale": 1e15,
     "display_unit": "×10¹⁵ molecules/cm²",
     "description": "Tropospheric nitrogen dioxide vertical column density, an indicator of combustion and vehicular/industrial emissions.",
-    "provider": null,
-    "product": null,
-    "version": null,
+    "provider": "NASA GES DISC",
+    "product": "OMI Aura (OMNO2d)",
+    "version": "v004",
+    "resolution": "~25 km",
     "citation": null
   }
 }

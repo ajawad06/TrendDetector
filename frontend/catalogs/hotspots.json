@@ -1,46 +1,46 @@
 [
   {
     "rank": 1,
-    "title": "Quetta Column NO₂ Surge",
+    "title": "Quetta Traffic Fumes Surge",
     "variable": "no2",
     "region": "quetta",
     "rate": "+2.01×10¹³ molecules/cm²/yr",
     "direction": "increasing",
     "significance": "Statistically Significant (p < 0.001, FDR verified)",
-    "why_it_matters": "Rising valley NO₂ reflects expanding vehicular and localized combustion trapped by surrounding high terrain.",
+    "why_it_matters": "Rising valley traffic fumes (NO₂) reflect expanding vehicular and localized combustion trapped by surrounding high terrain.",
     "icon": "⚡"
   },
   {
     "rank": 2,
-    "title": "Islamabad Particulate Increase",
+    "title": "Islamabad Smog Increase",
     "variable": "pm25",
     "region": "islamabad",
     "rate": "+0.456 µg/m³/year",
     "direction": "increasing",
     "significance": "Statistically Significant (p = 0.00075, Tier: Significant)",
-    "why_it_matters": "Substantial rise in fine inhalable particulates along the Margalla foothills over the 20-year satellite record.",
+    "why_it_matters": "Substantial rise in fine inhalable particulates (smog) along the Margalla foothills over the 20-year satellite record.",
     "icon": "💨"
   },
   {
     "rank": 3,
-    "title": "Peshawar PM2.5 Elevation",
+    "title": "Peshawar Smog Elevation",
     "variable": "pm25",
     "region": "peshawar",
     "rate": "+0.375 µg/m³/year",
     "direction": "increasing",
     "significance": "Statistically Significant (p = 0.0116, Tier: Significant)",
-    "why_it_matters": "Persistent upward particulate trend in the Peshawar basin with elevated risks for respiratory hospital admissions.",
+    "why_it_matters": "Persistent upward smog trend in the Peshawar basin with elevated risks for respiratory hospital admissions.",
     "icon": "🏭"
   },
   {
     "rank": 4,
-    "title": "Multan NO₂ Reduction",
+    "title": "Multan Traffic Fumes Reduction",
     "variable": "no2",
     "region": "multan",
     "rate": "-1.70×10¹³ molecules/cm²/yr",
     "direction": "decreasing",
     "significance": "Significant with Caution (p < 0.001, moderate persistence)",
-    "why_it_matters": "Noticeable downward slope in column NO₂ indicating regional shifts in southern Punjab combustion sources.",
+    "why_it_matters": "Noticeable downward slope in traffic fumes (NO₂) indicating regional shifts in southern Punjab combustion sources.",
     "icon": "🌾"
   },
   {
@@ -56,13 +56,13 @@
   },
   {
     "rank": 6,
-    "title": "Quetta Aerosol Optical Depth Decline",
+    "title": "Quetta Haze Decline",
     "variable": "aod",
     "region": "quetta",
     "rate": "-0.00119 AOD/year",
     "direction": "decreasing",
     "significance": "Statistically Significant (p = 0.0016, MK p = 0.0026)",
-    "why_it_matters": "Long-term reduction in high-altitude aerosol light extinction over the western valley.",
+    "why_it_matters": "Long-term reduction in high-altitude haze (aerosol light extinction) over the western valley.",
     "icon": "🏔️"
   }
 ]

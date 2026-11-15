@@ -1,7 +1,7 @@
 [
   {
     "id": "pm25",
-    "name": "Particulate Matter (PM2.5)",
+    "name": "Smog (PM2.5)",
     "unit": "µg/m³",
     "priority": "P0",
     "pct_change_ok": true,
@@ -15,7 +15,7 @@
   },
   {
     "id": "aod",
-    "name": "Aerosol Optical Depth",
+    "name": "Haze (AOD)",
     "unit": "dimensionless",
     "priority": "P0",
     "pct_change_ok": true,
@@ -43,7 +43,7 @@
   },
   {
     "id": "no2",
-    "name": "Nitrogen Dioxide Column",
+    "name": "Traffic fumes (NO₂)",
     "unit": "molecules/cm²",
     "priority": "P0",
     "pct_change_ok": true,
