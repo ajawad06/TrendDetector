@@ -1,54 +1,128 @@
-/* Single source of design tokens. Light "cream and olive" theme, dark via prefers-color-scheme.
-   Canvas code reads these with getComputedStyle — no hex in JS/HTML. */
+/* ==========================================================================
+   Trend Detector — design tokens (single source of truth)
+   Theme: "Deep Space Observatory" — dark, calm, scientific, high contrast.
+   Every colour, font, space, radius, shadow and motion value used by the app
+   is defined here. Canvas/SVG code reads these with getComputedStyle
+   (src/js/theme.js), so there is no hex in JS or HTML.
+   ========================================================================== */
 :root {
-  /* Palette: olive #6F874B, lime #C8E19F, white #F1F1F3, tan #CAAC8F, brown #6D523D; logo ink #453327 / #4F682F on cream #F5EBDF */
-  --bg: #F5EBDF;
-  --surface: #FCF9F4;
-  --surface-sunk: #EBDFCE;
-  --border: #D6C2A8;
-  --text: #3A2B20;
-  --text-muted: #6D523D;
-  --accent: #4F682F;
-  --accent-ink: #FFFFFF;
-  --lime: #C8E19F;
-  --olive: #6F874B;
-  --tan: #CAAC8F;
-  --series-trend: #6D523D;      /* brown: trend fit */
-  --series-base: #6D523D;       /* baseline */
-  --up: #9A4F1F;               /* direction is always icon + label + colour */
-  --down: #2F5D8A;
-  --focus: #1C5FB8;
-  --series-obs: #8FA073;
-  --grid: #E3D4BF;
-  --cat-1: #4C9A52; --cat-2: #D4A72C; --cat-3: #E08A2E; --cat-4: #D2483B; --cat-5: #8E3270;
-  --line-1: #4F682F; --line-2: #8A4B1E; --line-3: #2F5D8A; --line-4: #B03A6B;
-  --line-5: #6B4FA3; --line-6: #8C7A1F; --line-7: #1F7F7A; --line-8: #6D523D;
+  color-scheme: dark;
 
-  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Syne", var(--font-body);
+  /* ---- Surfaces ---- */
+  --bg-0: #070B14;            /* page */
+  --bg-1: #0D1322;            /* panels */
+  --bg-2: #141C30;            /* cards */
+  --bg-3: #1C2640;            /* hover and inputs */
+  --border: #27324D;          /* decorative card/divider lines */
+  --border-strong: #3A4768;
+  --border-ui: #6375A0;       /* interactive control boundaries: 3:1+ on every surface */
+  --scrim: rgb(3 6 12 / 0.6);
+  --glass: rgb(7 11 20 / 0.72);  /* translucent bars over --bg-0 */
 
-  /* 4 type sizes */
-  --fs-sm: 0.875rem; --fs-md: 1rem; --fs-lg: 1.5rem; --fs-xl: 2.25rem;
-  /* 8-pt spacing */
-  --s1: 0.5rem; --s2: 1rem; --s3: 1.5rem; --s4: 2rem; --s6: 3rem; --s8: 4rem;
-  --radius: 8px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+  /* ---- Text (all 4.5:1+ on --bg-0..--bg-3) ---- */
+  --text: #F3F6FC;
+  --text-2: #B4BFD6;
+  --text-3: #8391AE;
+
+  /* ---- Brand and states ---- */
+  --primary: #6EE7B7;         /* aurora green */
+  --primary-hover: #A7F3D0;
+  --primary-press: #34D399;
+  --on-primary: #03231A;      /* dark text on green, every state */
+  --secondary: #A78BFA;       /* nebula violet */
+  --info: #5CC8FF;            /* rain, water, links */
+  --warning: #FBBF24;
+  --danger: #FF6B6B;
+  --success: var(--primary);
+  --focus: var(--primary);
+
+  --primary-tint: rgb(110 231 183 / 0.12);
+  --secondary-tint: rgb(167 139 250 / 0.16);
+  --info-tint: rgb(92 200 255 / 0.10);
+  --warning-tint: rgb(251 191 36 / 0.12);
+  --danger-tint: rgb(255 107 107 / 0.12);
+  --neutral-tint: rgb(180 191 214 / 0.10);
+  --sheen: rgb(255 255 255 / 0.06);       /* skeleton shimmer highlight */
+  --ring: 0 0 0 3px rgb(110 231 183 / 0.4);
+  --ring-0: 0 0 0 0 rgb(110 231 183 / 0);
+
+  /* ---- Air-quality scale (green > amber > orange > red > magenta) ----
+     Mapped by index onto the app's five Pollution Index bands:
+     Good / Moderate / Unhealthy for sensitive groups / Unhealthy / Hazardous */
+  --aq-good: #6EE7B7;
+  --aq-moderate: #FBBF24;
+  --aq-unhealthy: #FB923C;
+  --aq-very: #FF6B6B;
+  --aq-hazard: #E879F9;
+  --aq-1: var(--aq-good); --aq-2: var(--aq-moderate); --aq-3: var(--aq-unhealthy);
+  --aq-4: var(--aq-very); --aq-5: var(--aq-hazard);
+
+  /* ---- Trend semantics (always paired with an arrow + text label) ---- */
+  --trend-up: var(--danger);      /* pollutant rising */
+  --trend-down: var(--success);   /* pollutant falling */
+  --trend-neutral: var(--info);   /* rainfall: up or down is not good or bad */
+  --trend-flat: var(--text-2);
+
+  /* ---- Chart palette: 8 cities, colourblind-safe on dark ---- */
+  --chart-1: #5CC8FF; --chart-2: #FFA24C; --chart-3: #6EE7A8; --chart-4: #F5E663;
+  --chart-5: #A594FF; --chart-6: #F58FC0; --chart-7: #FF7A5C; --chart-8: #8FB3C9;
+  --chart-obs: #8FB3C9;           /* observed monthly series */
+  --chart-fit: var(--primary);    /* fitted trend line */
+  --chart-base: var(--text-3);    /* zero / baseline */
+  --grid: #1E2842;                /* muted gridlines */
+
+  /* ---- Mascot (original SVG, see src/js/mascot.js) ---- */
+  --mascot-shell: #EEF2FB;
+  --mascot-shade: #B4BFD6;
+  --mascot-visor: #0A1020;
+  --logo-tile: #F5EBDF;           /* the logo artwork is drawn for a cream tile */
+
+  /* ---- Typography ---- */
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --fs-h1: clamp(2.25rem, 1.2rem + 3.6vw, 4rem);
+  --fs-h2: clamp(1.5rem, 1rem + 1.8vw, 2.25rem);
+  --fs-h3: 1.1875rem;
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.8125rem;
+  --fs-stat: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  --lh-body: 1.65;
+  --lh-head: 1.15;
+  --measure: 68ch;
+
+  /* ---- Spacing: 4/8px scale ---- */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-7: 32px; --space-8: 40px; --space-9: 48px; --space-10: 64px;
+  --gap: var(--space-4);                      /* one gap for every grid and toolbar */
+  --head-gap: var(--space-6);                 /* heading to content */
+  --section-gap: clamp(48px, 8vw, 96px);
+  --container: 1200px;
+  --gutter: clamp(16px, 4vw, 32px);
   --tap: 44px;
+  --nav-h: 64px;
+  --tabbar-h: 60px;
+
+  /* ---- Shape ---- */
+  --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 12px rgb(0 0 0 / 0.18);
+  --shadow-2: 0 2px 4px rgb(0 0 0 / 0.35), 0 16px 40px rgb(0 0 0 / 0.4);
+  --glow-primary: 0 0 0 1px rgb(110 231 183 / 0.4), 0 0 24px rgb(110 231 183 / 0.18);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --ease-overshoot: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 500ms;
+  --dur-reveal: 700ms;
+
+  /* ---- Layers ---- */
+  --z-nav: 20; --z-scrim: 30; --z-panel: 40; --z-mascot: 45; --z-toast: 60; --z-progress: 70;
+
+  /* ---- Assets ---- */
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B4BFD6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #1B150F; --surface: #251D15; --surface-sunk: #15100B; --border: #4A3B2C;
-    --text: #F1E8DC; --text-muted: #CAAC8F; --accent: #B3D183; --accent-ink: #1B150F;
-    --lime: #3D4A28; --olive: #8FA66A; --tan: #CAAC8F;
-    --series-trend: #CAAC8F; --series-base: #CAAC8F; --series-obs: #8FA073; --grid: #33291D;
-    --cat-1: #6FBF73; --cat-2: #E6C84F; --cat-3: #F29B3F; --cat-4: #E0584B; --cat-5: #C0599A;
-    --line-1: #B3D183; --line-2: #E3A86F; --line-3: #8DB8E8; --line-4: #E58FB0;
-    --line-5: #C9B6F2; --line-6: #E6D87A; --line-7: #7FD0C8; --line-8: #CAAC8F; --up: #E3A86F; --down: #8DB8E8; --focus: #8DB8E8;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-}
-:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.skip-link { position: absolute; left: var(--s1); top: -100px; background: var(--surface); padding: var(--s1) var(--s2); z-index: 100; }
-.skip-link:focus { top: var(--s1); }

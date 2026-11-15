@@ -4,35 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Are air pollution and rainfall in Pakistan's cities rising or falling? Monthly NASA-derived trends, 2005–2024.">
+  <meta name="theme-color" content="#070B14">
+  <meta name="color-scheme" content="dark">
   <title>Trend Detector: Pakistan air and rain trends</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=Syne:wght@700&display=swap" rel="stylesheet">
+  <!-- Heading font first and preloaded; body and mono follow. All display=swap. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
   <link rel="stylesheet" href="./src/css/tokens.css">
   <link rel="stylesheet" href="./src/css/style.css">
+  <link rel="stylesheet" href="./src/css/components.css">
   <link rel="stylesheet" href="./src/css/pollution.css">
+  <link rel="stylesheet" href="./src/css/animations.css">
   <link rel="icon" href="./src/img/logo-64.png" type="image/png">
   <link rel="apple-touch-icon" href="./src/img/logo-192.png">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
   <header class="top">
-    <div class="wrap">
-      <a class="brand" href="#/home"><img src="./src/img/logo-64.png" srcset="./src/img/logo-64.png 1x, ./src/img/logo-192.png 3x" width="40" height="40" alt=""><span>Trend Detector</span></a>
+    <div class="container top-inner">
+      <a class="brand" href="#/home"><img src="./src/img/logo-64.png" srcset="./src/img/logo-64.png 1x, ./src/img/logo-192.png 3x" width="36" height="36" alt=""><span>Trend Detector</span></a>
       <nav class="nav-links" aria-label="Main">
         <a data-nav="home" href="#/home">Home</a>
         <a data-nav="trends" href="#/trends">Trends</a>
         <a data-nav="pollution" href="#/pollution">Pollution</a>
         <a data-nav="compare" href="#/compare">Compare</a>
         <a data-nav="data" href="#/data">About</a>
+        <span class="nav-ind" aria-hidden="true"></span>
       </nav>
-      <button class="btn" id="ask-btn" aria-controls="drawer" aria-expanded="false">Ask</button>
+      <label class="switch" title="Show plain-language labels instead of statistical terms">
+        <input type="checkbox" role="switch" id="plain-toggle">
+        <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+        <span class="switch-label">Plain<span class="wide"> language</span></span>
+      </label>
+      <button class="btn" id="ask-btn" type="button" aria-controls="drawer" aria-expanded="false">Ask</button>
     </div>
   </header>
 
-  <main id="main" tabindex="-1"></main>
+  <main id="main" tabindex="-1">
+    <div class="container page" aria-busy="true">
+      <div class="loading-row"><span class="orbit" aria-hidden="true"></span><span role="status">Loading the observation record…</span></div>
+      <div class="skel skel-title"></div>
+      <div class="skel skel-line"></div>
+      <div class="skel skel-line"></div>
+      <div class="card-grid"><div class="skel skel-card"></div><div class="skel skel-card"></div><div class="skel skel-card"></div></div>
+    </div>
+  </main>
 
-  <footer class="site"><div class="wrap">
+  <footer class="site"><div class="container">
     <a href="#/data">About</a>
     <span>Trends show what happened, not why.</span>
     <span>Built for NASA Space Apps Challenge 2026 — Be an Earth System Trend Detective.</span>
@@ -43,19 +66,31 @@
     <a data-nav="trends" href="#/trends"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 17l5-6 4 4 8-9"/></svg>Trends</a>
     <a data-nav="pollution" href="#/pollution"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8h12a3 3 0 100-3M3 13h16a3 3 0 110 3M3 18h8"/></svg>Pollution</a>
     <a data-nav="compare" href="#/compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>Compare</a>
+    <a data-nav="data" href="#/data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>About</a>
   </nav>
 
   <div class="scrim" id="scrim"></div>
   <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
-    <header><strong id="drawer-title">Ask about the data</strong><button class="btn" id="drawer-close" aria-label="Close assistant">Close</button></header>
+    <header>
+      <span class="drawer-avatar" id="drawer-avatar" aria-hidden="true"></span>
+      <span class="drawer-title"><strong id="drawer-title">Ask about the data</strong><small>Answers use only this dataset</small></span>
+      <button class="btn btn-ghost btn-icon" id="drawer-close" type="button" aria-label="Close assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
     <div class="chat" id="chat" aria-live="polite"><div class="chat-msg chat-bot">Ask about any of the 4 variables in the 8 cities (2005–2024). Answers use only this dataset.</div></div>
-    <div class="prompts">
-      <button class="chip" data-prompt="Is PM2.5 increasing in Lahore?">PM2.5 in Lahore?</button>
-      <button class="chip" data-prompt="Compare rainfall trends between Peshawar and Karachi">Rain: Peshawar vs Karachi</button>
-      <button class="chip" data-prompt="Explain the Mann-Kendall test in plain terms">What is Mann-Kendall?</button>
+    <div class="prompts-wrap scroll-fade">
+      <div class="prompts" data-scroller role="group" aria-label="Suggested questions">
+        <button class="chip" type="button" data-prompt="Is PM2.5 increasing in Lahore?">PM2.5 in Lahore?</button>
+        <button class="chip" type="button" data-prompt="Compare rainfall trends between Peshawar and Karachi">Rain: Peshawar vs Karachi</button>
+        <button class="chip" type="button" data-prompt="Explain the Mann-Kendall test in plain terms">What is Mann-Kendall?</button>
+      </div>
     </div>
-    <form class="chat-form" id="chat-form"><input type="text" id="chat-input" aria-label="Your question" placeholder="Type a question" autocomplete="off"><button class="btn btn-primary" id="chat-send" type="submit">Send</button></form>
+    <form class="chat-form" id="chat-form">
+      <textarea id="chat-input" rows="1" aria-label="Your question" placeholder="Type a question" autocomplete="off" enterkeyhint="send"></textarea>
+      <button class="btn btn-primary" id="chat-send" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Send</button>
+    </form>
   </aside>
+
+  <div class="toasts" id="toasts" role="region" aria-label="Notifications" aria-live="polite"></div>
 
   <script type="module" src="./src/js/main.js"></script>
 </body>

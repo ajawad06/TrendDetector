@@ -6,12 +6,18 @@
  * - OLS fitted linear trend line
  * - Preserves legitimate zeros (rain_mm = 0 is a real value)
  * - Supports NO2 display scaling (x10^15)
- * - Clean, flat, calm palette: Forest green primary,
- *   Sage observed series, Pale Mint OLS line,
- *   Warm Tan secondary baseline. No glow, no neon.
+ * - Styled from design tokens only (tokens.css): muted gridlines, mono axis
+ *   labels, rounded dark tooltip, observed / trend / baseline series colours.
+ * - Motion (presentation only): lines draw in left to right (900ms), tooltip
+ *   fades and scales from 0.96 (120ms). Skipped under prefers-reduced-motion.
  */
 
 import { tok as T } from './theme.js';
+
+const MONO = () => T('--font-mono', 'monospace');
+const SANS = () => T('--font-body', 'sans-serif');
+const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DRAW_MS = 900, TIP_MS = 120;
 
 export class TrendChart {
   constructor(canvasElement) {
@@ -25,8 +31,11 @@ export class TrendChart {
     this.useAnomalies = true;
     this.hoverIndex = -1;
     this.renderRequested = false;
+    this.drawStart = 0;      // draw-in animation clock
+    this.tipStart = 0;       // tooltip fade clock
 
     this._setupEvents();
+    document.fonts?.ready.then(() => this.requestRender());   // redraw once the mono font is available
   }
 
   setData(dataPoints, olsResult, unit, useAnomalies = true, displayScale = 1.0, displayUnit = null) {
@@ -37,6 +46,7 @@ export class TrendChart {
     this.displayUnit = displayUnit || unit || "";
     this.useAnomalies = useAnomalies;
     this.hoverIndex = -1;
+    this.drawStart = reduced() ? 0 : performance.now();
     this.requestRender();
   }
 
@@ -123,7 +133,7 @@ export class TrendChart {
       const zeroY = getY(0);
       if (zeroY >= padding.top && zeroY <= padding.top + plotHeight) {
         ctx.save();
-        ctx.strokeStyle = T('--series-trend');
+        ctx.strokeStyle = T('--chart-base');
         ctx.setLineDash([3, 3]);
         ctx.lineWidth = 1.0;
         ctx.beginPath();
@@ -134,9 +144,17 @@ export class TrendChart {
       }
     }
 
-    // 1. Draw Primary Series Line in Sage Green - Flat, Clean
+    // Draw-in: series and trend line are revealed left to right through a clip rectangle.
+    const drawT = this.drawStart ? Math.min(1, (performance.now() - this.drawStart) / DRAW_MS) : 1;
+    const drawP = 1 - Math.pow(1 - drawT, 3);
     ctx.save();
-    ctx.strokeStyle = T('--series-obs');
+    ctx.beginPath();
+    ctx.rect(padding.left - 2, 0, (plotWidth + 4) * drawP, height);
+    ctx.clip();
+
+    // 1. Draw Primary Series Line (observed)
+    ctx.save();
+    ctx.strokeStyle = T('--chart-obs');
     ctx.lineWidth = 1.6;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -161,7 +179,7 @@ export class TrendChart {
     ctx.stroke();
     ctx.restore();
 
-    // 2. Draw OLS Trend Line in Pale Mint - Crisp 2.4px, No Glow
+    // 2. Draw OLS Trend Line - crisp 2.4px
     if (this.olsResult && totalPts > 1) {
       const slope = this.olsResult.slope_per_year / scale;
       const periodYears = 20.0;
@@ -178,14 +196,17 @@ export class TrendChart {
       const y2 = getY(lastYVal);
 
       ctx.save();
-      ctx.strokeStyle = T('--accent');
+      ctx.strokeStyle = T('--chart-fit');
       ctx.lineWidth = 2.4;
+      ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(getX(0), y1);
       ctx.lineTo(getX(totalPts - 1), y2);
       ctx.stroke();
       ctx.restore();
     }
+    ctx.restore();   // end draw-in clip
+    if (drawT < 1) this.requestRender(); else this.drawStart = 0;
 
     // 3. Draw Hover Point & Flat Tooltip
     if (this.hoverIndex >= 0 && this.hoverIndex < totalPts) {
@@ -196,9 +217,11 @@ export class TrendChart {
         const x = getX(this.hoverIndex);
         const y = getY(val);
 
+        const tipT = reduced() ? 1 : Math.min(1, (performance.now() - this.tipStart) / TIP_MS);
         ctx.save();
-        ctx.fillStyle = T('--accent');
-        ctx.strokeStyle = T('--surface');
+        ctx.globalAlpha = tipT;
+        ctx.fillStyle = T('--chart-fit');
+        ctx.strokeStyle = T('--bg-2');
         ctx.lineWidth = 2.0;
         ctx.beginPath();
         ctx.arc(x, y, 4.5, 0, Math.PI * 2);
@@ -206,7 +229,8 @@ export class TrendChart {
         ctx.stroke();
         ctx.restore();
 
-        this._drawTooltip(ctx, x, y, pt, width, scale);
+        this._drawTooltip(ctx, x, y, pt, width, scale, tipT);
+        if (tipT < 1) this.requestRender();
       }
     }
   }
@@ -214,9 +238,9 @@ export class TrendChart {
   _drawGrid(ctx, pad, w, h, minY, maxY) {
     ctx.save();
     ctx.strokeStyle = T('--grid');
-    ctx.lineWidth = 0.8;
-    ctx.fillStyle = T('--series-obs');
-    ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
+    ctx.lineWidth = 1;
+    ctx.fillStyle = T('--text-2');
+    ctx.font = `500 11px ${MONO()}`;
 
     // Horizontal grid lines
     const steps = 4;
@@ -261,15 +285,15 @@ export class TrendChart {
     ctx.translate(14, pad.top + h / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = "center";
-    ctx.font = "600 11px 'Plus Jakarta Sans', -apple-system, sans-serif";
-    ctx.fillStyle = T('--text');
+    ctx.font = `600 11px ${SANS()}`;
+    ctx.fillStyle = T('--text-2');
     ctx.fillText(this.useAnomalies ? `Anomaly (${this.displayUnit})` : `Observed (${this.displayUnit})`, 0, 0);
     ctx.restore();
 
     ctx.restore();
   }
 
-  _drawTooltip(ctx, x, y, pt, canvasWidth, scale) {
+  _drawTooltip(ctx, x, y, pt, canvasWidth, scale, t = 1) {
     const rawVal = pt.value !== null ? (pt.value / scale).toFixed(3) : 'Missing';
     const anomVal = pt.anomaly !== null ? ((pt.anomaly >= 0 ? '+' : '') + (pt.anomaly / scale).toFixed(3)) : 'N/A';
 
@@ -277,39 +301,43 @@ export class TrendChart {
     const text2 = `Value: ${rawVal} ${this.displayUnit}`;
     const text3 = `Anomaly: ${anomVal}`;
 
-    ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
-    const boxW = 155;
-    const boxH = 58;
+    ctx.font = `500 11px ${MONO()}`;
+    const boxW = Math.max(150, Math.ceil(Math.max(ctx.measureText(text2).width, ctx.measureText(text3).width)) + 22);
+    const boxH = 62;
     let boxX = x + 12;
-    if (boxX + boxW > canvasWidth - 10) boxX = x - boxW - 12;
+    if (boxX + boxW > canvasWidth - 10) boxX = Math.max(4, x - boxW - 12);
     const boxY = Math.max(6, y - boxH / 2);
 
+    // fades in and scales from 0.96 around its own centre
+    const s = 0.96 + 0.04 * t, cx = boxX + boxW / 2, cy = boxY + boxH / 2;
     ctx.save();
-    ctx.fillStyle = T('--surface');
-    ctx.strokeStyle = T('--border');
+    ctx.globalAlpha = t;
+    ctx.translate(cx, cy); ctx.scale(s, s); ctx.translate(-cx, -cy);
+    ctx.fillStyle = T('--bg-1');
+    ctx.strokeStyle = T('--border-strong');
     ctx.lineWidth = 1.0;
     ctx.beginPath();
-    ctx.roundRect(boxX, boxY, boxW, boxH, 6);
+    ctx.roundRect(boxX, boxY, boxW, boxH, 8);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = T('--text');
     ctx.textAlign = "left";
-    ctx.font = "600 11px 'Plus Jakarta Sans', -apple-system, sans-serif";
-    ctx.fillText(text1, boxX + 10, boxY + 16);
+    ctx.font = `600 11px ${SANS()}`;
+    ctx.fillText(text1, boxX + 11, boxY + 18);
 
-    ctx.font = "11px 'Plus Jakarta Sans', -apple-system, sans-serif";
-    ctx.fillStyle = T('--series-obs');
-    ctx.fillText(text2, boxX + 10, boxY + 32);
-    ctx.fillStyle = T('--series-trend');
-    ctx.fillText(text3, boxX + 10, boxY + 48);
+    ctx.font = `500 11px ${MONO()}`;
+    ctx.fillStyle = T('--text');
+    ctx.fillText(text2, boxX + 11, boxY + 35);
+    ctx.fillStyle = T('--text-2');
+    ctx.fillText(text3, boxX + 11, boxY + 51);
     ctx.restore();
   }
 
   _renderEmpty(ctx, w, h) {
     ctx.save();
-    ctx.fillStyle = T('--series-obs');
-    ctx.font = "13px 'Plus Jakarta Sans', -apple-system, sans-serif";
+    ctx.fillStyle = T('--text-2');
+    ctx.font = `13px ${SANS()}`;
     ctx.textAlign = "center";
     ctx.fillText("Select a variable and city station to display observations", w / 2, h / 2);
     ctx.restore();
@@ -335,6 +363,7 @@ export class TrendChart {
       const fraction = (mouseX - padding.left) / plotWidth;
       const index = Math.round(fraction * (this.dataPoints.length - 1));
       if (index !== this.hoverIndex && index >= 0 && index < this.dataPoints.length) {
+        if (this.hoverIndex === -1) this.tipStart = performance.now();
         this.hoverIndex = index;
         this.requestRender();
       }
