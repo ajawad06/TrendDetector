@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Trend Detector — shared keyframes and motion utilities.
+   Only transform and opacity are animated here (plus stroke-dashoffset for
+   SVG draw-ins). Durations and easings come from the motion tokens.
+   Behaviour hooks live in src/js/ui.js; `.motion` is set on <html> only when
+   JS is running and the user has not asked for reduced motion.
+   ========================================================================== */
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes view-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes view-out { from { opacity: 1; transform: translateY(var(--leave-y, 0px)); } to { opacity: 0; transform: translateY(calc(var(--leave-y, 0px) - 8px)); } }
+@keyframes msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pop-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes pop-menu { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes shimmer { to { transform: translateX(100%); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes typing { 0%, 60%, 100% { transform: none; opacity: 0.5; } 30% { transform: translateY(-5px); opacity: 1; } }
+@keyframes pin-ring { 0% { opacity: 0.7; transform: scale(0.8); } 100% { opacity: 0; transform: scale(1.5); } }
+@keyframes badge-pulse { 0% { transform: scale(1); } 40% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes toast-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes toast-out { to { opacity: 0; transform: translateX(24px); } }
+@keyframes toast-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes twinkle { from { opacity: 0.18; } to { opacity: 0.6; } }
+@keyframes aurora { from { transform: translate3d(-2%, -1%, 0) scale(1); } to { transform: translate3d(2%, 2%, 0) scale(1.06); } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes antenna-pulse { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.7); } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes flicker { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+@keyframes bubble-in { from { opacity: 0; transform: translateX(8px) scale(0.92); } to { opacity: 1; transform: none; } }
+@keyframes bubble-out { to { opacity: 0; transform: translateX(8px) scale(0.92); } }
+@keyframes star-trail { from { opacity: 0.8; transform: translate(0, 0) scale(1); } to { opacity: 0; transform: translate(var(--dx, 0px), var(--dy, 12px)) scale(0.3); } }
+
+/* 1. route change */
+.motion #main.view-leave { animation: view-out var(--dur-fast) var(--ease-in-out) both; pointer-events: none; }
+.motion #main.view-enter { animation: view-in 350ms var(--ease-out) both; }
+
+/* 2. scroll reveal (IntersectionObserver adds .is-visible once) */
+.motion [data-reveal] { opacity: 0; }
+.motion [data-reveal].is-visible { animation: fade-up var(--dur-reveal) var(--ease-out) both; }
+.motion [data-reveal="stagger"] { opacity: 1; }
+.motion [data-reveal="stagger"] > * { opacity: 0; }
+.motion [data-reveal="stagger"].is-visible { animation: none; }
+.motion [data-reveal="stagger"].is-visible > * { animation: fade-up var(--dur-reveal) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
+
+/* 3. hero */
+.motion .hero h1 .w { display: inline-block; opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
+.motion .hero .lead, .motion .hero-actions { opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) 320ms both; }
+.motion .hero-actions { animation-delay: 420ms; }
+.motion .hero-viz { opacity: 0; animation: fade-up var(--dur-reveal) var(--ease-out) 200ms both; }
+.motion .spark-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.2s var(--ease-in-out) 500ms forwards; }
+.motion .spark-area, .motion .spark-dot { opacity: 0; animation: fade-up var(--dur-slow) var(--ease-out) 1.6s both; }
+.motion body::before { animation: aurora 20s ease-in-out infinite alternate; }
+
+/* 5. gauge sweep */
+.motion .gauge-fill { stroke-dashoffset: 100; transition: stroke-dashoffset var(--dur-reveal) var(--ease-out) 150ms; }
+.motion .is-visible .gauge-fill, .motion .gauge.is-visible .gauge-fill { stroke-dashoffset: calc(100 - var(--v, 0)); }
+
+/* 6. bars grow from the baseline */
+.motion .pi-bar span, .motion .pt-bar span { transform-origin: left; animation: grow-x 600ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms); }
+.menu[open] .pop { animation: pop-menu 120ms var(--ease-out) both; }
+
+/* 12. skeleton shimmer + orbit spinner: see components.css (.skel, .orbit) */
+
+/* 13. map markers */
+.motion .pin.pin-pop { animation: pop-in 320ms var(--ease-overshoot) both; animation-delay: calc(var(--i, 0) * 50ms); }
+
+/* 14. trend badges: one-time pulse on first reveal */
+.motion .badge.pulse { animation: badge-pulse 600ms var(--ease-out) 200ms 1 both; }
+
+/* mascot idle */
+.motion .mascot-float { animation: float 4s ease-in-out infinite; }
+.motion .m-halo { animation: antenna-pulse 2.4s ease-in-out infinite; }
+.motion .m-eye { animation: blink 5.5s linear infinite; }
+.motion .m-flame path { animation: flicker 0.5s ease-in-out infinite; }
+
+/* Reduced motion: no transforms, parallax, glide, shimmer or loops.
+   Only opacity fades of 150ms or less remain. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-property: opacity, visibility !important; transition-duration: 120ms !important; transition-delay: 0s !important;
+  }
+  .skel::after, .pin.is-selected::after, .starfield, .toast-bar { display: none !important; }
+  .orbit { animation: none !important; }
+  .card-link:hover, .btn:active, .chip:active, .card-link:active, .mascot:hover svg, .pin-wrap:hover .pin { transform: none !important; }
+  .mascot-tilt, .m-flame { transform: none !important; }
+}
