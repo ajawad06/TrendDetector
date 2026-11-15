@@ -205,7 +205,8 @@ export function viewTransition(main, render) {
     window.scrollTo(0, 0);
     if (reducedMotion()) return;
     main.classList.remove('view-enter'); void main.offsetWidth; main.classList.add('view-enter');
-    main.addEventListener('animationend', (e) => { if (e.target === main) main.classList.remove('view-enter'); }, { once: true });
+    const done = (e) => { if (e.target !== main) return; main.classList.remove('view-enter'); main.removeEventListener('animationend', done); };   // ignore animationend bubbling up from children
+    main.addEventListener('animationend', done);
   };
   if (firstView || reducedMotion()) { firstView = false; enter(); return; }
   main.style.setProperty('--leave-y', `${-window.scrollY}px`);

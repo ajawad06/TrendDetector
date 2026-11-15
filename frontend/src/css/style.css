@@ -101,8 +101,9 @@ main:focus { outline: none; }
 .aq-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--gap); flex-wrap: wrap; margin-bottom: var(--space-5); }
 .aq-top h2 { margin: 0; }
 .aq-top small { display: block; color: var(--text-3); }
-.locate-row { display: grid; gap: var(--space-3); align-items: end; margin-block: var(--space-5) var(--space-4); }
+.locate-row { display: grid; gap: var(--space-3); align-items: end; justify-content: start; margin-block: var(--space-5) var(--space-4); }
 @media (min-width: 640px) { .locate-row { grid-template-columns: auto minmax(0, 320px); gap: var(--gap); } }
+@media (max-width: 639.98px) { .locate-row { justify-content: stretch; } }
 .stat-grid { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); align-items: stretch; }
 /* label / value+unit on one baseline / badge / caption — rows shared across cards via subgrid */
 .stat-card { display: grid; grid-template-rows: auto auto auto 1fr; gap: var(--space-3); grid-row: span 4; min-width: 0;
@@ -234,4 +235,12 @@ dl.glossary dd small { display: block; color: var(--text-3); margin-top: var(--s
   body { padding-bottom: 0; }
   .row.cols-2, .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ---------- small phones: metrics stack as value | unit rows so long units never break mid-word ---------- */
+@media (max-width: 479.98px) {
+  .metrics { grid-template-columns: minmax(0, 1fr); }
+  .metric { grid-template-columns: minmax(8ch, auto) minmax(0, 1fr); grid-template-rows: auto; align-items: center; gap: var(--space-3); }
+  .metric b { font-size: 1.125rem; }
+  .metric > span { overflow-wrap: break-word; }
 }

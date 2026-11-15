@@ -323,3 +323,10 @@ footer.site a { color: var(--text); font-weight: 500; }
 .starfield { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; contain: strict; }
 .starfield-drift { position: absolute; inset: 0; will-change: transform; transform: translate3d(0, var(--y, 0px), 0); }
 .star-layer { position: absolute; top: 0; left: 0; width: 1px; height: 1px; border-radius: 50%; background: transparent; animation: twinkle var(--t, 6s) ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+
+/* ---------- tablet: keep the full navbar on one line at 768px ---------- */
+.brand { flex: none; }
+@media (min-width: 768px) and (max-width: 899.98px) {
+  .nav-links { margin-right: 0; gap: 0; }
+  .nav-links a { padding: 0 var(--space-2); }
+}
