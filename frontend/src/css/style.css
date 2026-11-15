@@ -14,9 +14,9 @@ body {
   -webkit-font-smoothing: antialiased;
   padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
 }
-/* Two very faint glows: violet top-left, green bottom-right (max 8% opacity). */
+/* Two very faint glows: violet top-left, green bottom-right (max 8% opacity). Behind starfield. */
 body::before {
-  content: ""; position: fixed; inset: -15%; z-index: -2; pointer-events: none;
+  content: ""; position: fixed; inset: -15%; z-index: calc(var(--z-stars) - 1); pointer-events: none;
   background:
     radial-gradient(42% 38% at 18% 14%, rgb(167 139 250 / 0.08), transparent 70%),
     radial-gradient(42% 38% at 84% 88%, rgb(110 231 183 / 0.07), transparent 70%);

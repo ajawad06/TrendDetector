@@ -1,0 +1,162 @@
+/* ==========================================================================
+   Trend Detector — animated Earth background.
+   Sits behind content (above the starfield). pointer-events: none.
+   Visual weight capped with vignette + route opacity so text stays readable.
+   ========================================================================== */
+
+.earth-bg {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-earth, -1);
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+  opacity: var(--earth-opacity, 0.42);
+  transition: opacity 1s var(--ease-in-out);
+  will-change: transform;
+  transform: translate3d(0, var(--earth-py, 0px), 0);
+}
+
+.earth-bg.is-home { --earth-opacity: 0.45; }
+.earth-bg:not(.is-home) { --earth-opacity: 0.35; }
+
+.earth-stage {
+  position: absolute;
+  width: var(--earth-size, 80vmin);
+  height: var(--earth-size, 80vmin);
+  right: var(--earth-right, -12%);
+  bottom: var(--earth-bottom, -28%);
+  will-change: transform;
+  transform: translate3d(var(--earth-tx, 0px), var(--earth-ty, 0px), 0)
+             rotateX(var(--earth-tilt-x, 0deg)) rotateY(var(--earth-tilt-y, 0deg));
+  transition: width 1s var(--ease-in-out), height 1s var(--ease-in-out),
+              right 1s var(--ease-in-out), bottom 1s var(--ease-in-out);
+}
+
+.earth-bg.is-home .earth-stage { --earth-size: 82vmin; --earth-right: -10%; --earth-bottom: -26%; }
+.earth-bg:not(.is-home) .earth-stage { --earth-size: 40vmin; --earth-right: -6%; --earth-bottom: -10%; }
+
+.earth-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Soft aurora rim + fade into --bg-0 so the globe never blows out text */
+.earth-stage::before {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%,
+      transparent 52%,
+      rgb(110 231 183 / 0.08) 62%,
+      rgb(167 139 250 / 0.06) 72%,
+      transparent 82%);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.earth-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 78% 82%, transparent 0%, var(--bg-0) 72%),
+    linear-gradient(180deg, rgb(7 11 20 / 0.55) 0%, transparent 28%, transparent 55%, rgb(7 11 20 / 0.7) 100%),
+    linear-gradient(90deg, rgb(7 11 20 / 0.75) 0%, transparent 42%, transparent 70%, rgb(7 11 20 / 0.35) 100%);
+  pointer-events: none;
+}
+
+/* Pure CSS sphere fallback (no WebGL / texture fail / reduced-data) */
+.earth-css {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 32% 28%, rgb(92 200 255 / 0.35), transparent 42%),
+    radial-gradient(circle at 70% 70%, rgb(7 11 20 / 0.55), transparent 55%),
+    radial-gradient(circle at 50% 50%, #1a4a7a 0%, #0a2038 55%, #041018 100%);
+  box-shadow:
+    inset -18px -12px 40px rgb(0 0 0 / 0.55),
+    inset 10px 8px 24px rgb(92 200 255 / 0.12),
+    0 0 40px rgb(110 231 183 / 0.08);
+}
+
+.earth-css::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background-image: url("../img/earth/earth-day.jpg");
+  background-size: 200% 100%;
+  background-position: var(--css-earth-x, 0%) 50%;
+  opacity: 0.85;
+  filter: saturate(0.85) brightness(0.72);
+  animation: earth-css-spin 120s linear infinite;
+  border-radius: 50%;
+  mask-image: radial-gradient(circle at 50% 50%, #000 58%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 58%, transparent 72%);
+}
+
+@keyframes earth-css-spin {
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
+}
+
+.earth-css-markers {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.earth-css-markers i {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  margin: -2px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 6px var(--primary);
+  opacity: 0.7;
+}
+
+.earth-css-markers i::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  opacity: 0.5;
+  animation: earth-marker-pulse 2s var(--ease-out) infinite;
+}
+
+@keyframes earth-marker-pulse {
+  0% { opacity: 0.55; transform: scale(0.7); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+
+@media (max-width: 767.98px) {
+  .earth-bg.is-home .earth-stage { --earth-size: 70vmin; --earth-right: -18%; --earth-bottom: -32%; }
+  .earth-bg:not(.is-home) .earth-stage { --earth-size: 36vmin; }
+  .earth-bg { --earth-opacity: 0.32; }
+  .earth-bg.is-home { --earth-opacity: 0.38; }
+}
+
+/* Paused / off / reduced-motion: static frame, no spin or pulse */
+.earth-bg.is-static .earth-css::before { animation: none; }
+.earth-bg.is-static .earth-css-markers i::after { animation: none; opacity: 0; }
+.earth-bg.is-off { opacity: 0 !important; visibility: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .earth-bg .earth-stage { transition: none; }
+  .earth-bg { transition: opacity 120ms linear; }
+  .earth-css::before { animation: none !important; }
+  .earth-css-markers i::after { animation: none !important; opacity: 0; }
+}
+
+@media (prefers-reduced-data: reduce) {
+  .earth-bg[data-mode="webgl"] { display: none; }
+}

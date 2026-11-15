@@ -120,7 +120,9 @@
   --dur-slow: 500ms;
   --dur-reveal: 700ms;
 
-  /* ---- Layers ---- */
+  /* ---- Layers ----
+     Stacking: starfield < earth < content < nav < scrim < chat panel < mascot < toast < progress */
+  --z-stars: -2; --z-earth: -1;
   --z-nav: 20; --z-scrim: 30; --z-panel: 40; --z-mascot: 45; --z-toast: 60; --z-progress: 70;
 
   /* ---- Assets ---- */

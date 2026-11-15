@@ -320,7 +320,7 @@ footer.site a { color: var(--text); font-weight: 500; }
 
 /* ---------- chrome: scroll progress + starfield ---------- */
 .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: var(--z-progress); background: var(--primary); transform-origin: left; transform: scaleX(var(--p, 0)); pointer-events: none; }
-.starfield { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; contain: strict; }
+.starfield { position: fixed; inset: 0; z-index: var(--z-stars, -2); pointer-events: none; overflow: hidden; contain: strict; }
 .starfield-drift { position: absolute; inset: 0; will-change: transform; transform: translate3d(0, var(--y, 0px), 0); }
 .star-layer { position: absolute; top: 0; left: 0; width: 1px; height: 1px; border-radius: 50%; background: transparent; animation: twinkle var(--t, 6s) ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
 

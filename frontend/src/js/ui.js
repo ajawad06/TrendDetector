@@ -1,9 +1,12 @@
 /**
  * Trend Detector — presentation behaviours (no data, statistics or routing logic).
  * Scroll reveal, count-up, sliding indicators, disclosures, toasts, scroll progress,
- * starfield, route transition, scrollspy. Everything animates transform/opacity only.
+ * starfield, Earth background, route transition, scrollspy.
+ * Everything animates transform/opacity only (plus stroke-dashoffset / clip-path where needed).
  */
 import { esc } from './util.js';
+import { initEarthBg, setEarthRoute, setEarthCity, setEarthAnimEnabled, isEarthAnimEnabled } from './earth-bg.js';
+export { setEarthRoute, setEarthCity, setEarthAnimEnabled, isEarthAnimEnabled };
 
 const root = document.documentElement;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -248,6 +251,20 @@ export function initUI(main) {
   io = new IntersectionObserver(onVisible, { threshold: 0.15 });
   bar = document.querySelector('.scroll-progress');
   buildStarfield();
+  // Earth mounts once after first paint (lazy three.js); route/city hooks in main.js
+  initEarthBg();
+  const { page: bootPage } = (() => {
+    try {
+      const raw = String(location.hash).replace(/^#\/?/, '');
+      return { page: raw.split('?')[0].split('/')[0] || 'home' };
+    } catch { return { page: 'home' }; }
+  })();
+  setEarthRoute(bootPage);
+  window.addEventListener('hashchange', () => {
+    const raw = String(location.hash).replace(/^#\/?/, '');
+    const p = raw.split('?')[0].split('/')[0] || 'home';
+    setEarthRoute(p === 'explore' || p === 'discover' ? 'trends' : p);
+  });
   window.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('click', onDisclosureClick);
   document.addEventListener('click', (e) => {            // close an open export menu when clicking elsewhere

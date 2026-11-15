@@ -8,7 +8,7 @@ import { initPatterns } from './patterns.js';
 import { esc, safeMarkdown, safeId } from './util.js';
 import { startRouter, buildHash, saveSelection, loadSelection } from './router.js';
 import { tok, palette } from './theme.js';
-import { initUI, icon, callout, disclosure, toast, viewTransition, scrollSpy, reducedMotion } from './ui.js';
+import { initUI, icon, callout, disclosure, toast, viewTransition, scrollSpy, reducedMotion, setEarthCity, setEarthAnimEnabled, isEarthAnimEnabled } from './ui.js';
 import { initMascot, mascotSvg } from './mascot.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -303,6 +303,7 @@ async function explorer(params, host) {
     saveSelection(sel); history.replaceState(null, '', buildHash('trends', { tab: 'explorer', var: sel.var, city: sel.city, mode: anom ? '' : 'raw' }));
     $('#map')?.toggleAttribute('data-neutral', NEUTRAL_VARS.has(sel.var));
     map?.setActiveCity(sel.city);
+    setEarthCity(sel.city);
   };
   S.trends = {}; S.regions.forEach((rg) => { try { S.trends[rg.id] = dirKey(analyze(sel.var, rg.id).analysis); } catch { /* skip */ } });
   let map;
@@ -379,6 +380,7 @@ function compare(params) {
     $('#ctable').innerHTML = `<table><thead><tr><th>City</th><th>Direction</th><th>Change per year (${esc(du)})</th><th>Confidence</th></tr></thead><tbody>${res.map((x) => `<tr><th scope="row">${esc(x.r.name)}</th><td>${badge(x.analysis, v.id)}</td><td class="num">${esc(num(x.analysis.ols.slope_per_year, sc))}</td><td>${esc(TIER[x.analysis.verdict.tier])}</td></tr>`).join('')}</tbody></table>`;
     $('#cnote').innerHTML = nearby(ids).map((n) => callout(esc(n), 'warn')).join('');
     saveSelection({ var: vid, city: ids[0] }); history.replaceState(null, '', buildHash('compare', { var: vid, cities: ids.join(',') }));
+    setEarthCity(ids[0]);
   };
   $('#sel-var').addEventListener('change', (e) => { vid = e.target.value; render(); });
   $('#pick').addEventListener('click', (e) => { const id = e.target.closest('[data-id]')?.dataset.id; if (!id) return;
@@ -462,6 +464,7 @@ function dataPage(params = {}) {
         <li><strong>Place names.</strong> BigDataCloud reverse geocoding, only if you choose “Use my location”.</li>
         <li><strong>Fonts.</strong> Space Grotesk, Inter and JetBrains Mono, SIL Open Font License 1.1, served by Google Fonts.</li>
         <li><strong>Mascot and icons.</strong> Original SVG artwork drawn for this project; no third-party asset is used.</li>
+        <li><strong>Earth background.</strong> Day texture from the MIT-licensed <a href="https://github.com/vasturiano/three-globe">three-globe</a> example assets (<code>earth-day.jpg</code>), derived from NASA Visible Earth / Blue Marble. Credit: NASA. Used under <a href="https://www.nasa.gov/nasa-brand-center/images-and-media/">NASA media guidelines</a> (informational use; no endorsement). Rendered with <a href="https://threejs.org/">three.js</a> (MIT).</li>
         <li><strong>Source code.</strong> <a href="https://github.com/fuzailfaraz/TrendDetector">GitHub</a>.</li>
       </ul>
     </section>
@@ -512,6 +515,12 @@ function assistant() {
 async function boot() {
   initUI(main);
   assistant();
+  // Footer: persist Earth animation preference (presentation only)
+  const et = $('#earth-toggle');
+  if (et) {
+    et.checked = isEarthAnimEnabled();
+    et.addEventListener('change', () => setEarthAnimEnabled(et.checked));
+  }
   try {
     S.series = await api.getSeriesData();
     const [v, r, m, h, t, meta] = await Promise.all([api.getVariables(), api.getRegions(), api.getMissions(), fetch('./catalogs/hotspots.json').then((x) => x.json()).catch(() => []), api.getLearningTerms(), api.getMetadata()]);

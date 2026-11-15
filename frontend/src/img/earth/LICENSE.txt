@@ -1,0 +1,10 @@
+Earth day texture (earth-day.jpg)
+---------------------------------
+Source URL: https://cdn.jsdelivr.net/npm/three-globe@2.31.1/example/img/earth-day.jpg
+Upstream package: three-globe (MIT) — https://github.com/vasturiano/three-globe
+Imagery: NASA Visible Earth / Blue Marble–derived day map, redistributed with the
+three-globe example assets. NASA media usage guidelines:
+https://www.nasa.gov/nasa-brand-center/images-and-media/
+Credit: NASA. No endorsement implied. No NASA logos are used.
+Software packaging of the example is MIT; NASA imagery remains subject to NASA
+media guidelines (informational use, credit NASA, no endorsement).
