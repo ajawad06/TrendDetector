@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -53,6 +53,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+*.log
 
 # Environment variables
 *.local

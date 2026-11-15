@@ -1,0 +1,12 @@
+{
+  "name": "trend-detector-frontend",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Trend Detector frontend — static UI + Vercel serverless functions (AI chat, live pollution now-cast).",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
