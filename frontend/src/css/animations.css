@@ -169,7 +169,7 @@
     scroll-behavior: auto !important;
     transition-property: opacity, visibility !important; transition-duration: 120ms !important; transition-delay: 0s !important;
   }
-  .skel::after, .pin.is-selected::after, .starfield, .toast-bar, .earth-bg { display: none !important; }
+  .skel::after, .pin.is-selected::after, .starfield, .toast-bar { display: none !important; }
   .orbit { animation: none !important; }
   .card-link:hover, .btn:active, .chip:active, .card-link:active, .mascot:hover svg, .pin-wrap:hover .pin { transform: none !important; }
   .mascot-tilt, .m-flame { transform: none !important; }

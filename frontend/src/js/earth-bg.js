@@ -460,11 +460,31 @@ export function initEarthBg() {
   const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; if (onScreen) wake(); }, { threshold: 0 });
   io.observe(host);
 
+  const mqMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const mqData = window.matchMedia('(prefers-reduced-data: reduce)');
+  const onPrefs = () => {
+    if (reducedMotion() || reducedData() || !enabled) {
+      if (mode === 'webgl') {
+        // Swap to a static CSS frame under reduced-motion / reduced-data / low-power prefs
+        disposeWebGL();
+        showCssFallback();
+      }
+      host?.classList.add('is-static');
+      applyEnabled();
+      return;
+    }
+    host?.classList.remove('is-static');
+    applyEnabled();
+  };
+  mqMotion.addEventListener?.('change', onPrefs);
+  mqData.addEventListener?.('change', onPrefs);
+
   const start = async () => {
     if (disposed) return;
-    if (!enabled || reducedMotion() || reducedData() || !webglOk()) {
+    // Reduced-data / save-data / disabled / no-WebGL → CSS sphere (static if reduced-motion).
+    if (!enabled || !webglOk() || reducedData() || reducedMotion()) {
       showCssFallback();
-      if (reducedMotion()) host.classList.add('is-static');
+      if (reducedMotion() || !enabled) host.classList.add('is-static');
       return;
     }
     try {

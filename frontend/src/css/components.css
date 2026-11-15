@@ -250,7 +250,12 @@ td.num, td .num { font-family: var(--font-mono); font-weight: 500; color: var(--
 footer.site { border-top: 1px solid var(--border); background: var(--bg-1); color: var(--text-2); font-size: var(--fs-sm); margin-top: var(--section-gap); }
 footer.site .container { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-6); padding-block: var(--space-6); }
 footer.site a { color: var(--text); font-weight: 500; }
-@media (max-width: 767.98px) { footer.site .container { padding-right: calc(var(--gutter) + 64px); } }
+footer.site .earth-toggle { margin-left: auto; font-size: var(--fs-xs); color: var(--text-3); }
+footer.site .earth-toggle .switch-label { white-space: nowrap; }
+@media (max-width: 767.98px) {
+  footer.site .container { padding-right: calc(var(--gutter) + 64px); }
+  footer.site .earth-toggle { margin-left: 0; flex: 1 0 100%; }
+}
 
 /* ---------- map (Leaflet restyled to tokens) ---------- */
 .map-frame.leaflet-container { background: var(--bg-1); font-family: var(--font-body); }
