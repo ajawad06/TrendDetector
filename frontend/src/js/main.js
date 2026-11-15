@@ -74,28 +74,134 @@ function loadLeaflet() {
   return leafletP;
 }
 
+/* ---------- your city: location + personal air box ---------- */
+const LOC_KEY = 'td:city';
+const CIG_PM25 = 22;          // Berkeley Earth rule of thumb: 22 µg/m³ PM2.5 over 24 h ≈ 1 cigarette
+const WHO_PM25 = 5;           // WHO 2021 annual PM2.5 guideline, µg/m³
+const YEARS_PER_UG = 0.098;   // AQLI: about 0.98 years of life expectancy per 10 µg/m³ above the guideline
+const exploreHref = (v, c) => buildHash('trends', { tab: 'explorer', var: v, city: c });
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthLabel = (d) => `${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
+
+function nearestRegion(lat, lon) {
+  let best = null;
+  S.regions.forEach((r) => { const d = km({ lat, lon }, r); if (!best || d < best.km) best = { region: r, km: d }; });
+  return best;
+}
+function readCity() { try { return JSON.parse(localStorage.getItem(LOC_KEY) || 'null'); } catch { return null; } }
+function writeCity(c) { try { if (c) localStorage.setItem(LOC_KEY, JSON.stringify(c)); else localStorage.removeItem(LOC_KEY); } catch { /* private mode */ } }
+function getPosition() {
+  return new Promise((ok, no) => {
+    if (!navigator.geolocation) return no(Object.assign(new Error('unsupported'), { code: 0 }));
+    navigator.geolocation.getCurrentPosition(ok, no, { enableHighAccuracy: false, timeout: 12000, maximumAge: 10 * 60 * 1000 });
+  });
+}
+/** Optional: turn coordinates into a place name. Falls back silently to the nearest tracked city. */
+async function placeName(lat, lon) {
+  try {
+    const u = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat.toFixed(2)}&longitude=${lon.toFixed(2)}&localityLanguage=en`;
+    const r = await fetch(u, { signal: AbortSignal.timeout(4000) });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j.city || j.locality || null;
+  } catch { return null; }
+}
+async function loadPI() {
+  S.pi ||= await fetch('./data/pollution_index.json').then((r) => r.json());
+  return S.pi;
+}
+/** Everything the air box shows for one tracked city. */
+async function airFor(region) {
+  const pi = await loadPI(), c = pi.cities[region.name];
+  const cats = pi.meta.categories, catOf = (v) => (cats.find((k) => v <= k.max) || cats.at(-1)).name;
+  const last12 = c.pm25.slice(-12), avg = last12.reduce((x, y) => x + y, 0) / last12.length;
+  const out = {
+    pm25: avg, period: `${monthLabel(c.dates.at(-12))} to ${monthLabel(c.dates.at(-1))}`,
+    cigs: avg / CIG_PM25, years: Math.max(0, avg - WHO_PM25) * YEARS_PER_UG,
+    pi: c.latest, cat: catOf(c.latest), piNote: `Latest month on record (${monthLabel(c.dates.at(-1))})`, live: false,
+  };
+  try {
+    const r = await fetch('/api/live-pi', { signal: AbortSignal.timeout(6000) });
+    const j = r.ok ? await r.json() : null, l = j?.cities?.[region.name];
+    if (l && typeof l.pi === 'number') Object.assign(out, { pi: l.pi, cat: l.category, piNote: 'Live now-cast, updated every 30 minutes', live: true });
+  } catch { /* historical value stays */ }
+  return out;
+}
+const fmt1 = (x) => (x < 10 ? x.toFixed(1) : Math.round(x).toString());
+
+async function renderAirBox(box, state) {
+  const picker = `<label class="field">Or choose a city<select id="city-pick"><option value="">Select a city</option>${S.regions.map((r) => `<option value="${esc(r.id)}">${esc(r.name)}</option>`).join('')}</select></label>`;
+  const bindPicker = () => $('#city-pick', box)?.addEventListener('change', (e) => {
+    const r = S.regions.find((x) => x.id === e.target.value); if (!r) return;
+    const c = { name: r.name, regionId: r.id, km: 0, manual: true }; writeCity(c); renderAirBox(box, { city: c });
+  });
+  if (state.busy) { box.innerHTML = `<h2>Your city</h2><p class="muted" role="status">Finding your city…</p>`; return; }
+  if (!state.city) {
+    box.innerHTML = `<h2>See the air where you live</h2>
+      <p class="muted">Allow location access and we will show your city’s pollution index, the cigarettes’ worth of smoke you breathe, and the life expectancy at risk.</p>
+      ${state.error ? `<p class="note" role="alert">${esc(state.error)}</p>` : ''}
+      <div class="aq-actions"><button class="btn btn-primary" id="locate">Use my location</button></div>${picker}
+      <small class="muted">Your position is used in your browser to find the nearest city. If you allow place names, rounded coordinates go to a free reverse-geocoding service. Nothing is stored on our server.</small>`;
+    $('#locate', box).addEventListener('click', async () => {
+      renderAirBox(box, { busy: true });
+      try {
+        const pos = await getPosition(), { latitude: lat, longitude: lon } = pos.coords, near = nearestRegion(lat, lon);
+        const name = (await placeName(lat, lon)) || near.region.name;
+        const c = { name, regionId: near.region.id, km: Math.round(near.km) }; writeCity(c); renderAirBox(box, { city: c });
+      } catch (e) {
+        const msg = e?.code === 1 ? 'Location permission was denied. You can pick a city below instead.' : 'We could not get your location. Pick a city below instead.';
+        renderAirBox(box, { error: msg });
+      }
+    });
+    bindPicker(); return;
+  }
+  const c = state.city, region = S.regions.find((r) => r.id === c.regionId) || S.regions[0];
+  box.innerHTML = `<h2>Your city</h2><p class="muted" role="status">Loading air data for ${esc(region.name)}…</p>`;
+  let air; try { air = await airFor(region); } catch (e) { console.error(e); box.innerHTML = `<h2>Your city</h2><p class="note">Air data could not be loaded. <button class="btn" id="aq-retry">Retry</button></p>`; $('#aq-retry', box)?.addEventListener('click', () => renderAirBox(box, state)); return; }
+  const far = c.km > 40 && c.name !== region.name;
+  box.innerHTML = `<div class="aq-top"><div><small class="muted">Your city</small><h2 class="aq-city">${esc(c.name)}</h2>
+      ${far ? `<small class="muted">Closest tracked city: ${esc(region.name)}, about ${c.km} km away. The numbers below are for ${esc(region.name)}.</small>` : ''}</div>
+      <button class="btn" id="aq-change">Change city</button></div>
+    <div class="aq-grid">
+      <div class="aq-stat"><span class="aq-label">Pollution index</span><b class="aq-num">${esc(fmt1(air.pi))}<small> / 100</small></b><span class="aq-pill">${esc(air.cat)}</span><small class="muted">${esc(air.piNote)}</small></div>
+      <div class="aq-stat"><span class="aq-label">Daily smoke equivalent</span><b class="aq-num">≈ ${esc(fmt1(air.cigs))}<small> cigarettes a day</small></b><small class="muted">Breathing the past year’s average air is like smoking this many.</small></div>
+      <div class="aq-stat"><span class="aq-label">Life expectancy at risk</span><b class="aq-num">≈ ${esc(fmt1(air.years))}<small> years</small></b><small class="muted">If this level of air lasted a lifetime, compared with the WHO guideline.</small></div>
+    </div>
+    <p class="aq-foot muted"><small>Based on average PM2.5 of ${esc(air.pm25.toFixed(1))} µg/m³ for ${esc(air.period)}. Rules of thumb: 22 µg/m³ ≈ 1 cigarette a day (Berkeley Earth); about 1 year of life per 10 µg/m³ above the WHO guideline of ${WHO_PM25} µg/m³ (Air Quality Life Index). Estimates, not medical advice. The index is a satellite and model composite, not a regulatory AQI.</small></p>
+    <a href="${exploreHref('pm25', region.id)}">See how PM2.5 is changing in ${esc(region.name)}</a>`;
+  $('#aq-change', box).addEventListener('click', () => { writeCity(null); renderAirBox(box, {}); });
+}
+
 /* ---------- pages ---------- */
-function home() {
+async function home() {
   const feat = S.missions.slice(0, 3);
   main.innerHTML = `<div class="wrap"><section class="hero">
       <h1>Is Pakistan’s air getting better or worse?</h1>
       <p>Twenty years of monthly pollution and rainfall records for eight cities, tested for real trends.</p>
-      <a class="btn btn-primary" href="${buildHash('explore', loadSelection())}">Start investigating</a></section>
-    <h2>Featured missions</h2>
-    <div class="grid cols-3">${feat.map((m) => `<a class="card card-link" href="${buildHash('explore', { var: m.variable, city: m.region })}"><h3>${esc(m.title)}</h3><p class="muted">${esc(m.question)}</p><small>${esc(m.result_summary)}</small></a>`).join('')}</div>
+      <a class="btn btn-primary" href="${exploreHref(loadSelection().var, loadSelection().city)}">Start investigating</a></section>
+    <section class="card aq" id="air-box" aria-live="polite" aria-label="Air where you live"></section>
+    <h2 class="gap-top">Featured missions</h2>
+    <div class="grid cols-3">${feat.map((m) => `<a class="card card-link" href="${exploreHref(m.variable, m.region)}"><h3>${esc(m.title)}</h3><p class="muted">${esc(m.question)}</p><small>${esc(m.result_summary)}</small></a>`).join('')}</div>
     <div id="pi-snap" class="stack"></div></div>`;
-  fetch('./data/pollution_index.json').then((r) => r.json()).then((j) => {
+  const box = $('#air-box'), saved = readCity();
+  if (saved && S.regions.some((r) => r.id === saved.regionId)) renderAirBox(box, { city: saved });
+  else {
+    renderAirBox(box, {});
+    // If the browser already granted permission earlier, skip the prompt and show the city straight away.
+    navigator.permissions?.query({ name: 'geolocation' }).then((p) => { if (p.state === 'granted' && $('#locate')) $('#locate').click(); }).catch(() => {});
+  }
+  loadPI().then((j) => {
     const t = j.ranking_latest[0];
-    $('#pi-snap').innerHTML = `<h2>Pollution right now</h2><a class="card card-link" href="#/pollution"><h3>${esc(t.city)}: ${esc(t.category)}</h3><p class="muted">Highest Pollution Index in the latest month (${esc(t.pi)} on a 0 to 100 scale).</p><small>See the full ranking</small></a>`;
+    $('#pi-snap').innerHTML = `<h2>Most polluted city</h2><a class="card card-link" href="#/pollution"><h3>${esc(t.city)}: ${esc(t.category)}</h3><p class="muted">Highest Pollution Index in the latest month (${esc(t.pi)} on a 0 to 100 scale).</p><small>See the full ranking</small></a>`;
   }).catch((e) => console.info('PI snapshot unavailable', e));
 }
 
-async function explore(params) {
+async function explorer(params, host) {
   const sel = { var: safeId(params.var), city: safeId(params.city) };
   if (!sel.var || !sel.city) Object.assign(sel, loadSelection());
   let anom = params.mode !== 'raw';
-  main.innerHTML = `<div class="wrap explore">
-    <div class="x-sel stack"><h1>Explore</h1>${selectors(sel.var, sel.city)}
+  host.innerHTML = `<div class="explore">
+    <div class="x-sel stack"><h2>Explorer</h2>${selectors(sel.var, sel.city)}
       <label class="check"><input type="checkbox" id="anom" ${anom ? 'checked' : ''}> Remove seasonal cycle</label></div>
     <section class="x-main stack" aria-live="polite"><div class="card" id="result"></div>
       <div class="card"><div class="head" id="chart-head"></div><div class="chart-box"><canvas id="cv" role="img" aria-label="Monthly time series with trend line"></canvas></div>
@@ -135,7 +241,7 @@ async function explore(params) {
     $('#city-list').innerHTML = S.regions.map((rg) => { const t = S.trends?.[rg.id]; const d = DIR[t || 'flat'];
       return `<button class="chip" data-city="${esc(rg.id)}" aria-pressed="${rg.id === sel.city}">${esc(rg.name)} <span aria-hidden="true">${d.icon}</span><span class="hide">${d.text}</span></button>`; }).join('');
     $('#chart-head [data-x]')?.closest('.pop').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => exportAs(b.dataset.x, cur, anom)));
-    saveSelection(sel); history.replaceState(null, '', buildHash('explore', { var: sel.var, city: sel.city, mode: anom ? '' : 'raw' }));
+    saveSelection(sel); history.replaceState(null, '', buildHash('trends', { tab: 'explorer', var: sel.var, city: sel.city, mode: anom ? '' : 'raw' }));
     map?.setActiveCity(sel.city);
   };
   S.trends = {}; S.regions.forEach((rg) => { try { S.trends[rg.id] = dirKey(analyze(sel.var, rg.id).analysis); } catch { /* skip */ } });
@@ -157,23 +263,37 @@ function exportAs(kind, cur, anom) {
   else download(`trend_${id}.md`, new Blob([`# ${headline(cur)}\n\n- Variable: ${v.name} (${du})\n- City: ${r.name}\n- Verdict: ${TIER[a.verdict.tier]}\n- Change per year: ${num(a.ols.slope_per_year, sc)} ${du}\n- Since 2005: ${num(a.ols.total_change, sc)} ${du}\n- Series: ${anom ? 'seasonal anomalies' : 'raw values'}, 240 months\n\nA trend shows what changed, not why.\n`], { type: 'text/markdown' }));
 }
 
-async function discover(params) {
-  const tab = ['missions', 'contrasts', 'ranked'].includes(params.tab) ? params.tab : 'missions';
+/* ---------- Trends: explorer + missions + contrasts + ranked hotspots + minor patterns ---------- */
+const TABS = [['explorer', 'Explorer'], ['missions', 'Missions'], ['contrasts', 'Contrasts'], ['ranked', 'Ranked hotspots'], ['patterns', 'Minor patterns']];
+function trends(params) {
+  const tab = TABS.some((t) => t[0] === params.tab) ? params.tab : 'explorer';
   const pairs = [['rain_mm', 'peshawar', 'karachi', 'Rainfall: northwest valley vs southern coast'], ['no2', 'peshawar', 'multan', 'NO₂: Peshawar vs Multan'], ['pm25', 'lahore', 'faisalabad', 'PM2.5: Lahore vs Faisalabad']];
-  const body = {
-    missions: () => `<div class="grid cols-2">${S.missions.map((m) => `<a class="card card-link" href="${buildHash('explore', { var: m.variable, city: m.region })}"><h3>${esc(m.title)}</h3><p class="muted">${esc(m.question)}</p><small>${esc(m.result_summary)}</small></a>`).join('')}</div>`,
-    contrasts: () => `<div class="grid cols-2">${pairs.map(([vr, a, b, t]) => { const x = analyze(vr, a), y = analyze(vr, b), v = x.v, sc = v.display_scale || 1;
+  const bodies = {
+    missions: () => `<p class="muted">Guided questions, each with the answer the data gives.</p><div class="grid cols-2">${S.missions.map((m) => `<a class="card card-link" href="${exploreHref(m.variable, m.region)}"><h3>${esc(m.title)}</h3><p class="muted">${esc(m.question)}</p><small>${esc(m.result_summary)}</small></a>`).join('')}</div>`,
+    contrasts: () => `<p class="muted">Pairs of cities that behave differently for the same variable.</p><div class="grid cols-2">${pairs.map(([vr, a, b, t]) => { const x = analyze(vr, a), y = analyze(vr, b), v = x.v, sc = v.display_scale || 1;
       return `<div class="card"><h3>${esc(t)}</h3>${[x, y].map((z) => `<p>${esc(z.r.name)} ${badge(z.analysis)} <small>${esc(num(z.analysis.ols.slope_per_year, sc))} ${esc(v.display_unit || v.unit)}/yr</small></p>`).join('')}
         ${nearby([a, b]).map((n) => `<p class="note">${esc(n)}</p>`).join('')}<a href="${buildHash('compare', { var: vr, cities: `${a},${b}` })}">Compare these cities</a></div>`; }).join('')}</div>`,
-    ranked: () => `<div class="grid">${S.hotspots.map((h) => `<a class="card card-link" href="${buildHash('explore', { var: h.variable, city: h.region })}"><h3>${esc(h.rank)}. ${esc(h.title)}</h3><p><span class="badge ${(DIR[h.direction] || DIR.flat).cls}"><span aria-hidden="true">${(DIR[h.direction] || DIR.flat).icon}</span> ${(DIR[h.direction] || DIR.flat).text}</span> <small>${esc(h.rate)}</small></p><p class="muted">${esc(h.significance)}. ${esc(h.why_it_matters)}</p></a>`).join('')}</div>`,
+    ranked: () => `<p class="muted">The strongest trends in the record, ranked.</p><div class="grid">${S.hotspots.map((h) => `<a class="card card-link" href="${exploreHref(h.variable, h.region)}"><h3>${esc(h.rank)}. ${esc(h.title)}</h3><p><span class="badge ${(DIR[h.direction] || DIR.flat).cls}"><span aria-hidden="true">${(DIR[h.direction] || DIR.flat).icon}</span> ${(DIR[h.direction] || DIR.flat).text}</span> <small>${esc(h.rate)}</small></p><p class="muted">${esc(h.significance)}. ${esc(h.why_it_matters)}</p></a>`).join('')}</div>`,
   };
-  main.innerHTML = `<div class="wrap stack"><h1>Discover</h1><div class="tabs" role="tablist">${[['missions', 'Missions'], ['contrasts', 'Contrasts'], ['ranked', 'Ranked']].map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div><div role="tabpanel">${body[tab]()}</div></div>`;
-  main.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => { location.hash = buildHash('discover', { tab: b.dataset.tab }); }));
+  main.innerHTML = `<div class="wrap stack"><h1>Trends</h1>
+    <p class="muted">Every trend we found in one place: explore any series, follow guided missions, see contrasts and rankings, and check the smaller seasonal and behavioural patterns.</p>
+    <div class="tabs" role="tablist" aria-label="Trend views">${TABS.map(([k, l]) => `<button role="tab" id="tab-${k}" aria-controls="tab-body" data-tab="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
+    <div id="tab-body" role="tabpanel" aria-labelledby="tab-${tab}"></div></div>`;
+  main.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+    const k = b.dataset.tab; location.hash = buildHash('trends', k === 'explorer' ? { tab: k, ...loadSelection() } : { tab: k });
+  }));
+  const host = $('#tab-body');
+  if (tab === 'explorer') explorer(params, host);
+  else if (tab === 'patterns') initPatterns(host);
+  else host.innerHTML = bodies[tab]();
 }
+/* Old links: #/explore and #/discover keep working. */
+const legacyExplore = (p) => location.replace(buildHash('trends', { tab: 'explorer', var: p.var, city: p.city, mode: p.mode }));
+const legacyDiscover = (p) => location.replace(buildHash('trends', { tab: ['contrasts', 'ranked'].includes(p.tab) ? p.tab : 'missions' }));
 
 function pollution() {
-  main.innerHTML = `<div class="wrap stack"><h1>Pollution index</h1><div id="pi-root"></div><h2>Smaller patterns</h2><div id="pt-root"></div></div>`;
-  initPollutionIndex($('#pi-root')); initPatterns($('#pt-root'));
+  main.innerHTML = `<div class="wrap stack"><h1>Pollution index</h1><div id="pi-root"></div><p class="note">Looking for the smaller seasonal and behavioural patterns? They now live under <a href="${buildHash('trends', { tab: 'patterns' })}">Trends, Minor patterns</a>.</p></div>`;
+  initPollutionIndex($('#pi-root'));
 }
 
 function compare(params) {
@@ -250,7 +370,7 @@ function assistant() {
     typing.remove(); send.disabled = false;
     if (!rep?.reply) return add('chat-bot', (d) => { d.textContent = 'The assistant is unavailable right now. '; const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'Retry'; b.onclick = () => { d.remove(); ask(text); }; d.appendChild(b); });
     add('chat-bot', (d) => { d.innerHTML = safeMarkdown(rep.reply); const v = safeId(rep.analysis_ref?.variable), r = safeId(rep.analysis_ref?.region);
-      if (v && r) { const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'Load in chart'; b.onclick = () => { location.hash = buildHash('explore', { var: v, city: r }); setOpen(false); }; d.appendChild(document.createElement('br')); d.appendChild(b); } });
+      if (v && r) { const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'Load in chart'; b.onclick = () => { location.hash = exploreHref(v, r); setOpen(false); }; d.appendChild(document.createElement('br')); d.appendChild(b); } });
   };
   $('#chat-form').addEventListener('submit', (e) => { e.preventDefault(); ask(input.value); });
   dr.querySelectorAll('[data-prompt]').forEach((c) => c.addEventListener('click', () => ask(c.dataset.prompt)));
@@ -269,6 +389,6 @@ async function boot() {
     const [v, r, m, h, t, meta] = await Promise.all([api.getVariables(), api.getRegions(), api.getMissions(), fetch('./catalogs/hotspots.json').then((x) => x.json()).catch(() => []), api.getLearningTerms(), api.getMetadata()]);
     Object.assign(S, { vars: v.variables, regions: r.regions, missions: m.missions || m, hotspots: h, terms: t.terms || [], meta: meta || {} });
   } catch (e) { console.error(e); return stateBox('The data could not be loaded.', true); }
-  startRouter({ home, explore, discover, pollution, compare, data: dataPage, about }, notFound);
+  startRouter({ home, trends, explore: legacyExplore, discover: legacyDiscover, pollution, compare, data: dataPage, about }, notFound);
 }
 boot();

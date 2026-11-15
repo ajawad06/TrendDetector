@@ -1,10 +1,10 @@
 /**
  * Minimal hash router (static-hosting friendly).
- * URL shape: #/page?key=value&key2=value2   e.g. #/explore?var=pm25&city=lahore
+ * URL shape: #/page?key=value&key2=value2   e.g. #/trends?tab=explorer&var=pm25&city=lahore
  */
 import { safeId } from './util.js';
 
-export const ROUTES = ['home', 'explore', 'discover', 'pollution', 'compare', 'data', 'about'];
+export const ROUTES = ['home', 'trends', 'explore', 'discover', 'pollution', 'compare', 'data', 'about']; // explore/discover are legacy aliases that redirect to trends
 const STORE_KEY = 'td:last-selection';
 
 export function parseHash(hash = '') {
@@ -23,7 +23,7 @@ export function buildHash(page, params = {}) {
   return `#/${page}${s ? '?' + s : ''}`;
 }
 
-/** Remember the last variable/city so Explore and Compare open where the user left off. */
+/** Remember the last variable/city so Trends and Compare open where the user left off. */
 export function saveSelection(sel, storage = globalThis.localStorage) {
   try { storage?.setItem(STORE_KEY, JSON.stringify({ var: safeId(sel.var), city: safeId(sel.city) })); } catch { /* private mode */ }
 }

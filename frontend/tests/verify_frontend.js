@@ -33,7 +33,7 @@ check(html.includes('id="main"'), 'Main landmark present');
 check(html.includes('class="skip-link"'), 'Skip link present');
 check(html.includes('id="drawer"') && html.includes('aria-modal="true"'), 'Assistant slide-over (dialog) present');
 check(html.includes('id="plain-toggle"'), 'Plain-language switch present');
-['home', 'explore', 'discover', 'pollution', 'compare', 'data', 'about'].forEach(r => check(html.includes(`href="#/${r}"`), `Nav link for #/${r}`));
+['home', 'trends', 'pollution', 'compare', 'data', 'about'].forEach(r => check(html.includes(`href="#/${r}"`), `Nav link for #/${r}`));
 check(!/style="/.test(html), 'No inline styles in index.html');
 check(!/<video/.test(html), 'No background video');
 check(!fs.existsSync(path.join(FRONTEND_DIR, 'HeroTD.mp4')), 'Hero video file removed');

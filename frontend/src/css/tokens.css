@@ -1,24 +1,28 @@
-/* Single source of design tokens. Light "linen" theme (documented), dark via prefers-color-scheme.
+/* Single source of design tokens. Light "cream and olive" theme, dark via prefers-color-scheme.
    Canvas code reads these with getComputedStyle — no hex in JS/HTML. */
 :root {
-  --bg: #FBFBF9;
-  --surface: #FFFFFF;
-  --surface-sunk: #F1F1EC;
-  --border: #D9D9D0;
-  --text: #1F2A1A;
-  --text-muted: #565D50;
-  --accent: #476E2A;
+  /* Palette: olive #6F874B, lime #C8E19F, white #F1F1F3, tan #CAAC8F, brown #6D523D; logo ink #453327 / #4F682F on cream #F5EBDF */
+  --bg: #F5EBDF;
+  --surface: #FCF9F4;
+  --surface-sunk: #EBDFCE;
+  --border: #D6C2A8;
+  --text: #3A2B20;
+  --text-muted: #6D523D;
+  --accent: #4F682F;
   --accent-ink: #FFFFFF;
-  --series-trend: #8A4B1E;      /* espresso brown: trend fit */
-  --series-base: #565D50;       /* baseline */
-  --up: #8A4B1E;               /* direction is always icon + label + colour */
+  --lime: #C8E19F;
+  --olive: #6F874B;
+  --tan: #CAAC8F;
+  --series-trend: #6D523D;      /* brown: trend fit */
+  --series-base: #6D523D;       /* baseline */
+  --up: #9A4F1F;               /* direction is always icon + label + colour */
   --down: #2F5D8A;
   --focus: #1C5FB8;
-  --series-obs: #7C8A70;
-  --grid: #E6E6DF;
+  --series-obs: #8FA073;
+  --grid: #E3D4BF;
   --cat-1: #4C9A52; --cat-2: #D4A72C; --cat-3: #E08A2E; --cat-4: #D2483B; --cat-5: #8E3270;
-  --line-1: #476E2A; --line-2: #8A4B1E; --line-3: #2F5D8A; --line-4: #B03A6B;
-  --line-5: #6B4FA3; --line-6: #8C7A1F; --line-7: #1F7F7A; --line-8: #555B52;
+  --line-1: #4F682F; --line-2: #8A4B1E; --line-3: #2F5D8A; --line-4: #B03A6B;
+  --line-5: #6B4FA3; --line-6: #8C7A1F; --line-7: #1F7F7A; --line-8: #6D523D;
 
   --font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Syne", var(--font-body);
@@ -33,12 +37,13 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #11180F; --surface: #182114; --surface-sunk: #0D130B; --border: #33402D;
-    --text: #ECEFE6; --text-muted: #AAB39F; --accent: #9CCB74; --accent-ink: #11180F;
-    --series-trend: #E3A86F; --series-base: #AAB39F; --series-obs: #7F8F72; --grid: #26311F;
+    --bg: #1B150F; --surface: #251D15; --surface-sunk: #15100B; --border: #4A3B2C;
+    --text: #F1E8DC; --text-muted: #CAAC8F; --accent: #B3D183; --accent-ink: #1B150F;
+    --lime: #3D4A28; --olive: #8FA66A; --tan: #CAAC8F;
+    --series-trend: #CAAC8F; --series-base: #CAAC8F; --series-obs: #8FA073; --grid: #33291D;
     --cat-1: #6FBF73; --cat-2: #E6C84F; --cat-3: #F29B3F; --cat-4: #E0584B; --cat-5: #C0599A;
-    --line-1: #9CCB74; --line-2: #E3A86F; --line-3: #8DB8E8; --line-4: #E58FB0;
-    --line-5: #C9B6F2; --line-6: #E6D87A; --line-7: #7FD0C8; --line-8: #AAB39F; --up: #E3A86F; --down: #8DB8E8; --focus: #8DB8E8;
+    --line-1: #B3D183; --line-2: #E3A86F; --line-3: #8DB8E8; --line-4: #E58FB0;
+    --line-5: #C9B6F2; --line-6: #E6D87A; --line-7: #7FD0C8; --line-8: #CAAC8F; --up: #E3A86F; --down: #8DB8E8; --focus: #8DB8E8;
   }
 }
 @media (prefers-reduced-motion: reduce) {
