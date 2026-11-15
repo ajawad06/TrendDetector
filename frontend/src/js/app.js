@@ -11,6 +11,8 @@ import * as stats from './stats.js';
 import { TrendChart } from './chart.js';
 import { RegionMap } from './map.js';
 import { icon } from './icons.js';
+import { initPollutionIndex } from './pollution.js';
+import { initPatterns } from './patterns.js';
 
 class App {
   constructor() {
@@ -889,5 +891,9 @@ class App {
 window.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   window.trendApp = app;
+  const piRoot = document.getElementById('pollution-index');
+  if (piRoot) initPollutionIndex(piRoot);
+  const ptRoot = document.getElementById('minor-patterns');
+  if (ptRoot) initPatterns(ptRoot);
   app.init();
 });

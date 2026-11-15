@@ -56,8 +56,8 @@
           </label>
         </div>
 
-        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('investigation-workspace').scrollIntoView({behavior:'smooth'})">
-          Open Analysis
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('pollution-index').scrollIntoView({behavior:'smooth'})">
+          Pollution Index
         </button>
       </div>
     </div>
@@ -66,7 +66,7 @@
   <!-- Hero Section (Frosted Atmospheric Glass Banner) -->
   <section class="hero-section">
     <div class="hero-container">
-      <div class="hero-tag">NASA Space Apps Challenge 2026</div>
+      <div class="hero-tag">NASA Space Apps Challenge 2026 · Pakistan Pollution Index</div>
       <h1 class="hero-title">Earth System Trend Detective</h1>
       <p class="hero-subtitle">
         Analyzing two decades (2005–2024, 240 monthly observations) of verified Earth system time series across 8 urban stations. Evaluating environmental trajectory, spatial divergence, and statistical confidence.
@@ -89,6 +89,9 @@
     <div id="learning-mode-banner" style="display:none;">
       <b><i data-icon="info"></i> Learning Mode Active:</b> Statistical terminology is translated into plain, intuitive explanations. Statistical significance indicates that a multi-year pattern is mathematically unlikely to be random variation, but does not establish isolated causality or guarantee future trends.
     </div>
+
+    <!-- Primary: Pollution Index (built from real data by scripts/build_pollution_index.py) -->
+    <section id="pollution-index" class="pi-section" style="margin-bottom:2.25rem;"></section>
 
     <!-- Section 1: Guided Demo Missions (Brown Heading Accent) -->
     <section style="margin-bottom:2.25rem;">
@@ -265,6 +268,9 @@
         <!-- Rendered dynamically -->
       </div>
     </section>
+
+    <!-- Minor trend patterns (data-backed, from scripts/build_patterns.py) -->
+    <section id="minor-patterns" style="margin:2.25rem 0;"></section>
 
   </main>
 

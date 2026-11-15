@@ -6,6 +6,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { getLivePI } = require('./live_pi');
 
 const PORT = process.env.PORT || 5173;
 const ROOT_DIR = __dirname;
@@ -109,6 +110,19 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ status: 'healthy', mode: 'real-data-engine' }));
+    return;
+  }
+
+  // Live Pollution Index (Open-Meteo now-cast)
+  if (req.url.split('?')[0] === '/api/live-pi') {
+    try {
+      const data = await getLivePI();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify(data));
+    } catch (e) {
+      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Live data unavailable: ' + e.message }));
+    }
     return;
   }
 

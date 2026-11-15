@@ -23,6 +23,12 @@ The system is built **exclusively on verified real-world monthly observations** 
 
 ---
 
+## Pollution Index (primary indicator)
+
+`python scripts/build_pollution_index.py` builds `pollution_index.json` from the real CSV (PM2.5, NO2, AOD, rainfall) following `pakistan-pollution-index-project.md`. Tree-loss and CO2 terms are removed because the dataset has no such columns; weights are renormalised. Also detects per-city peaks/dips (seasonally adjusted anomalies beyond 1.5 sigma) and long-term trends (Theil-Sen + Mann-Kendall). Test: `python tests/test_pollution_index.py`.
+
+---
+
 ## 🚀 Key Features
 
 ### 1. Earth Detective Investigation Flow ("What do you want to investigate?")
