@@ -349,4 +349,32 @@ export function initUI(main) {
     m.classList.remove('is-wiggle'); void m.offsetWidth; m.classList.add('is-wiggle');
     m.addEventListener('animationend', () => m.classList.remove('is-wiggle'), { once: true });
   });
+
+  // Card spotlight + button ripple (desktop / fine pointer only for spotlight)
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+  document.addEventListener('pointermove', (e) => {
+    if (!fine.matches) return;
+    const card = e.target.closest?.('.card-link');
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    card.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  }, { passive: true });
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest?.('.btn');
+    if (!btn || reducedMotion()) return;
+    const r = btn.getBoundingClientRect();
+    const rip = document.createElement('span');
+    rip.className = 'ripple';
+    rip.style.left = `${e.clientX - r.left}px`;
+    rip.style.top = `${e.clientY - r.top}px`;
+    btn.appendChild(rip);
+    rip.addEventListener('animationend', () => rip.remove(), { once: true });
+  });
+  // Sticky table header shadow when the scroller moves
+  document.addEventListener('scroll', (e) => {
+    const scroller = e.target?.closest?.('.scroll-x, [data-scroller]') || (e.target?.classList?.contains?.('scroll-x') ? e.target : null);
+    if (!scroller || scroller === document || scroller === document.documentElement) return;
+    scroller.closest('.table-wrap')?.classList.toggle('is-scrolled', scroller.scrollTop > 2 || scroller.scrollLeft > 2);
+  }, true);
 }
